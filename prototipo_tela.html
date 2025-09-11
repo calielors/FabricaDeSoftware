@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento SUS - Protótipo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        header {
+            background: #0072BB;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 4px solid #28A745;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: 500;
+            margin: 15px 0;
+            color: #0072BB;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0072BB;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary {
+            background: #0072BB;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #005a9e;
+        }
+        
+        .btn-secondary {
+            background: #28A745;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #218838;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #0072BB;
+            color: #0072BB;
+        }
+        
+        .btn-outline:hover {
+            background: #f0f8ff;
+        }
+        
+        .link {
+            color: #0072BB;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        
+        .link:hover {
+            text-decoration: underline;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .divider:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #ddd;
+        }
+        
+        .divider span {
+            background: #f5f5f5;
+            padding: 0 15px;
+            position: relative;
+            color: #777;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            background: #0072BB;
+            color: white;
+        }
+        
+        .appointment-card {
+            border-left: 4px solid #0072BB;
+        }
+        
+        .appointment-card.canceled {
+            border-left-color: #dc3545;
+        }
+        
+        .appointment-card.completed {
+            border-left-color: #28A745;
+        }
+        
+        .appointment-date {
+            color: #0072BB;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .appointment-specialty {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .appointment-location {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .appointment-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .appointment-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .step-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .step-progress:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ddd;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step.active {
+            background: #0072BB;
+            color: white;
+        }
+        
+        .step.completed {
+            background: #28A745;
+            color: white;
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .calendar-day.active {
+            background: #0072BB;
+            color: white;
+        }
+        
+        .calendar-day.available {
+            background: #e8f5e9;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .time-slot {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .time-slot.active {
+            background: #0072BB;
+            color: white;
+            border-color: #0072BB;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            color: #666;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        
+        .nav-item.active {
+            color: #0072BB;
+        }
+        
+        .nav-item i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .welcome-user {
+            margin-bottom: 20px;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-action {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        
+        .quick-action i {
+            font-size: 24px;
+            color: #0072BB;
+            margin-bottom: 10px;
+        }
+        
+        .next-appointment {
+            background: #e8f5e9;
+            border-left: 4px solid #28A745;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .float-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #28A745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="login-screen" class="screen active">
+        <header>
+            <div class="logo">
+                <i class="fas fa-hospital"></i>
+                <h1>SUS Agendamento</h1>
+            </div>
+        </header>
+        
+        <div class="container">
+            <h2 class="page-title">Acesse sua conta</h2>
+            
+            <div class="card">
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <div class="input-icon">
+                        <input type="text" id="cpf" placeholder="Digite seu CPF">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <div class="input-icon">
+                        <input type="password" id="password" placeholder="Digite sua senha">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="showScreen('main-screen')">Entrar</button>
+                
+                <a href="#" class="link">Esqueci minha senha</a>
+            </div>
+            
+            <div class="divider">
+                <span>ou</span>
+            </div>
+            
+            <button class="btn btn-outline">
+                <i class="fas fa-globe"></i> Entrar com gov.br
+            </button>
+            
+            <a href="#" class="link">Primeiro acesso? Cadastre-se aqui</a>
+        </div>
+        
+        <div class="bottom-nav">
+            <a class="nav-item active">
+                <i class="fas fa-user"></i>
+                <span>Login</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('main-screen')">
+                <i class="fas fa-home"></i>
+                <span>Início</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('appointment-list-screen')">
+                <i class="fas fa-list"></i>
+                <span>Consultas</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('schedule-screen')">
+                <i class="fas fa-calendar-plus"></i>
+                <span>Agendar</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Tela Principal -->
+    <div id="main-screen" class="screen">
+        <header>
+            <div class="logo">
+                <i class="fas fa-hospital"></i>
+                <h1>SUS Agendamento</h1>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="welcome-user">
+                <h2>Olá, Maria!</h2>
+                <p>Hoje é segunda-feira, 12 de junho de 2023</p>
+            </div>
+            
+            <div class="card next-appointment">
+                <h3>Sua próxima consulta</h3>
+                <p class="appointment-date">15/06/2023 às 14:30</p>
+                <p class="appointment-specialty">Clínica Geral</p>
+                <p class="appointment-location">UBS Jardim das Flores</p>
+                <span class="appointment-status status-confirmed">Confirmada</span>
+            </div>
+            
+            <h3 class="page-title">Serviços</h3>
+            
+            <div class="quick-actions">
+                <div class="quick-action" onclick="showScreen('schedule-screen')">
+                    <i class="fas fa-calendar-plus"></i>
+                    <p>Agendar Consulta</p>
+                </div>
+                
+                <div class="quick-action" onclick="showScreen('appointment-list-screen')">
+                    <i class="fas fa-list"></i>
+                    <p>Minhas Consultas</p>
+                </div>
+                
+                <div class="quick-action">
+                    <i class="fas fa-hospital"></i>
+                    <p>Unidades de Saúde</p>
+                </div>
+                
+                <div class="quick-action">
+                    <i class="fas fa-file-medical"></i>
+                    <p>Meu Histórico</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bottom-nav">
+            <a class="nav-item" onclick="showScreen('login-screen')">
+                <i class="fas fa-user"></i>
+                <span>Login</span>
+            </a>
+            <a class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Início</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('appointment-list-screen')">
+                <i class="fas fa-list"></i>
+                <span>Consultas</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('schedule-screen')">
+                <i class="fas fa-calendar-plus"></i>
+                <span>Agendar</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Tela de Lista de Consultas -->
+    <div id="appointment-list-screen" class="screen">
+        <header>
+            <div class="logo">
+                <i class="fas fa-hospital"></i>
+                <h1>Minhas Consultas</h1>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('upcoming-tab')">Próximas</div>
+                <div class="tab" onclick="switchTab('completed-tab')">Realizadas</div>
+                <div class="tab" onclick="switchTab('canceled-tab')">Canceladas</div>
+            </div>
+            
+            <div id="upcoming-tab" class="tab-content active">
+                <div class="card appointment-card">
+                    <p class="appointment-date">15/06/2023 às 14:30</p>
+                    <p class="appointment-specialty">Clínica Geral</p>
+                    <p class="appointment-location">UBS Jardim das Flores</p>
+                    <span class="appointment-status status-confirmed">Confirmada</span>
+                    <div class="appointment-actions">
+                        <button class="btn btn-outline">Cancelar</button>
+                        <button class="btn btn-primary">Remarcar</button>
+                    </div>
+                </div>
+                
+                <div class="card appointment-card">
+                    <p class="appointment-date">22/06/2023 às 10:00</p>
+                    <p class="appointment-specialty">Cardiologia</p>
+                    <p class="appointment-location">Hospital Central</p>
+                    <span class="appointment-status status-pending">Aguardando confirmação</span>
+                    <div class="appointment-actions">
+                        <button class="btn btn-outline">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="completed-tab" class="tab-content">
+                <div class="card appointment-card completed">
+                    <p class="appointment-date">05/05/2023 às 09:15</p>
+                    <p class="appointment-specialty">Oftalmologia</p>
+                    <p class="appointment-location">UBS Centro</p>
+                    <span class="appointment-status status-confirmed">Realizada</span>
+                </div>
+                
+                <div class="card appointment-card completed">
+                    <p class="appointment-date">20/04/2023 às 16:45</p>
+                    <p class="appointment-specialty">Pediatria</p>
+                    <p class="appointment-location">Hospital da Criança</p>
+                    <span class="appointment-status status-confirmed">Realizada</span>
+                </div>
+            </div>
+            
+            <div id="canceled-tab" class="tab-content">
+                <div class="card appointment-card canceled">
+                    <p class="appointment-date">10/03/2023 às 11:30</p>
+                    <p class="appointment-specialty">Dermatologia</p>
+                    <p class="appointment-location">UBS Vila Nova</p>
+                    <span class="appointment-status status-confirmed">Cancelada</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="float-btn" onclick="showScreen('schedule-screen')">
+            <i class="fas fa-plus"></i>
+        </div>
+        
+        <div class="bottom-nav">
+            <a class="nav-item" onclick="showScreen('login-screen')">
+                <i class="fas fa-user"></i>
+                <span>Login</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('main-screen')">
+                <i class="fas fa-home"></i>
+                <span>Início</span>
+            </a>
+            <a class="nav-item active">
+                <i class="fas fa-list"></i>
+                <span>Consultas</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('schedule-screen')">
+                <i class="fas fa-calendar-plus"></i>
+                <span>Agendar</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Tela de Agendamento -->
+    <div id="schedule-screen" class="screen">
+        <header>
+            <div class="logo">
+                <i class="fas fa-hospital"></i>
+                <h1>Agendar Consulta</h1>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="step-progress">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step active">3</div>
+                <div class="step">4</div>
+                <div class="step">5</div>
+            </div>
+            
+            <h3 class="page-title">Selecione a data</h3>
+            
+            <div class="card">
+                <div class="calendar">
+                    <div class="calendar-day">Dom</div>
+                    <div class="calendar-day">Seg</div>
+                    <div class="calendar-day">Ter</div>
+                    <div class="calendar-day">Qua</div>
+                    <div class="calendar-day">Qui</div>
+                    <div class="calendar-day">Sex</div>
+                    <div class="calendar-day">Sáb</div>
+                    
+                    <div class="calendar-day">28</div>
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
+                    <div class="calendar-day">31</div>
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day">2</div>
+                    <div class="calendar-day">3</div>
+                    
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day">5</div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+                    <div class="calendar-day">8</div>
+                    <div class="calendar-day">9</div>
+                    <div class="calendar-day">10</div>
+                    
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day">12</div>
+                    <div class="calendar-day available">13</div>
+                    <div class="calendar-day available">14</div>
+                    <div class="calendar-day available active">15</div>
+                    <div class="calendar-day available">16</div>
+                    <div class="calendar-day">17</div>
+                    
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day available">19</div>
+                    <div class="calendar-day available">20</div>
+                    <div class="calendar-day available">21</div>
+                    <div class="calendar-day available">22</div>
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day">24</div>
+                </div>
+            </div>
+            
+            <h3 class="page-title">Horários disponíveis</h3>
+            
+            <div class="time-slots">
+                <div class="time-slot">08:00</div>
+                <div class="time-slot">08:30</div>
+                <div class="time-slot">09:00</div>
+                <div class="time-slot">09:30</div>
+                <div class="time-slot">10:00</div>
+                <div class="time-slot">10:30</div>
+                <div class="time-slot">11:00</div>
+                <div class="time-slot">11:30</div>
+                <div class="time-slot active">14:00</div>
+                <div class="time-slot">14:30</div>
+                <div class="time-slot">15:00</div>
+                <div class="time-slot">15:30</div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="showScreen('confirmation-screen')">Próximo</button>
+            <button class="btn btn-outline" onclick="showScreen('appointment-list-screen')">Cancelar</button>
+        </div>
+        
+        <div class="bottom-nav">
+            <a class="nav-item" onclick="showScreen('login-screen')">
+                <i class="fas fa-user"></i>
+                <span>Login</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('main-screen')">
+                <i class="fas fa-home"></i>
+                <span>Início</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('appointment-list-screen')">
+                <i class="fas fa-list"></i>
+                <span>Consultas</span>
+            </a>
+            <a class="nav-item active">
+                <i class="fas fa-calendar-plus"></i>
+                <span>Agendar</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Tela de Confirmação (extra) -->
+    <div id="confirmation-screen" class="screen">
+        <header>
+            <div class="logo">
+                <i class="fas fa-hospital"></i>
+                <h1>Confirmar Agendamento</h1>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="card">
+                <h3 class="page-title">Resumo da Consulta</h3>
+                
+                <div class="appointment-details">
+                    <p><strong>Especialidade:</strong> Clínica Geral</p>
+                    <p><strong>Unidade:</strong> UBS Jardim das Flores</p>
+                    <p><strong>Endereço:</strong> Rua das Flores, 123 - Jardim das Flores</p>
+                    <p><strong>Data:</strong> 15/06/2023</p>
+                    <p><strong>Horário:</strong> 14:00</p>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="showScreen('appointment-list-screen')">Confirmar Agendamento</button>
+                <button class="btn btn-outline" onclick="showScreen('schedule-screen')">Voltar</button>
+            </div>
+        </div>
+        
+        <div class="bottom-nav">
+            <a class="nav-item" onclick="showScreen('login-screen')">
+                <i class="fas fa-user"></i>
+                <span>Login</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('main-screen')">
+                <i class="fas fa-home"></i>
+                <span>Início</span>
+            </a>
+            <a class="nav-item" onclick="showScreen('appointment-list-screen')">
+                <i class="fas fa-list"></i>
+                <span>Consultas</span>
+            </a>
+            <a class="nav-item active">
+                <i class="fas fa-calendar-plus"></i>
+                <span>Agendar</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function showScreen(screenId) {
+            // Oculta todas as telas
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Mostra a tela solicitada
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function switchTab(tabId) {
+            // Remove a classe active de todas as tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Adiciona a classe active à tab clicada
+            event.target.classList.add('active');
+            
+            // Oculta todos os conteúdos de tab
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Mostra o conteúdo da tab clicada
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        // Adiciona máscara de CPF
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 9) {
+                value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else if (value.length > 6) {
+                value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1.$2.$3');
+            } else if (value.length > 3) {
+                value = value.replace(/(\d{3})(\d+)/, '$1.$2');
+            }
+            
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
