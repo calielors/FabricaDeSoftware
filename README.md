@@ -3,6 +3,8 @@ Documento com as especificações do projeto: https://docs.google.com/document/d
 
 Acesso aos protótipos no Figma: https://www.figma.com/design/0THctJLxAMypddq06xTW1v/SUSAGENDAMENTO?node-id=0-1&p=f&t=BVUlqQPTzNu1cjh9-0
 
+Acesso das HU com os protótipos: https://docs.google.com/spreadsheets/d/1jKtuyUHv7XniL5sgp3FePg4-SvljHVftocVHPyPiOnQ/edit?gid=891834841#gid=891834841
+
 <img width="20%" height="667" alt="Login" src="https://github.com/user-attachments/assets/023cba3b-eb49-4041-9ea3-accb56c438ec" />
 <img width="20%" height="667" alt="Tela Principal" src="https://github.com/user-attachments/assets/11b27c9a-67f6-4a9a-9c74-aea5ffd97938" />
 <img width="20%" height="667" alt="AbaAgendamento" src="https://github.com/user-attachments/assets/6ef04067-4ae0-4f37-a628-7aa308f6e84e" />
