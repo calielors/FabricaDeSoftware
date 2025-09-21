@@ -4,7 +4,7 @@ import { Login_Styles } from "./login_styles";
 import { COLORS } from "../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { Top_Bar } from "../../components/top_bar/top_bar";
+import { Top_Bar } from "../../components/top_bar";
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -35,8 +35,8 @@ export default function Login() {
                 <TouchableOpacity activeOpacity={0.7}>
                     <Text style={Login_Styles.links}>Primeiro acesso? Cadastre-se aqui</Text>
                 </TouchableOpacity>
-
             </View>
+            
         </View>
     );
 }
