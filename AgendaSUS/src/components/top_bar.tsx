@@ -23,7 +23,6 @@ const Top_Bar_Styles = StyleSheet.create({
         backgroundColor: COLORS.azul_principal,
         width: '100%',
         height: '15%',
-        position: 'absolute',
         top: 0,
         alignItems: 'center',
         paddingTop: 60,
