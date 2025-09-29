@@ -1,5 +1,8 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "../../assets/colors/colors";
+import { Dimensions } from "react-native";
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export const Agendamento_Styles = StyleSheet.create({
     container: {
@@ -13,14 +16,10 @@ export const Agendamento_Styles = StyleSheet.create({
         marginTop: 20,
     },
     calendario: {
-        width: '90%',
+        width: SCREEN_WIDTH * 0.9, 
         marginTop: 10,
         marginBottom: 20,
         backgroundColor: 'tranasparent',
-    },
-    calendario_dias: {
-        width: '100%',
-        height: 30,
     },
     calendario_texto: {
         color: COLORS.azul_principal,
@@ -28,17 +27,11 @@ export const Agendamento_Styles = StyleSheet.create({
         marginBottom: 10,
     },
     horaios_box: {
-        width: '90%',
+        width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         gap: 2,
-    },
-    horarios_titulo: {
-        width: '100%',
-        fontSize: 16,
-        marginBottom: 10,
-        color: COLORS.preto,
     },
     horarios: {
         backgroundColor: COLORS.azul_principal,
@@ -49,9 +42,15 @@ export const Agendamento_Styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         margin: 2,
+        borderColor: COLORS.placeholder_text,
+        borderWidth: 0.2,
     },
     horarios_texto: {
         color: COLORS.preto,
         fontWeight: 'bold',
     },
+    scroll:{
+        maxHeight: 185,
+        width: '90%',
+    }
 });
