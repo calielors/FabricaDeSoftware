@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Platform, InputAccessoryView, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, Platform, KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import { Login_Styles } from "./login_styles";
 import { COLORS } from "../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -11,6 +11,11 @@ export default function Login() {
     const [password, setPassword] = useState("");
 
     return (
+        <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} 
+        >
         <View style={Login_Styles.container}>
             <Top_Bar />
             <View style={Login_Styles.login_box}>
@@ -38,5 +43,6 @@ export default function Login() {
             </View>
             
         </View>
+        </KeyboardAvoidingView>
     );
 }

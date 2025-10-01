@@ -20,6 +20,9 @@ export default function Agendamento() {
         '17:30', '18:00', '18:30', '19:00', '19:30'
 
     ];
+    {/*Dia de hoje*/}
+    const today = new Date().toISOString().split('T')[0];
+
     return (
         <View style={Agendamento_Styles.container}>
             <Top_Bar />
@@ -27,7 +30,7 @@ export default function Agendamento() {
             <Text style={{ color: COLORS.azul_principal, paddingLeft: 10, fontSize: 20, alignSelf: 'flex-start',paddingTop: 10}}>Selecione a data </Text>
             <Calendar style={Agendamento_Styles.calendario}
                 markedDates={{
-                    '2025-09-28': { marked: true, selectedColor: COLORS.azul_principal },
+                    [today]: { marked: true, selectedColor: COLORS.verde},
                     [day]: { selected: true, selectedColor: COLORS.azul_principal }
                 }}
                 headerStyle={{
@@ -39,8 +42,8 @@ export default function Agendamento() {
                 theme={{
                     textSectionTitleColor: COLORS.preto,
                     monthTextColor: COLORS.preto,
-                    selectedDayBackgroundColor: COLORS.azul_principal,
-                    todayTextColor: COLORS.azul_principal,
+                    selectedDayBackgroundColor: COLORS.verde,
+                    todayTextColor: COLORS.verde,
                     arrowColor: COLORS.azul_principal,
                     textDayFontWeight: 'bold',
                     textMonthFontWeight: 'bold',
