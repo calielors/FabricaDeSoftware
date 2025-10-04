@@ -3,7 +3,6 @@ import { View, Text, TextInput, Button, Platform, KeyboardAvoidingView, Touchabl
 import { Login_Styles } from "./login_styles";
 import { COLORS } from "../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Top_Bar } from "../../components/top_bar";
 
 export default function Login() {

@@ -25,7 +25,7 @@ export const Login_Styles = StyleSheet.create({
             justifyContent: 'center',
             borderWidth: 1,
             borderColor: COLORS.placeholder_text,
-            backgroundColor: '#f4f4f4',
+            backgroundColor: COLORS.cinza_claro,
             borderRadius: 10,
             marginTop: '25%',
       },

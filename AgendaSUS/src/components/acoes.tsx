@@ -10,58 +10,30 @@ export default function Acoes() {
 
   return (
     <View style={Acoes_Styles.acoes_box}>
-      <TouchableOpacity
-        style={Acoes_Styles.acoes_icons}
-        onPress={() => setAtivo(0)}
-      >
+      <TouchableOpacity style={Acoes_Styles.acoes_icons} onPress={() => setAtivo(0)}>
         <View style={{ alignItems: 'center' }}>
-          <FontAwesome6
-            name="user"
-            size={24}
-            color={ativo === 0 ? 'black' : COLORS.placeholder_text}
-          />
+          <FontAwesome6 name="user" size={24} color={ativo === 0 ? 'black' : COLORS.placeholder_text} />
           <Text style={Acoes_Styles.texto_icons}>Login</Text>
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={Acoes_Styles.acoes_icons}
-        onPress={() => setAtivo(1)}
-      >
+      <TouchableOpacity style={Acoes_Styles.acoes_icons} onPress={() => setAtivo(1)}>
         <View style={{ alignItems: 'center' }}>
-          <Entypo
-            name="home"
-            size={24}
-            color={ativo === 1 ? 'black' : COLORS.placeholder_text}
-          />
-          <Text style={Acoes_Styles.texto_icons}>Início </Text>
+          <Entypo name="home" size={24} color={ativo === 1 ? 'black' : COLORS.placeholder_text} />
+          <Text style={Acoes_Styles.texto_icons}>Início</Text>
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={Acoes_Styles.acoes_icons}
-        onPress={() => setAtivo(2)}
-      >
+      <TouchableOpacity style={Acoes_Styles.acoes_icons} onPress={() => setAtivo(2)}>
         <View style={{ alignItems: 'center' }}>
-          <AntDesign
-            name="bars"
-            size={24}
-            color={ativo === 2 ? 'black' : COLORS.placeholder_text}
-          />
+          <AntDesign name="bars" size={24} color={ativo === 2 ? 'black' : COLORS.placeholder_text} />
           <Text style={Acoes_Styles.texto_icons}>Consultas</Text>
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={Acoes_Styles.acoes_icons}
-        onPress={() => setAtivo(3)}
-      >
+      <TouchableOpacity style={Acoes_Styles.acoes_icons} onPress={() => setAtivo(3)}>
         <View style={{ alignItems: 'center' }}>
-          <FontAwesome6
-            name="calendar-plus"
-            size={24}
-            color={ativo === 3 ? 'black' : COLORS.placeholder_text}
-          />
+          <FontAwesome6 name="calendar-plus" size={24} color={ativo === 3 ? 'black' : COLORS.placeholder_text} />
           <Text style={Acoes_Styles.texto_icons}>Agendar</Text>
         </View>
       </TouchableOpacity>
