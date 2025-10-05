@@ -3,12 +3,12 @@ import { StyleSheet } from "react-native";
 import { COLORS } from "../../assets/colors/colors";
 
 export const Login_Styles = StyleSheet.create({
-     container: {
+      container: {
             flex: 1,
             alignItems: 'center',
             backgroundColor: COLORS.branco,
       },
-      sus_agendamento:{
+      sus_agendamento: {
             backgroundColor: COLORS.azul_principal,
             width: '100%',
             height: '15%',
@@ -17,7 +17,7 @@ export const Login_Styles = StyleSheet.create({
             alignItems: 'center',
             paddingTop: 60,
       },
-     login_box: {
+      login_box: {
             width: '90%',
             height: '50%',
             alignItems: 'center',
@@ -29,7 +29,7 @@ export const Login_Styles = StyleSheet.create({
             borderRadius: 10,
             marginTop: '25%',
       },
-      textos:{
+      textos: {
             alignSelf: 'flex-start',
             marginLeft: '5%',
             fontSize: 16,
@@ -56,7 +56,7 @@ export const Login_Styles = StyleSheet.create({
             fontSize: 18,
             fontWeight: 'bold',
       },
-      gov_box_container:{
+      gov_box_container: {
             width: '100%',
             position: 'absolute',
             bottom: 40,
@@ -74,9 +74,9 @@ export const Login_Styles = StyleSheet.create({
             alignItems: 'center',
             marginTop: 30,
             alignSelf: 'center',
-            
+
       },
-      links:{
+      links: {
             color: COLORS.azul_principal,
             fontSize: 12,
             fontWeight: 'bold',
