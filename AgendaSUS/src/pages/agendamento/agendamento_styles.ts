@@ -16,17 +16,17 @@ export const Agendamento_Styles = StyleSheet.create({
         marginTop: 20,
     },
     calendario: {
-        width: SCREEN_WIDTH * 0.9, 
+        width: SCREEN_WIDTH * 0.9,
         marginTop: 10,
         marginBottom: 20,
-        backgroundColor: 'tranasparent',
+        backgroundColor: 'transparent',
     },
     calendario_texto: {
         color: COLORS.azul_principal,
         fontSize: 20,
         marginBottom: 10,
     },
-    horaios_box: {
+    horarios_box: {
         width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -35,7 +35,7 @@ export const Agendamento_Styles = StyleSheet.create({
     },
     horarios: {
         backgroundColor: COLORS.azul_principal,
-        width: '30%',  
+        width: '30%',
         flexGrow: 1,
         height: 40,
         borderRadius: 10,
@@ -49,7 +49,7 @@ export const Agendamento_Styles = StyleSheet.create({
         color: COLORS.preto,
         fontWeight: 'bold',
     },
-    scroll:{
+    scroll: {
         maxHeight: 185,
         width: '90%',
     }

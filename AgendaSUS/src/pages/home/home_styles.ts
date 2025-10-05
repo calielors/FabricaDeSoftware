@@ -9,7 +9,6 @@ export const Home_Styles = StyleSheet.create({
 
     header_box: {
         marginTop: 10,
-        // paddingHorizontal removido daqui, pois agora está no wrapper
     },
 
     titulo: {
@@ -28,7 +27,6 @@ export const Home_Styles = StyleSheet.create({
         borderRadius: 10,
         padding: 20,
         marginVertical: 10,
-        // margem horizontal removida, pois o wrapper cuida disso
     },
 
     consulta_header: {
@@ -83,7 +81,7 @@ export const Home_Styles = StyleSheet.create({
         flexWrap: "wrap",
         justifyContent: "space-around",
         marginTop: 10,
-        paddingBottom: 100, // espaço pro ACOES
+        paddingBottom: 100,
     },
 
     servico_item: {

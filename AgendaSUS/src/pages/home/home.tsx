@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Home_Styles } from "./home_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
-import ACOES from "../../components/acoes";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -18,7 +17,10 @@ interface Consulta {
     status: string;
 }
 
+import { useNavigation } from '@react-navigation/native';
+
 export default function Home() {
+    const navigation: any = useNavigation();
 
     {/* Alterar valores aqui*/ }
     const [nome, setNome] = useState("Maria");
@@ -86,18 +88,17 @@ export default function Home() {
                         <Text style={Home_Styles.servico_text}>Minhas consultas</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7}>
+                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Medicamentos')}>
                         <FontAwesome5 name="pills" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Medicamentos</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7}>
+                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Historico')}>
                         <FontAwesome5 name="file-medical" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Meu histórico</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            <ACOES />
         </View>
     );
 }

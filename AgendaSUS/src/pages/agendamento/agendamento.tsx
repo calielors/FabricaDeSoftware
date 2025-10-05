@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { Agendamento_Styles } from "./agendamento_styles";
 import { COLORS } from "../../assets/colors/colors";
-import ACOES from "../../components/acoes";
 import { Top_Bar } from "../../components/top_bar";
 import { Calendar } from "react-native-calendars";
 
@@ -20,17 +19,17 @@ export default function Agendamento() {
         '17:30', '18:00', '18:30', '19:00', '19:30'
 
     ];
-    {/*Dia de hoje*/}
+    {/*Dia de hoje*/ }
     const today = new Date().toISOString().split('T')[0];
 
     return (
         <View style={Agendamento_Styles.container}>
             <Top_Bar />
             {/* --------------------------Calendário--------------------------*/}
-            <Text style={{ color: COLORS.azul_principal, paddingLeft: 10, fontSize: 20, alignSelf: 'flex-start',paddingTop: 10}}>Selecione a data </Text>
+            <Text style={{ color: COLORS.azul_principal, paddingLeft: 10, fontSize: 20, alignSelf: 'flex-start', paddingTop: 10 }}>Selecione a data </Text>
             <Calendar style={Agendamento_Styles.calendario}
                 markedDates={{
-                    [today]: { marked: true, selectedColor: COLORS.verde},
+                    [today]: { marked: true, selectedColor: COLORS.verde },
                     [day]: { selected: true, selectedColor: COLORS.azul_principal }
                 }}
                 headerStyle={{
@@ -65,55 +64,54 @@ export default function Agendamento() {
                 minDate={new Date().toDateString()}
                 hideExtraDays
             />
-            {/*------------------------------Horários------------------------*/}
-            <View style={{ position: 'absolute', bottom: 85, alignItems: 'center', width: '100%' }}>
-                <Text style={{ width: '100%', fontSize: 20, paddingLeft: 10, paddingBottom: 10,fontStyle:'normal' }}>Horários disponíveis </Text>
-                <ScrollView style={Agendamento_Styles.scroll}>
-                    <View style={Agendamento_Styles.horaios_box}>
-                        {horarios.map((hora) => (
-                            <TouchableOpacity
-                                key={hora}
-                                style={[
-                                    Agendamento_Styles.horarios,
-                                    { backgroundColor: selectedTime === hora ? COLORS.azul_principal : 'transparent' }
-                                ]}
-                                activeOpacity={0.7}
-                                onPress={() => setSelectedTime(hora)}>
-                                <Text style={Agendamento_Styles.horarios_texto}>{hora}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </ScrollView>
+                    {/*------------------------------Horários------------------------*/}
+                    <View style={{ alignItems: 'center', width: '100%', marginTop: 20 }}>
+                        <Text style={{ width: '100%', fontSize: 20, paddingLeft: 10, paddingBottom: 10, fontStyle: 'normal' }}>Horários disponíveis </Text>
+                        <ScrollView style={Agendamento_Styles.scroll}>
+                            <View style={Agendamento_Styles.horarios_box}>
+                                {horarios.map((hora) => (
+                                    <TouchableOpacity
+                                        key={hora}
+                                        style={[
+                                            Agendamento_Styles.horarios,
+                                            { backgroundColor: selectedTime === hora ? COLORS.azul_principal : 'transparent' }
+                                        ]}
+                                        activeOpacity={0.7}
+                                        onPress={() => setSelectedTime(hora)}>
+                                        <Text style={Agendamento_Styles.horarios_texto}>{hora}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
 
-                {/*--------------------------Botões Próximo e Cancelar----------------------------*/}
-                <View>
-                    <TouchableOpacity activeOpacity={0.7} style={{ paddingTop: 10 }}>
-                        <View style={{
-                            backgroundColor: COLORS.azul_principal,
-                            width: 250,
-                            height: 35,
-                            borderRadius: 5,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <Text style={{ color: COLORS.branco, fontSize: 18, fontWeight: 'bold' }}>Próximo</Text>
+                        {/*--------------------------Botões Próximo e Cancelar----------------------------*/}
+                        <View style={{ marginTop: 10, marginBottom: 40 }}>
+                            <TouchableOpacity activeOpacity={0.7} style={{ paddingTop: 10 }}>
+                                <View style={{
+                                    backgroundColor: COLORS.azul_principal,
+                                    width: 250,
+                                    height: 35,
+                                    borderRadius: 5,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}>
+                                    <Text style={{ color: COLORS.branco, fontSize: 18, fontWeight: 'bold' }}>Próximo</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity activeOpacity={0.7}>
+                                <View style={{
+                                    backgroundColor: COLORS.placeholder_text,
+                                    width: 250,
+                                    height: 35,
+                                    alignItems: 'center',
+                                    borderRadius: 5,
+                                    justifyContent: 'center',
+                                }}>
+                                    <Text style={{ color: COLORS.branco, fontSize: 18, fontWeight: 'bold' }}>Cancelar</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7}>
-                        <View style={{
-                            backgroundColor: COLORS.placeholder_text,
-                            width: 250,
-                            height: 35,
-                            alignItems: 'center',
-                            borderRadius: 5,
-                            justifyContent: 'center',
-                        }}>
-                            <Text style={{ color: COLORS.branco, fontSize: 18, fontWeight: 'bold' }}>Cancelar</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <ACOES />
+                    </View>
         </View>
     );
 }

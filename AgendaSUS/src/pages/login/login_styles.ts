@@ -8,15 +8,6 @@ export const Login_Styles = StyleSheet.create({
             alignItems: 'center',
             backgroundColor: COLORS.branco,
       },
-      sus_agendamento: {
-            backgroundColor: COLORS.azul_principal,
-            width: '100%',
-            height: '15%',
-            position: 'absolute',
-            top: 0,
-            alignItems: 'center',
-            paddingTop: 60,
-      },
       login_box: {
             width: '90%',
             height: '50%',
@@ -27,7 +18,7 @@ export const Login_Styles = StyleSheet.create({
             borderColor: COLORS.placeholder_text,
             backgroundColor: COLORS.cinza_claro,
             borderRadius: 10,
-            marginTop: '25%',
+            marginTop: 20,
       },
       textos: {
             alignSelf: 'flex-start',

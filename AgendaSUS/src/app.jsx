@@ -1,6 +1,3 @@
-import React from "react";
-import TabNavigator from "./src/navigation/TabNavigator";
+import HomePage from './app/index';
 
-export default function App() {
-    return <TabNavigator />;
-}
+export default HomePage;
