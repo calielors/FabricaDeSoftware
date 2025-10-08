@@ -11,18 +11,12 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const { signIn } = useContext(AuthContext);
 
-    // Usuário teste para desenvolvimento. Remover em produção.
-    const TEST_USER = {
-        username: "teste",
-        password: "teste"
-    };
-
     async function handleLogin() {
-        if (username === TEST_USER.username && password === TEST_USER.password) {
-            await signIn(username);
+        try {
+            await signIn(username, password);
             console.log('[Login] signIn called for', username);
             Alert.alert("Login realizado", "Você está autenticado!");
-        } else {
+        } catch (error) {
             Alert.alert("Login inválido", "Usuário ou senha incorretos.");
         }
     }
@@ -73,7 +67,6 @@ export default function Login() {
                         <Text style={Login_Styles.links}>Primeiro acesso? Cadastre-se aqui</Text>
                     </TouchableOpacity>
                 </View>
-
             </View>
         </KeyboardAvoidingView>
     );

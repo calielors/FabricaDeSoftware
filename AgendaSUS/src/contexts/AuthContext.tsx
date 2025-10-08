@@ -1,10 +1,11 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import * as Auth from '../utils/auth';
+import { supabase } from '../services/supabase';
 
 type AuthContextType = {
     logged: boolean;
     loading: boolean;
-    signIn: (username: string) => Promise<void>;
+    signIn: (username: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
 };
 
@@ -40,14 +41,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         init();
     }, []);
 
-    async function signIn(username: string) {
-        await Auth.saveLogin(username);
-        setLogged(true);
-        console.log('[AuthContext] signIn -> logged true for', username);
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setLogged(!!session);
+            setLoading(false);
+        });
+    }, []);
+
+    async function signIn(username: string, password: string) {
+        const { data, error } = await supabase.auth.signInWithPassword({ email: username, password });
+        if (error) {
+            setLogged(false);
+            throw error;
+        } else {
+            setLogged(true);
+        }
     }
 
     async function signOut() {
-        await Auth.logout();
+        await supabase.auth.signOut();
         setLogged(false);
         console.log('[AuthContext] signOut -> logged false');
     }
