@@ -4,6 +4,7 @@ import { Login_Styles } from "./login_styles";
 import { COLORS } from "../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { Top_Bar } from "../../components/top_bar";
+import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../contexts/AuthContext';
 import { TextInput as PaperInput } from 'react-native-paper';
 
@@ -12,6 +13,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const { signIn } = useContext(AuthContext);
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const navigation: any = useNavigation();
 
     async function handleLogin() {
         try {
@@ -23,6 +25,7 @@ export default function Login() {
         }
     }
 
+    
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -69,7 +72,7 @@ export default function Login() {
                     <TouchableOpacity style={Login_Styles.acessar} onPress={handleLogin} activeOpacity={0.7}>
                         <Text style={Login_Styles.acessar_text}>Acessar</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { /* implementar ação de recuperação de senha futuramente */ }} activeOpacity={0.7}>
+                    <TouchableOpacity onPress={() => { /* implementar ação de recuperação de senha */ }} activeOpacity={0.7}>
                         <Text style={Login_Styles.links}>Esqueci minha senha </Text>
                     </TouchableOpacity>
                 </View>
@@ -80,8 +83,7 @@ export default function Login() {
                             <Text style={{ color: COLORS.azul_principal }}>Entrar com o gov.br </Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity activeOpacity={0.7}>
-                        {/* implementar cadastro de usuário futuramente */}
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Cadastro')}>
                         <Text style={Login_Styles.links}>Primeiro acesso? Cadastre-se aqui</Text>
                     </TouchableOpacity>
                 </View>

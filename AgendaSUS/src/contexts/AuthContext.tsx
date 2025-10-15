@@ -49,7 +49,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     async function signIn(username: string, password: string) {
-        const { data, error } = await supabase.auth.signInWithPassword({ email: username, password });
+
+        //deletar essa parte após implementação do usuário de teste no banco
+        if('teste' === username && 'teste' === password) {
+            setLogged(true);
+            return;
+        };//deletar após implementação real
+        //deletar até essa parte
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email: username, password  });
         if (error) {
             setLogged(false);
             throw error;
