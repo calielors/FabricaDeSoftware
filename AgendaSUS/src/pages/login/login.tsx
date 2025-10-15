@@ -5,11 +5,13 @@ import { COLORS } from "../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { Top_Bar } from "../../components/top_bar";
 import { AuthContext } from '../../contexts/AuthContext';
+import { TextInput as PaperInput } from 'react-native-paper';
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { signIn } = useContext(AuthContext);
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     async function handleLogin() {
         try {
@@ -31,22 +33,38 @@ export default function Login() {
                 <Top_Bar />
                 <View style={Login_Styles.login_box}>
                     <Text style={Login_Styles.textos}>Usuário </Text>
-                    <TextInput
-                        style={Login_Styles.inputs}
-                        placeholder="Digite seu usuário"
-                        placeholderTextColor={COLORS.placeholder_text}
+                    <PaperInput
+                        mode="outlined"
+                        label={<Text style={{ color: COLORS.placeholder_text }}>Usuário</Text>}
                         value={username}
                         onChangeText={setUsername}
-                        autoCapitalize="none"
+                        placeholder="Digite seu usuário"
+                        placeholderTextColor={COLORS.placeholder_text}
+                        activeOutlineColor={COLORS.azul_principal}
+                        style={Login_Styles.inputs}
+                        theme={{ roundness: 30 }}
+
                     />
                     <Text style={Login_Styles.textos}>Senha </Text>
-                    <TextInput
-                        style={Login_Styles.inputs}
-                        placeholder="Digite sua senha"
-                        placeholderTextColor={COLORS.placeholder_text}
+                    <PaperInput
+                        mode="outlined"
+                        label={<Text style={{ color: COLORS.placeholder_text }}>Senha</Text>}
                         value={password}
                         onChangeText={setPassword}
-                        secureTextEntry
+                        placeholder="Digite seu usuário"
+                        placeholderTextColor={COLORS.placeholder_text}
+                        activeOutlineColor={COLORS.azul_principal}
+                        style={Login_Styles.inputs}
+                        theme={{ roundness: 30 }}
+                        secureTextEntry={!passwordVisible}
+                        right={
+                            <PaperInput.Icon
+                                icon={passwordVisible ? "eye" : "eye-off"}
+                                onPress={() => setPasswordVisible(!passwordVisible)}
+                                forceTextInputFocus={false}
+                                style={{ alignSelf: "center", marginRight: 0 }}
+                            />
+                        }
                     />
                     <TouchableOpacity style={Login_Styles.acessar} onPress={handleLogin} activeOpacity={0.7}>
                         <Text style={Login_Styles.acessar_text}>Acessar</Text>
