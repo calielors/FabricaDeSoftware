@@ -1,31 +1,48 @@
 import React from "react";
-import { View, Text, Platform, StatusBar } from "react-native";
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { View, Text, Platform, StatusBar, StyleSheet } from "react-native";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { COLORS } from "../assets/colors/colors";
-import { StyleSheet } from "react-native";
 
-//usar SafeAreaView se necessário?
 export const Top_Bar = () => {
-    const extraTop = Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 0;
+    const extraTop = Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
+
     return (
         <View style={[Top_Bar_Styles.sus_agendamento, { paddingTop: extraTop }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={Top_Bar_Styles.title_container}>
                 <FontAwesome6 name="hospital" size={44} color={COLORS.branco} />
-                <Text style={{ color: COLORS.branco, fontSize: 22, fontWeight: '700' }}>SUS Agendamento</Text>
+                <Text style={Top_Bar_Styles.title_text}>SUS Agendamento</Text>
             </View>
-
-            <View style={{ backgroundColor: '#28a745', width: '100%', height: 4, alignSelf: 'stretch', marginTop: 8 }} />
+            <View style={Top_Bar_Styles.green_bar} />
         </View>
     );
-}
+};
 
 const Top_Bar_Styles = StyleSheet.create({
     sus_agendamento: {
         backgroundColor: COLORS.azul_principal,
-        width: '100%',
+        width: "100%",
         minHeight: 88,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 12,
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+    },
+    title_container: {
+        flexDirection: "row",
+        alignItems: "center",
+        transform: [{ translateY: -10 }],
+        gap: 10,
+    },
+    title_text: {
+        color: COLORS.branco,
+        fontSize: 22,
+        fontWeight: "700",
+    },
+    green_bar: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 4,
+        backgroundColor: COLORS.verde,
     },
 });

@@ -54,7 +54,7 @@ export default function Login() {
                         label={<Text style={{ color: COLORS.placeholder_text }}>Senha</Text>}
                         value={password}
                         onChangeText={setPassword}
-                        placeholder="Digite seu usuário"
+                        placeholder="Digite sua senha"
                         placeholderTextColor={COLORS.placeholder_text}
                         activeOutlineColor={COLORS.azul_principal}
                         style={Login_Styles.inputs}

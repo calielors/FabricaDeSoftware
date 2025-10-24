@@ -37,7 +37,6 @@ export const Medicamentos_Styles = StyleSheet.create({
         color: COLORS.placeholder_text,
         marginTop: 4,
     },
-
     emptyText: {
         textAlign: 'center',
         color: COLORS.placeholder_text,
@@ -54,7 +53,6 @@ export const Medicamentos_Styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-
     statusText: {
         fontSize: 14,
         fontWeight: '600',

@@ -24,7 +24,17 @@ export default function Home() {
 
     {/* Alterar valores aqui*/ }
     const [nome, setNome] = useState("Maria");
-    const [dataAtual, setDataAtual] = useState("Quarta-feira, 24 de fevereiro de 2023");
+    const [dataAtual, setDataAtual] = useState(() => {
+        const hoje = new Date();
+        const dataFormatada = hoje.toLocaleDateString('pt-BR', {
+            weekday: 'long',
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+        return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+    });
+
 
     const [consulta, setConsulta] = useState<Consulta>({
         data: "22/02/2023",
@@ -78,12 +88,12 @@ export default function Home() {
                 <Text style={Home_Styles.servicos_titulo}>Serviços</Text>
 
                 <View style={Home_Styles.servicos_container}>
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7}>
+                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Agendar')}>
                         <FontAwesome6 name="calendar-plus" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Agendar consulta</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7}>
+                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Consultas')}>
                         <AntDesign name="bars" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Minhas consultas</Text>
                     </TouchableOpacity>

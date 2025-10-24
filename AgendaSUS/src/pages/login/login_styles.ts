@@ -10,7 +10,7 @@ export const Login_Styles = StyleSheet.create({
       },
       login_box: {
             width: '90%',
-            height: '50%',
+            height: '45%',
             alignItems: 'center',
             gap: 15,
             justifyContent: 'center',
@@ -18,7 +18,9 @@ export const Login_Styles = StyleSheet.create({
             borderColor: COLORS.placeholder_text,
             backgroundColor: COLORS.cinza_claro,
             borderRadius: 10,
-            marginTop: 20,
+            marginTop: 'auto',
+            marginBottom: 'auto',
+            transform: [{ translateY: -88 }],
       },
       textos: {
             alignSelf: 'flex-start',
@@ -40,7 +42,7 @@ export const Login_Styles = StyleSheet.create({
             borderRadius: 30,
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 10,
+            marginTop: 20,
       },
       acessar_text: {
             color: '#fff',

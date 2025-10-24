@@ -1,89 +1,156 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // ✅ import adicionado
-import { CadastroStyles as styles } from './cadastro_styles';
-import { COLORS } from '../../assets/colors/colors';
-import { supabase } from '../../services/supabase';
-
-type Form = {
-    nome: string;
-    sobrenome: string;
-    endereco: string;
-    numero: string;
-    telefone: string;
-    cep: string;
-    cns: string;
-    rg: string;
-    cpf: string;
-    email: string;
-    senha: string;
-};
+import React, { useState } from "react";
+import { View, Text, Platform, KeyboardAvoidingView, TouchableOpacity, Alert } from "react-native";
+import { CadastroStyles } from "./cadastro_styles";
+import { COLORS } from "../../assets/colors/colors";
+import Fontisto from '@expo/vector-icons/Fontisto';
+import { Top_Bar } from "../../components/top_bar";
+import { useNavigation } from '@react-navigation/native';
+import { TextInput as PaperInput } from 'react-native-paper';
 
 export default function Cadastro() {
-    const navigation = useNavigation();
-    const [form, setForm] = useState<Form>({
-        nome: '', sobrenome: '', endereco: '', numero: '', telefone: '',
-        cep: '', cns: '', rg: '', cpf: '', email: '', senha: ''
-    });
-    const [loading, setLoading] = useState(false);
+    {/* Estados para os campos de entrada */ }
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    {/* Estados para visibilidade das senhas */ }
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    {/* Navegação */ }
+    const navigation: any = useNavigation();
 
-    function setField<K extends keyof Form>(k: K, v: string) {
-        setForm(s => ({ ...s, [k]: v }));// atualiza campo do form
+    const validarCampos = () => {
+    // Todos os campos preenchidos
+    if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+        Alert.alert("Atenção", "Todos os campos devem ser preenchidos!");
+        return false;
     }
 
-    async function handleSubmit() {
-        if (!form.nome || !form.sobrenome || !form.cns || !form.rg || !form.cpf || !form.email || !form.senha) {
-            Alert.alert('Preencha os campos obrigatórios (nome, sobrenome, CNS, RG, CPF, e-mail e senha)');
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            // checa duplicados
-            const { data: existsCNS } = await supabase.from('usuarios').select('id').eq('cns', form.cns).limit(1);
-            if (existsCNS && (existsCNS as any).length > 0) { Alert.alert('CNS já cadastrado'); setLoading(false); return; }
-
-            const { data: existsRG } = await supabase.from('usuarios').select('id').eq('rg', form.rg).limit(1);
-            if (existsRG && (existsRG as any).length > 0) { Alert.alert('RG já cadastrado'); setLoading(false); return; }
-
-            const { data: existsCPF } = await supabase.from('usuarios').select('id').eq('cpf', form.cpf).limit(1);
-            if (existsCPF && (existsCPF as any).length > 0) { Alert.alert('CPF já cadastrado'); setLoading(false); return; }
-
-            const { error } = await supabase.from('usuarios').insert([{ ...form }]);
-            if (error) throw error;
-
-            Alert.alert('Cadastro realizado', 'Usuário cadastrado com sucesso');
-
-            navigation.navigate('Login' as never);
-        } catch (err: any) {
-            const msg = err?.message || 'Falha ao cadastrar';
-            console.log('[Cadastro] erro:', msg);
-            Alert.alert('Erro', msg);
-        } finally {
-            setLoading(false);
-        }
+    // Usuário com ao menos 5 caracteres
+    if (username.trim().length < 5) {
+        Alert.alert("Atenção", "O usuário deve ter pelo menos 5 caracteres!");
+        return false;
     }
+
+    // E-mail válido
+    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regexEmail.test(email)) {
+        Alert.alert("Atenção", "Digite um e-mail válido!");
+        return false;
+    }
+
+    // Senhas iguais
+    if (password !== confirmPassword) {
+        Alert.alert("Atenção", "As senhas não são iguais!");
+        setPassword("");
+        setConfirmPassword("");
+        return false;
+    }
+
+    // Senha forte
+    const senhaForte = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!senhaForte.test(password)) {
+        Alert.alert(
+            "Atenção",
+            "A senha deve ter no mínimo 8 caracteres e conter pelo menos:\n- Uma letra maiúscula\n- Uma letra minúscula\n- Um número\n- Um caractere especial"
+        );
+        setPassword("");
+        setConfirmPassword("");
+        return false;
+    }
+    alert("Cadastro realizado com sucesso!");
+    navigation.navigate('Login');
+    return true; // tudo certo
+};
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Cadastro</Text>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+        >
+            <View style={CadastroStyles.container}>
+                <Top_Bar />
+                <View style={CadastroStyles.cadastro_box}>
+                    <PaperInput
+                        mode="outlined"
+                        label={<Text style={{ color: COLORS.placeholder_text }}>Usuário</Text>}
+                        value={username}
+                        onChangeText={setUsername}
+                        placeholder="Digite seu usuário"
+                        placeholderTextColor={COLORS.placeholder_text}
+                        activeOutlineColor={COLORS.azul_principal}
+                        style={CadastroStyles.inputs}
+                        theme={{ roundness: 30 }}
+                    />
+                    <PaperInput
+                        mode="outlined"
+                        label={<Text style={{ color: COLORS.placeholder_text }}>E-mail</Text>}
+                        value={email}
+                        onChangeText={setEmail}
+                        placeholder="Digite seu e-mail"
+                        placeholderTextColor={COLORS.placeholder_text}
+                        activeOutlineColor={COLORS.azul_principal}
+                        style={CadastroStyles.inputs}
+                        theme={{ roundness: 30 }}
 
-            <TextInput placeholder="Nome" value={form.nome} onChangeText={t => setField('nome', t)} style={styles.input} />
-            <TextInput placeholder="Sobrenome" value={form.sobrenome} onChangeText={t => setField('sobrenome', t)} style={styles.input} />
-            <TextInput placeholder="Endereço" value={form.endereco} onChangeText={t => setField('endereco', t)} style={styles.input} />
-            <TextInput placeholder="Número" value={form.numero} onChangeText={t => setField('numero', t)} style={styles.input} keyboardType="numeric" />
-            <TextInput placeholder="Telefone" value={form.telefone} onChangeText={t => setField('telefone', t)} style={styles.input} keyboardType="phone-pad" />
-            <TextInput placeholder="CEP" value={form.cep} onChangeText={t => setField('cep', t)} style={styles.input} keyboardType="numeric" />
-            <TextInput placeholder="CNS" value={form.cns} onChangeText={t => setField('cns', t)} style={styles.input} />
-            <TextInput placeholder="RG" value={form.rg} onChangeText={t => setField('rg', t)} style={styles.input} />
-            <TextInput placeholder="CPF" value={form.cpf} onChangeText={t => setField('cpf', t)} style={styles.input} />
-            <TextInput placeholder="E-mail" value={form.email} onChangeText={t => setField('email', t)} style={styles.input} keyboardType="email-address" />
-            <TextInput placeholder="Senha" value={form.senha} onChangeText={t => setField('senha', t)} style={styles.input} secureTextEntry />
-
-            <TouchableOpacity style={styles.btn} onPress={handleSubmit} disabled={loading}>
-                <Text style={styles.btnText}>{loading ? 'Cadastrando...' : 'Cadastrar'}</Text>
-            </TouchableOpacity>
-        </ScrollView>
+                    />
+                    <PaperInput
+                        mode="outlined"
+                        label={<Text style={{ color: COLORS.placeholder_text }}>Senha</Text>}
+                        value={password}
+                        onChangeText={setPassword}
+                        placeholder="Digite sua senha"
+                        placeholderTextColor={COLORS.placeholder_text}
+                        activeOutlineColor={COLORS.azul_principal}
+                        style={CadastroStyles.inputs}
+                        theme={{ roundness: 30 }}
+                        secureTextEntry={!passwordVisible}
+                        right={
+                            <PaperInput.Icon
+                                icon={passwordVisible ? "eye" : "eye-off"}
+                                onPress={() => setPasswordVisible(!passwordVisible)}
+                                forceTextInputFocus={false}
+                                style={{ alignSelf: "center", marginRight: 0 }}
+                            />
+                        }
+                    />
+                    <PaperInput
+                        mode="outlined"
+                        label={<Text style={{ color: COLORS.placeholder_text }}>Confirmação da senha</Text>}
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
+                        placeholder="Digite confirme sua senha"
+                        placeholderTextColor={COLORS.placeholder_text}
+                        activeOutlineColor={COLORS.azul_principal}
+                        style={CadastroStyles.inputs}
+                        theme={{ roundness: 30 }}
+                        secureTextEntry={!confirmPasswordVisible}
+                        right={
+                            <PaperInput.Icon
+                                icon={confirmPasswordVisible ? "eye" : "eye-off"}
+                                onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                                forceTextInputFocus={false}
+                                style={{ alignSelf: "center", marginRight: 0 }}
+                            />
+                        }
+                    />
+                    <TouchableOpacity style={CadastroStyles.criar} activeOpacity={0.7} onPress={validarCampos}>
+                        <Text style={CadastroStyles.criar_text}>Criar conta</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={CadastroStyles.gov_box_container}>
+                    <View style={CadastroStyles.gov_box}>
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} activeOpacity={0.7}>
+                            <Fontisto name="world" size={18} color={COLORS.azul_principal} />
+                            <Text style={{ color: COLORS.azul_principal }}>Entrar com o gov.br </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Login')}>
+                        <Text style={CadastroStyles.links}>Já tem uma conta? Acesse aqui!</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </KeyboardAvoidingView>
     );
 }
