@@ -7,6 +7,7 @@ import { Top_Bar } from "../../components/top_bar";
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../contexts/AuthContext';
 import { TextInput as PaperInput } from 'react-native-paper';
+import { supabase } from '../../services/supabase';
 
 export default function Login() {
     const [username, setUsername] = useState("");

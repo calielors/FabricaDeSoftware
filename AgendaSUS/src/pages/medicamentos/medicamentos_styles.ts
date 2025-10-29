@@ -31,12 +31,18 @@ export const Medicamentos_Styles = StyleSheet.create({
         fontWeight: '700',
         color: COLORS.preto,
     },
-
     itemInfo: {
         fontSize: 14,
         color: COLORS.placeholder_text,
         marginTop: 4,
     },
+
+    unidadeName:{
+        fontSize: 14,
+        fontWeight: '700',
+        color: COLORS.preto,
+    },
+
     emptyText: {
         textAlign: 'center',
         color: COLORS.placeholder_text,
