@@ -2,45 +2,51 @@ import { StyleSheet } from 'react-native';
 import { COLORS } from '../../assets/colors/colors';
 
 export const Historico_Styles = StyleSheet.create({
-    tabContainer: {
+    container: {
         flex: 1,
-        padding: 16,
         backgroundColor: COLORS.branco,
     },
-    eventText: {
+    header: {
+        fontSize: 20,
+        fontWeight: 'bold',
         color: COLORS.preto,
-        fontSize: 16,
+        marginTop: 15,
+        textAlign: 'center',
+    },
+    content: {
+        flex: 1,
+    },
+    listContainer: {
+        marginTop: 12,
+        marginHorizontal: 10,
+        paddingHorizontal: 6,
+        flex: 1,
+    },
+    item: {
+        padding: 15,
+        borderRadius: 12,
         marginBottom: 10,
+        borderColor: COLORS.placeholder_text,
+        borderWidth: 1,
     },
-    eventRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 8,
+    itemMeta: {
+        marginTop: 6,
+        fontSize: 15,
+        color: COLORS.preto,
+        fontWeight: 'bold',
     },
-    badgePresent: {
-        backgroundColor: '#d4f5dd',
-        color: COLORS.verde,
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderRadius: 12,
-        overflow: 'hidden',
-        fontWeight: '700',
+    statusContainer: {
+        marginTop: 8,
+        width: '20%'
     },
-    badgeAbsent: {
-        backgroundColor: '#fff3db',
-        color: '#d98200',
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderRadius: 12,
-        overflow: 'hidden',
-        fontWeight: '700',
+    emptyText: {
+        textAlign: 'center',
+        color: COLORS.placeholder_text,
+        marginTop: 20,
+        fontStyle: 'italic',
     },
-    tabBar: {
-        backgroundColor: COLORS.branco,
-    },
-    tabIndicator: {
-        backgroundColor: COLORS.azul_principal,
+    statusText: {
+        fontSize: 14,
+        fontWeight: '600',
     },
 });
-

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Top_Bar } from '../../components/top_bar';
 import { COLORS } from '../../assets/colors/colors';
-import { ConsultasStyles as styles } from './consultas_styles';
+import { Consultas_Styles as styles } from './consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
 

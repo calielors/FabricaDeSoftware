@@ -7,6 +7,7 @@ import Agendamento from '../pages/agendamento/agendamento';
 import Consultas from '../pages/consultas/consultas';
 import Perfil from '../pages/perfil/perfil';
 import HomeStack from './HomeStack';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +21,7 @@ export default function TabNavigator() {
                     if (route.name === 'Início') return <Ionicons name="home" size={size} color={color} />;
                     if (route.name === 'Consultas') return <FontAwesome name="bars" size={size} color={color} />;
                     if (route.name === 'Agendar') return <MaterialIcons name="event-available" size={size} color={color} />;
-                    if (route.name === 'Perfil') return <Ionicons name="person-circle" size={size} color={color} />;
+                    if (route.name === 'Perfil') return <FontAwesome5 name="user-cog" size={18} color={color} />;
                     return null;
                 },
                 tabBarActiveTintColor: '#1976d2',

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { COLORS } from '../../assets/colors/colors';
 
-export const ConsultasStyles = StyleSheet.create({
+export const Consultas_Styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.branco,

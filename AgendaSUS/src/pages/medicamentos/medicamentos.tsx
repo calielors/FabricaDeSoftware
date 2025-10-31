@@ -4,8 +4,8 @@ import { COLORS } from '../../assets/colors/colors';
 import { Top_Bar } from '../../components/top_bar';
 import { Medicamentos_Styles as styles } from './medicamentos_styles';
 import { CampoPesquisa } from '../../components/campo_pesquisa';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../services/supabase';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 type Medicamento = {
   id: string;
   name: string;
@@ -46,11 +46,11 @@ export default function Medicamentos() {
         setData([]);
       } else if (fetchedData) {
         const mappedData: Medicamento[] = fetchedData.map((item: any, index: number) => ({
-            id: `${item.id_medicamento}-${index}`, // ensure unique key
-            name: item.medicamento.nome,
-            dose_mg: `${item.medicamento.dose_mg}mg`, // this is dosage
-            quantidade: item.unidades_disponiveis,
-            hospital: item.unidade_saude?.nome || 'Desconhecido',
+          id: `${item.id_medicamento}-${index}`, // ensure unique key
+          name: item.medicamento.nome,
+          dose_mg: `${item.medicamento.dose_mg}mg`, // this is dosage
+          quantidade: item.unidades_disponiveis,
+          hospital: item.unidade_saude?.nome || 'Desconhecido',
         }));
 
         setData(mappedData);
@@ -97,27 +97,35 @@ export default function Medicamentos() {
         data={results.length > 0 ? results : data}
         keyExtractor={(item) => item.id} // IDs are unique now
         renderItem={({ item }) => {
-            const disponivel = item.quantidade && item.quantidade > 0;
+          const disponivel = item.quantidade && item.quantidade > 0;
 
-            return (
-                <TouchableOpacity
-                accessibilityRole="button"
-                accessibilityLabel={`Medicamento ${item.name}`}
-                style={styles.item}
-                activeOpacity={0.8}
-                >
-                <View style={{ paddingVertical: 6 }}>
-                    <Text style={styles.itemName}>{item.name} - {item.dose_mg}</Text>
-                    <Text style={[styles.itemInfo, { color: disponivel ? COLORS.verde : COLORS.vermelho }]}>
-                        {item.quantidade} em estoque - {disponivel ? 'Disponível' : 'Indisponível'}
-                    </Text>
-                    <Text style={styles.unidadeName}>Hospital: {item.hospital}</Text>
+          return (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={`Medicamento ${item.name}`}
+              style={styles.item}
+              activeOpacity={0.8}
+            >
+              <View style={{ paddingVertical: 6, }}>
+                <Text style={styles.itemName}>{item.name} - {item.dose_mg}</Text>
+                <View style={styles.statusContainer}>
+                  <Text style={[styles.statusText, { color: disponivel ? COLORS.verde : COLORS.laranja }]}>
+                    {disponivel ? "Disponível" : "Indisponível"}
+                  </Text>
+                  <MaterialCommunityIcons
+                    name={disponivel ? "check-circle" : "close-circle"}
+                    size={20}
+                    color={disponivel ? COLORS.verde : COLORS.laranja}
+                    style={{ marginLeft: 4 }}
+                  />
                 </View>
-                </TouchableOpacity>
-            );
-            }}
+                <Text style={styles.unidadeName}>Unidade: {item.hospital}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhum medicamento encontrado</Text>
+          <Text style={styles.emptyText}>Nenhum medicamento encontrad o</Text>
         }
         style={styles.resultsContainer}
       />

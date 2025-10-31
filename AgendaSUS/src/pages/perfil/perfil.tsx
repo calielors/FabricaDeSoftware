@@ -1,46 +1,168 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Top_Bar } from '../../components/top_bar';
-import { COLORS } from '../../assets/colors/colors';
-import { useContext } from 'react';
-import { AuthContext } from '../../contexts/AuthContext';
+import React, { useContext, useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity, Switch } from "react-native";
+import { Top_Bar } from "../../components/top_bar";
+import { COLORS } from "../../assets/colors/colors";
+import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { Perfil_Styles } from "./perfil_styles";
+import { AuthContext } from "../../contexts/AuthContext";
+
 
 export default function Perfil() {
     const { signOut } = useContext(AuthContext);
+
+    const [notificacoes, setNotificacoes] = useState(true);
+    const [temaEscuro, setTemaEscuro] = useState(false);
+
+    const usuario = {
+        nome: "Maria Souza Guimarães",
+        cpf: "123.456.789-00",
+        nascimento: "1956-07-12",
+        endereco: "Rua das Palmeiras, 7",
+        unidade: "UBS Central - Dois Vizinhos",
+        cadastro: "15/03/2021",
+    };
 
     async function handleLogout() {
         await signOut();
     }
 
-    const usuario = {
-        nome: 'Dona Maria Souza Guimarães',
-        nascimento: '1956-07-12',
-        endereco: 'Rua das Palmeiras, 7',
-        unidade: 'UBS Central - Dois Vizinhos',
-    };
-
     return (
-        <View style={styles.container}>
+        <View style={[Perfil_Styles.container, { backgroundColor: COLORS.branco }]}>
             <Top_Bar />
-            <View style={styles.content}>
-                <Text style={styles.title}>{usuario.nome}</Text>
-                <Text style={styles.field}>Nascimento: {usuario.nascimento}</Text>
-                <Text style={styles.field}>Endereço: {usuario.endereco}</Text>
-                <Text style={styles.field}>Unidade: {usuario.unidade}</Text>
+            <ScrollView contentContainerStyle={Perfil_Styles.content}>
+                {/* Cabeçalho */}
+                <View style={Perfil_Styles.header}>
+                    <Text style={Perfil_Styles.title}>{usuario.nome}</Text>
+                    <Text style={Perfil_Styles.subText}>Nascimento: {new Date(usuario.nascimento).toLocaleDateString('pt-BR')}</Text>
+                    <Text style={Perfil_Styles.subText}>Unidade: {usuario.unidade}</Text>
+                </View>
 
-                <TouchableOpacity style={styles.btn} onPress={handleLogout}>
-                    <Text style={styles.btnText}>Sair</Text>
+                {/* Informações Pessoais */}
+                <Card titulo="Informações Pessoais">
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="user" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Dados Pessoais</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="map-marker-alt" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Endereço</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="phone" size={19} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Contato</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+                </Card>
+
+                {/* Preferências */}
+                <Card titulo="Preferências">
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="language" size={19} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Idioma</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={{ color: COLORS.placeholder_text, marginRight: 6 }}>Português</Text>
+                            <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        </View>
+                    </TouchableOpacity>
+
+                    <View style={Perfil_Styles.menuItem}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="bell" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Notificações</Text>
+                        </View>
+                        <Switch
+                            value={notificacoes}
+                            onValueChange={setNotificacoes}
+                            trackColor={{ true: COLORS.azul_principal }}
+                        />
+                    </View>
+
+                    <View style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="moon" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Tema Escuro</Text>
+                        </View>
+                        <Switch
+                            value={temaEscuro}
+                            onValueChange={setTemaEscuro}
+                            trackColor={{ true: COLORS.azul_principal }}
+                        />
+                    </View>
+                </Card>
+
+                {/* Segurança */}
+                <Card titulo="Segurança">
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="lock" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Alterar Senha</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="shield-alt" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Privacidade</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+                </Card>
+
+                {/* Ajuda e Suporte */}
+                <Card titulo="Ajuda e Suporte">
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="question-circle" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Central de Ajuda</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="comments" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Fale Conosco</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]} activeOpacity={0.7}>
+                        <View style={Perfil_Styles.menuLeft}>
+                            <FontAwesome5 name="info-circle" size={20} color={COLORS.azul_principal} />
+                            <Text style={Perfil_Styles.menuText}>Sobre o Aplicativo</Text>
+                        </View>
+                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                    </TouchableOpacity>
+                </Card>
+
+                {/* Botão Sair */}
+                <TouchableOpacity style={Perfil_Styles.sair} onPress={handleLogout}>
+                    <MaterialCommunityIcons name="logout" size={22} color={COLORS.branco} style={{ marginRight: 8 }} />
+                    <Text style={Perfil_Styles.sairText}>Sair da conta</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: COLORS.branco },
-    content: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    title: { fontSize: 18, color: COLORS.preto },
-    field: { marginTop: 8, color: COLORS.preto },
-    btn: { marginTop: 20, backgroundColor: COLORS.azul_principal, padding: 10, borderRadius: 6 },
-    btnText: { color: COLORS.branco },
-});
+function Card({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+    return (
+        <View style={Perfil_Styles.card}>
+            <Text style={Perfil_Styles.cardTitle}>{titulo}</Text>
+            {children}
+        </View>
+    );
+}

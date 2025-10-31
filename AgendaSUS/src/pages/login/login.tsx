@@ -7,10 +7,8 @@ import { Top_Bar } from "../../components/top_bar";
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../contexts/AuthContext';
 import { TextInput as PaperInput } from 'react-native-paper';
-import { supabase } from '../../services/supabase';
-
 export default function Login() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { signIn } = useContext(AuthContext);
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -18,15 +16,14 @@ export default function Login() {
 
     async function handleLogin() {
         try {
-            await signIn(username, password);
-            console.log('[Login] signIn called for', username);
+            await signIn(email, password);
+            console.log('[Login] signIn called for', email);
             Alert.alert("Login realizado", "Você está autenticado!");
         } catch (error) {
-            Alert.alert("Login inválido", "Usuário ou senha incorretos.");
+            Alert.alert("Login inválido", "E-mail ou senha incorretos.");
         }
     }
 
-    
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -36,13 +33,13 @@ export default function Login() {
             <View style={Login_Styles.container}>
                 <Top_Bar />
                 <View style={Login_Styles.login_box}>
-                    <Text style={Login_Styles.textos}>Usuário </Text>
+                    <Text style={Login_Styles.textos}>E-mail </Text>
                     <PaperInput
                         mode="outlined"
-                        label={<Text style={{ color: COLORS.placeholder_text }}>Usuário</Text>}
-                        value={username}
-                        onChangeText={setUsername}
-                        placeholder="Digite seu usuário"
+                        label={<Text style={{ color: COLORS.placeholder_text }}>E-mail</Text>}
+                        value={email}
+                        onChangeText={(text) => setEmail(text.replace(/\s/g, ''))}
+                        placeholder="Digite seu e-mail"
                         placeholderTextColor={COLORS.placeholder_text}
                         activeOutlineColor={COLORS.azul_principal}
                         style={Login_Styles.inputs}

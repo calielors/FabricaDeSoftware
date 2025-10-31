@@ -20,7 +20,7 @@ export const Medicamentos_Styles = StyleSheet.create({
         flex: 1,
     },
     item: {
-        padding: 15,
+        padding: 10,
         borderRadius: 12,
         marginBottom: 10,
         borderColor: COLORS.placeholder_text,
@@ -37,10 +37,12 @@ export const Medicamentos_Styles = StyleSheet.create({
         marginTop: 4,
     },
 
-    unidadeName:{
+    unidadeName: {
         fontSize: 14,
         fontWeight: '700',
         color: COLORS.preto,
+        maxWidth:'65%', //Ajuste da distância da unidade ao status
+        paddingTop: 5
     },
 
     emptyText: {
@@ -54,11 +56,13 @@ export const Medicamentos_Styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
     },
-
     statusContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        position:'absolute',
+        top:'45%',
+        right: 0
     },
+
     statusText: {
         fontSize: 14,
         fontWeight: '600',
