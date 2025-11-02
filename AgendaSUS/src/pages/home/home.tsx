@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Home_Styles } from "./home_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-
-
+import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../../contexts/AuthContext';
 
 interface Consulta {
     data: string;
@@ -17,13 +17,10 @@ interface Consulta {
     status: string;
 }
 
-import { useNavigation } from '@react-navigation/native';
-
 export default function Home() {
     const navigation: any = useNavigation();
+    const { user } = useContext(AuthContext); // Get logged-in user
 
-    {/* Alterar valores aqui*/ }
-    const [nome, setNome] = useState("Maria");
     const [dataAtual, setDataAtual] = useState(() => {
         const hoje = new Date();
         const dataFormatada = hoje.toLocaleDateString('pt-BR', {
@@ -34,7 +31,6 @@ export default function Home() {
         });
         return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
     });
-
 
     const [consulta, setConsulta] = useState<Consulta>({
         data: "22/02/2023",
@@ -50,7 +46,7 @@ export default function Home() {
             <View style={{ flex: 1, paddingHorizontal: 15 }}>
                 {/* Saudação */}
                 <View style={Home_Styles.header_box}>
-                    <Text style={Home_Styles.titulo}>Olá, {nome}!</Text>
+                    <Text style={Home_Styles.titulo}>Olá, {user?.nome || "Usuário"}!</Text>
                     <Text style={Home_Styles.data}>{dataAtual}</Text>
                 </View>
 

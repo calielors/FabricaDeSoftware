@@ -6,21 +6,11 @@ import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { Perfil_Styles } from "./perfil_styles";
 import { AuthContext } from "../../contexts/AuthContext";
 
-
 export default function Perfil() {
-    const { signOut } = useContext(AuthContext);
+    const { signOut, user } = useContext(AuthContext);
 
     const [notificacoes, setNotificacoes] = useState(true);
     const [temaEscuro, setTemaEscuro] = useState(false);
-
-    const usuario = {
-        nome: "Maria Souza Guimarães",
-        cpf: "123.456.789-00",
-        nascimento: "1956-07-12",
-        endereco: "Rua das Palmeiras, 7",
-        unidade: "UBS Central - Dois Vizinhos",
-        cadastro: "15/03/2021",
-    };
 
     async function handleLogout() {
         await signOut();
@@ -32,9 +22,15 @@ export default function Perfil() {
             <ScrollView contentContainerStyle={Perfil_Styles.content}>
                 {/* Cabeçalho */}
                 <View style={Perfil_Styles.header}>
-                    <Text style={Perfil_Styles.title}>{usuario.nome}</Text>
-                    <Text style={Perfil_Styles.subText}>Nascimento: {new Date(usuario.nascimento).toLocaleDateString('pt-BR')}</Text>
-                    <Text style={Perfil_Styles.subText}>Unidade: {usuario.unidade}</Text>
+                    <Text style={Perfil_Styles.title}>{user?.nome || "Usuário"}</Text>
+                    {user?.nascimento && (
+                        <Text style={Perfil_Styles.subText}>
+                            Nascimento: {new Date(user.nascimento).toLocaleDateString('pt-BR')}
+                        </Text>
+                    )}
+                    {user?.unidade && (
+                        <Text style={Perfil_Styles.subText}>Unidade: {user.unidade}</Text>
+                    )}
                 </View>
 
                 {/* Informações Pessoais */}
@@ -55,7 +51,7 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]} activeOpacity={0.7}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="phone" size={19} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Contato</Text>
@@ -89,7 +85,7 @@ export default function Perfil() {
                         />
                     </View>
 
-                    <View style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]}>
+                    <View style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="moon" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Tema Escuro</Text>
@@ -112,7 +108,7 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]} activeOpacity={0.7}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="shield-alt" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Privacidade</Text>
@@ -139,7 +135,7 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem  ,{ borderBottomWidth: 0 } ]} activeOpacity={0.7}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="info-circle" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Sobre o Aplicativo</Text>

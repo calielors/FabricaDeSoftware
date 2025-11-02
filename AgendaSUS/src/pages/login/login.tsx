@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, TextInput, Platform, KeyboardAvoidingView, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Platform, KeyboardAvoidingView, TouchableOpacity, Alert } from "react-native";
 import { Login_Styles } from "./login_styles";
 import { COLORS } from "../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -7,20 +7,39 @@ import { Top_Bar } from "../../components/top_bar";
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../contexts/AuthContext';
 import { TextInput as PaperInput } from 'react-native-paper';
+import { formatCPF } from "../../components/format_cpf";
+
 export default function Login() {
-    const [email, setEmail] = useState("");
+    const [cpf, setCpf] = useState("");
     const [password, setPassword] = useState("");
-    const { signIn } = useContext(AuthContext);
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const { signIn } = useContext(AuthContext);
     const navigation: any = useNavigation();
 
     async function handleLogin() {
+        // Basic validation
+        if (!cpf || !password) {
+            Alert.alert("Atenção", "Preencha CPF e senha!");
+            return;
+        }
+
+        // Ensure CPF is numeric and exactly 11 digits
+        const cleanCpf = cpf.replace(/\D/g, '');
+        if (cleanCpf.length !== 11) {
+            Alert.alert("Atenção", "CPF inválido! Deve conter 11 dígitos.");
+            return;
+        }
+
+        // Map CPF to fake email for Supabase Auth
+        const authEmail = `${cleanCpf}@user.com`;
+
         try {
-            await signIn(email, password);
-            console.log('[Login] signIn called for', email);
+            await signIn(authEmail, password);
+            console.log('[Login] signIn called for', authEmail);
             Alert.alert("Login realizado", "Você está autenticado!");
-        } catch (error) {
-            Alert.alert("Login inválido", "E-mail ou senha incorretos.");
+        } catch (error: any) {
+            console.error("Login failed:", error);
+            Alert.alert("Login inválido", "CPF ou senha incorretos.");
         }
     }
 
@@ -33,25 +52,28 @@ export default function Login() {
             <View style={Login_Styles.container}>
                 <Top_Bar />
                 <View style={Login_Styles.login_box}>
-                    <Text style={Login_Styles.textos}>E-mail </Text>
+
+                    {/* CPF */}
+                    <Text style={Login_Styles.textos}>CPF</Text>
                     <PaperInput
                         mode="outlined"
-                        label={<Text style={{ color: COLORS.placeholder_text }}>E-mail</Text>}
-                        value={email}
-                        onChangeText={(text) => setEmail(text.replace(/\s/g, ''))}
-                        placeholder="Digite seu e-mail"
-                        placeholderTextColor={COLORS.placeholder_text}
+                        label={<Text style={{ color: COLORS.placeholder_text }}>CPF</Text>}
+                        value={formatCPF(cpf)}
+                        onChangeText={(text) => setCpf(text.replace(/\D/g, '').slice(0, 11))}
+                        placeholder="Digite seu CPF"
+                        keyboardType="numeric"
                         activeOutlineColor={COLORS.azul_principal}
                         style={Login_Styles.inputs}
                         theme={{ roundness: 30 }}
-
                     />
-                    <Text style={Login_Styles.textos}>Senha </Text>
+
+                    {/* Senha */}
+                    <Text style={Login_Styles.textos}>Senha</Text>
                     <PaperInput
                         mode="outlined"
                         label={<Text style={{ color: COLORS.placeholder_text }}>Senha</Text>}
                         value={password}
-                        onChangeText={setPassword}
+                        onChangeText={(text) => setPassword(text.replace(/\s/g, ''))}
                         placeholder="Digite sua senha"
                         placeholderTextColor={COLORS.placeholder_text}
                         activeOutlineColor={COLORS.azul_principal}
@@ -67,13 +89,19 @@ export default function Login() {
                             />
                         }
                     />
+
+                    {/* Login Button */}
                     <TouchableOpacity style={Login_Styles.acessar} onPress={handleLogin} activeOpacity={0.7}>
                         <Text style={Login_Styles.acessar_text}>Acessar</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { /* implementar ação de recuperação de senha */ }} activeOpacity={0.7}>
+
+                    {/* Forgot password */}
+                    <TouchableOpacity onPress={() => { /* implementar recuperação */ }} activeOpacity={0.7}>
                         <Text style={Login_Styles.links}>Esqueci minha senha </Text>
                     </TouchableOpacity>
                 </View>
+
+                {/* gov.br login & navigation to register */}
                 <View style={Login_Styles.gov_box_container}>
                     <View style={Login_Styles.gov_box}>
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} activeOpacity={0.7}>

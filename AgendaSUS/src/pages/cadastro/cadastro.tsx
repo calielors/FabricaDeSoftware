@@ -9,66 +9,99 @@ import { TextInput as PaperInput } from 'react-native-paper';
 import { formatCPF } from "../../components/format_cpf";
 
 export default function Cadastro() {
-    {/* Estados para os campos de entrada */ }
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6YmNsb2lzd3licWl3eXllamRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNDk0OTksImV4cCI6MjA3NDkyNTQ5OX0.DjCSY_BLtydN5Fv_ShOXtv1OApVYV69nHgc9UBwEBpA";
     const [username, setUsername] = useState("");
     const [cpf, setCpf] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    {/* Estados para visibilidade das senhas */ }
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    {/* Navegação */ }
     const navigation: any = useNavigation();
 
-    const validarCampos = () => {
-        // Todos os campos preenchidos
-        if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+    const validarCampos = async () => {
+        // Validation
+        if (!username.trim() || !cpf.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
             Alert.alert("Atenção", "Todos os campos devem ser preenchidos!");
-            return false;
+            return;
         }
 
-        // Usuário com ao menos 5 caracteres
         if (username.trim().length < 5) {
-            Alert.alert("Atenção", "O usuário deve ter pelo menos 5 caracteres!");
-            return false;
+            Alert.alert("Atenção", "O usuário deve ter no mínimo 5 caracteres!");
+            return;
         }
-        //CPF com 11 dígitos numéricos
+
         const regexCPF = /^\d{11}$/;
         if (!regexCPF.test(cpf)) {
             Alert.alert("Atenção", "O CPF deve conter exatamente 11 dígitos numéricos!");
-            return false;
+            return;
         }
 
-        // E-mail válido
         const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!regexEmail.test(email)) {
             Alert.alert("Atenção", "Digite um e-mail válido!");
-            return false;
+            return;
         }
 
-        // Senhas iguais
         if (password !== confirmPassword) {
             Alert.alert("Atenção", "As senhas não são iguais!");
-            setPassword("");
-            setConfirmPassword("");
-            return false;
+            setPassword(""); setConfirmPassword(""); return;
         }
 
-        // Senha forte
         const senhaForte = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
         if (!senhaForte.test(password)) {
             Alert.alert(
                 "Atenção",
                 "A senha deve ter no mínimo 8 caracteres e conter pelo menos:\n- Uma letra maiúscula\n- Uma letra minúscula\n- Um número\n- Um caractere especial"
             );
-            setPassword("");
-            setConfirmPassword("");
-            return false;
+            setPassword(""); setConfirmPassword(""); return;
         }
-        alert("Cadastro realizado com sucesso!");
-        navigation.navigate('Login');
-        return true; // tudo certo
+
+        try {
+            // Call Edge Function
+            const response = await fetch("https://szbcloiswybqiwyyejdj.supabase.co/functions/v1/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+                },
+                body: JSON.stringify({
+                    nome: username,
+                    cpf,
+                    password,
+                    email
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+            // Prefer structured message, then details, then whole error object
+            const errObj = data?.error;
+            const userMessage =
+                errObj?.message ||
+                errObj?.details ||
+                (typeof errObj === "string" ? errObj : null) ||
+                data?.message ||
+                "Erro desconhecido";
+
+            console.error("Register failed response:", data);
+            Alert.alert("Erro no cadastro", userMessage);
+            return;
+            }
+
+
+            Alert.alert(
+                "Sucesso",
+                `Cadastro realizado com sucesso! Você fará login com o CPF: ${cpf}`
+            );
+
+            navigation.navigate('Login');
+
+        } catch (error: any) {
+            console.error("Erro no fetch:", error);
+            Alert.alert("Erro", "Não foi possível realizar o cadastro.");
+        }
     };
 
     return (
@@ -80,6 +113,7 @@ export default function Cadastro() {
             <View style={CadastroStyles.container}>
                 <Top_Bar />
                 <View style={CadastroStyles.cadastro_box}>
+                    {/* Usuário */}
                     <PaperInput
                         mode="outlined"
                         label={<Text style={{ color: COLORS.placeholder_text }}>Usuário</Text>}
@@ -91,21 +125,21 @@ export default function Cadastro() {
                         style={CadastroStyles.inputs}
                         theme={{ roundness: 30 }}
                     />
+
+                    {/* CPF */}
                     <PaperInput
                         mode="outlined"
                         label={<Text style={{ color: COLORS.placeholder_text }}>CPF</Text>}
                         value={formatCPF(cpf)}
-                        onChangeText={(text) => {
-                            // remove tudo que não é dígito e limita a 11 chars
-                            const onlyDigits = text.replace(/\D/g, '').slice(0, 11);
-                            setCpf(onlyDigits);
-                        }}
+                        onChangeText={(text) => setCpf(text.replace(/\D/g, '').slice(0, 11))}
                         placeholder="Digite seu CPF"
                         placeholderTextColor={COLORS.placeholder_text}
                         activeOutlineColor={COLORS.azul_principal}
                         style={CadastroStyles.inputs}
                         theme={{ roundness: 30 }}
                     />
+
+                    {/* Email */}
                     <PaperInput
                         mode="outlined"
                         label={<Text style={{ color: COLORS.placeholder_text }}>E-mail</Text>}
@@ -116,8 +150,10 @@ export default function Cadastro() {
                         activeOutlineColor={COLORS.azul_principal}
                         style={CadastroStyles.inputs}
                         theme={{ roundness: 30 }}
-
+                        keyboardType="email-address"
                     />
+
+                    {/* Senha */}
                     <PaperInput
                         mode="outlined"
                         label={<Text style={{ color: COLORS.placeholder_text }}>Senha</Text>}
@@ -129,15 +165,10 @@ export default function Cadastro() {
                         style={CadastroStyles.inputs}
                         theme={{ roundness: 30 }}
                         secureTextEntry={!passwordVisible}
-                        right={
-                            <PaperInput.Icon
-                                icon={passwordVisible ? "eye" : "eye-off"}
-                                onPress={() => setPasswordVisible(!passwordVisible)}
-                                forceTextInputFocus={false}
-                                style={{ alignSelf: "center", marginRight: 0 }}
-                            />
-                        }
+                        right={<PaperInput.Icon icon={passwordVisible ? "eye" : "eye-off"} onPress={() => setPasswordVisible(!passwordVisible)} />}
                     />
+
+                    {/* Confirmação da senha */}
                     <PaperInput
                         mode="outlined"
                         label={<Text style={{ color: COLORS.placeholder_text }}>Confirmação da senha</Text>}
@@ -149,19 +180,14 @@ export default function Cadastro() {
                         style={CadastroStyles.inputs}
                         theme={{ roundness: 30 }}
                         secureTextEntry={!confirmPasswordVisible}
-                        right={
-                            <PaperInput.Icon
-                                icon={confirmPasswordVisible ? "eye" : "eye-off"}
-                                onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
-                                forceTextInputFocus={false}
-                                style={{ alignSelf: "center", marginRight: 0 }}
-                            />
-                        }
+                        right={<PaperInput.Icon icon={confirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
                     />
+
                     <TouchableOpacity style={CadastroStyles.criar} activeOpacity={0.7} onPress={validarCampos}>
                         <Text style={CadastroStyles.criar_text}>Criar conta</Text>
                     </TouchableOpacity>
                 </View>
+
                 <View style={CadastroStyles.gov_box_container}>
                     <View style={CadastroStyles.gov_box}>
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} activeOpacity={0.7}>
