@@ -5,6 +5,7 @@ import { COLORS } from '../../assets/colors/colors';
 import { Consultas_Styles as styles } from './consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
+import { formatarData } from '@/src/components/formatar_data';
 
 type Consulta = {
     id: string;
@@ -114,7 +115,7 @@ export default function Consultas() {
                 <Modal isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
                     <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>
-                            Tem certeza que deseja cancelar a consulta com {consultaSelecionada?.especialista} em {consultaSelecionada ? new Date(consultaSelecionada.date).toLocaleDateString('pt-BR') : ''}?
+                            Tem certeza que deseja cancelar a consulta com {consultaSelecionada?.especialista} em {consultaSelecionada ? formatarData(consultaSelecionada.date) : ''}?
                         </Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 15 }}>
                             <TouchableOpacity

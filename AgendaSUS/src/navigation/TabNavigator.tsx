@@ -5,7 +5,7 @@ import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import Home from '../pages/home/home';
 import Agendamento from '../pages/agendamento/agendamento';
 import Consultas from '../pages/consultas/consultas';
-import Perfil from '../pages/perfil/perfil';
+import PerfilStack from './PerfilStack';
 import HomeStack from './HomeStack';
 import { FontAwesome5 } from '@expo/vector-icons';
 
@@ -21,7 +21,7 @@ export default function TabNavigator() {
                     if (route.name === 'Início') return <Ionicons name="home" size={size} color={color} />;
                     if (route.name === 'Consultas') return <FontAwesome name="bars" size={size} color={color} />;
                     if (route.name === 'Agendar') return <MaterialIcons name="event-available" size={size} color={color} />;
-                    if (route.name === 'Perfil') return <FontAwesome5 name="user-cog" size={18} color={color} />;
+                    if (route.name === 'PerfilStack') return <FontAwesome5 name="user-cog" size={18} color={color} />;
                     return null;
                 },
                 tabBarActiveTintColor: '#1976d2',
@@ -39,7 +39,7 @@ export default function TabNavigator() {
             <Tab.Screen name="Início" component={HomeStack} />
             <Tab.Screen name="Consultas" component={Consultas} />
             <Tab.Screen name="Agendar" component={Agendamento} />
-            <Tab.Screen name="Perfil" component={Perfil} />
+            <Tab.Screen name="PerfilStack" component={PerfilStack} />
         </Tab.Navigator>
     );
 }

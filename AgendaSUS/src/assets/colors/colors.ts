@@ -9,5 +9,6 @@ export const COLORS = {
     verde: '#28a644',
     laranja: '#d98200',
     vermelho: '#FD1919',
+    vermelho_claro: '#FF5555'
     // Adicione outras cores aqui
 };

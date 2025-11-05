@@ -96,7 +96,7 @@ export default function Login() {
                     </TouchableOpacity>
 
                     {/* Forgot password */}
-                    <TouchableOpacity onPress={() => { /* implementar recuperação */ }} activeOpacity={0.7}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Recuperar')} activeOpacity={0.7}>
                         <Text style={Login_Styles.links}>Esqueci minha senha </Text>
                     </TouchableOpacity>
                 </View>

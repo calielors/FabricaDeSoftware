@@ -4,10 +4,16 @@ import { Agendamento_Styles } from "./agendamento_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
 import { Calendar } from "react-native-calendars";
+import Modal from "react-native-modal";
+import { formatarData } from "@/src/components/formatar_data";
 
 export default function Agendamento() {
     const [day, setDay] = useState('');
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [isVisible, setIsVisible] = useState(false);
+    const [erro, setErro] = useState(false);
+
+    const today = new Date().toISOString().split('T')[0];
 
     const horarios = [
         '08:00', '08:30', '09:00', '09:30',
@@ -16,13 +22,21 @@ export default function Agendamento() {
         '17:30', '18:00', '18:30', '19:00', '19:30'
     ];
 
-    const today = new Date().toISOString().split('T')[0];
+    const abrirModalCancelar = () => {
+        if (day && selectedTime) {
+            setIsVisible(true);
+            setErro(false);
+        } else {
+            setErro(true); 
+        }
+    };
+
+    const botaoAtivo = day !== '' && selectedTime !== null;
 
     return (
         <View style={Agendamento_Styles.container}>
             <Top_Bar />
 
-            {/* --------------------------Calendário--------------------------*/}
             <Text
                 style={{
                     color: COLORS.azul_principal,
@@ -41,34 +55,11 @@ export default function Agendamento() {
                     [today]: { marked: false, selectedColor: COLORS.verde },
                     [day]: { selected: true, selectedColor: COLORS.azul_principal }
                 }}
-                headerStyle={{
-                    backgroundColor: 'transparent',
-                    borderBottomColor: COLORS.placeholder_text,
-                    borderBottomWidth: 1,
-                }}
-                theme={{
-                    textSectionTitleColor: COLORS.preto,
-                    monthTextColor: COLORS.preto,
-                    selectedDayBackgroundColor: COLORS.verde,
-                    todayTextColor: COLORS.verde,
-                    arrowColor: COLORS.azul_principal,
-                    textDayFontWeight: 'bold',
-                    textMonthFontWeight: 'bold',
-                    textDayHeaderFontWeight: 'bold',
-                    textDayFontSize: 16,
-                    textMonthFontSize: 20,
-                    textDayHeaderFontSize: 14,
-                    calendarBackground: 'transparent',
-                    textDisabledColor: COLORS.placeholder_text,
-                }}
-                disableAllTouchEventsForDisabledDays
-                enableSwipeMonths
                 onDayPress={(day) => setDay(day.dateString)}
                 minDate={new Date().toDateString()}
                 hideExtraDays
             />
 
-            {/* -----------------------Horários----------------------- */}
             <View
                 style={{
                     position: 'absolute',
@@ -113,7 +104,23 @@ export default function Agendamento() {
                 </ScrollView>
             </View>
 
-            {/* --------------------Botões-------------------- */}
+            {/* Mensagem de erro em vermelho */}
+            {erro && (
+                <Text
+                    style={{
+                        color: COLORS.vermelho,
+                        marginTop: 10,
+                        textAlign: "center",
+                        position: "absolute",
+                        bottom: 100,
+                        width: "100%",
+                    }}
+                >
+                    Selecione uma data e um horário antes de continuar.
+                </Text>
+            )}
+
+            {/* Botões */}
             <View
                 style={{
                     position: 'absolute',
@@ -122,7 +129,10 @@ export default function Agendamento() {
                     gap: 5,
                 }}
             >
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={abrirModalCancelar}
+                >
                     <View
                         style={{
                             backgroundColor: COLORS.azul_principal,
@@ -142,7 +152,7 @@ export default function Agendamento() {
                 <TouchableOpacity activeOpacity={0.7}>
                     <View
                         style={{
-                            backgroundColor: COLORS.placeholder_text,
+                            backgroundColor: COLORS.vermelho_claro,
                             width: 250,
                             height: 40,
                             alignItems: 'center',
@@ -156,6 +166,27 @@ export default function Agendamento() {
                     </View>
                 </TouchableOpacity>
             </View>
+
+            <Modal isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
+                <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>
+                        Tem certeza que deseja confirmar a consulta para o dia {formatarData(day)} : {selectedTime}?
+                    </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 15 }}>
+                        <TouchableOpacity
+                            style={{ backgroundColor: COLORS.vermelho, padding: 10, borderRadius: 5, minWidth: 80, alignItems: 'center' }}
+                            onPress={() => setIsVisible(false)}
+                        >
+                            <Text style={{ color: COLORS.branco, fontWeight: 'bold' }}>Não</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ backgroundColor: COLORS.verde, padding: 10, borderRadius: 5, minWidth: 80, alignItems: 'center' }}
+                        >
+                            <Text style={{ color: COLORS.branco, fontWeight: 'bold' }}>Sim</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
