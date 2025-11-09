@@ -1,27 +1,28 @@
-import React, { useEffect, useState, useContext } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Home_Styles } from "./home_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../contexts/AuthContext';
+import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../services/consultas';
 
 interface Consulta {
     data: string;
     hora: string;
-    especialidade: string;
-    local: string;
+    especialidade?: string;
+    local?: string;
     status: string;
 }
 
 export default function Home() {
     const navigation: any = useNavigation();
-    const { user } = useContext(AuthContext); // Get logged-in user
+    const { user } = useContext(AuthContext);
 
-    const [dataAtual, setDataAtual] = useState(() => {
+    const dataAtual = (() => {
         const hoje = new Date();
         const dataFormatada = hoje.toLocaleDateString('pt-BR', {
             weekday: 'long',
@@ -30,15 +31,74 @@ export default function Home() {
             year: 'numeric'
         });
         return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
-    });
+    })();
 
-    const [consulta, setConsulta] = useState<Consulta>({
-        data: "22/02/2023",
-        hora: "14:00H",
-        especialidade: "Clínico Geral",
-        local: "UBS Jardim das Flores",
-        status: "Confirmada",
-    });
+    const [consulta, setConsulta] = useState<Consulta | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            carregarProximaConsulta();
+        }, [user])
+    );
+
+    const carregarProximaConsulta = async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const { data: paciente } = await buscarPacientePorAuthId(user.id);
+            
+            if (!paciente) {
+                setLoading(false);
+                return;
+            }
+
+            const { data: consultas } = await buscarConsultasPaciente(paciente.id);
+            
+            if (consultas && consultas.length > 0) {
+                const agora = new Date();
+                
+                const proximaConsulta = consultas
+                    .filter(c => {
+                        const dataConsulta = new Date(c.data_hora);
+                        return dataConsulta >= agora && c.status === 'agendada';
+                    })
+                    .sort((a, b) => {
+                        return new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime();
+                    })[0];
+
+                if (proximaConsulta) {
+                    const [dataParte, horaParte] = proximaConsulta.data_hora.split('T');
+                    const [ano, mes, dia] = dataParte.split('-');
+                    const dataFormatada = `${dia}/${mes}/${ano}`;
+                    
+                    const dataHora = new Date(proximaConsulta.data_hora);
+                    const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    
+                    // Busca o nome da unidade do objeto retornado pelo JOIN
+                    let nomeUnidade = 'UBS';
+                    if (proximaConsulta.unidade_saude && typeof proximaConsulta.unidade_saude === 'object') {
+                        nomeUnidade = proximaConsulta.unidade_saude.nome;
+                    } else if (typeof proximaConsulta.unidade_saude === 'string') {
+                        nomeUnidade = proximaConsulta.unidade_saude;
+                    }
+                    
+                    setConsulta({
+                        data: dataFormatada,
+                        hora: hora + 'H',
+                        especialidade: proximaConsulta.especialidade || 'Consulta Médica',
+                        local: nomeUnidade,
+                        status: proximaConsulta.status === 'agendada' ? 'Confirmada' : proximaConsulta.status || 'Agendada',
+                    });
+                }
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <View style={Home_Styles.container}>
@@ -51,7 +111,14 @@ export default function Home() {
                 </View>
 
                 {/* Próxima consulta */}
-                {consulta && consulta.data && consulta.hora && consulta.especialidade && consulta.local && consulta.status && (
+                {loading ? (
+                    <View style={Home_Styles.consulta_box}>
+                        <ActivityIndicator size="large" color={COLORS.azul_principal} />
+                        <Text style={{ textAlign: 'center', marginTop: 10, color: COLORS.preto }}>
+                            Carregando consultas...
+                        </Text>
+                    </View>
+                ) : consulta ? (
                     <View style={Home_Styles.consulta_box}>
                         <View style={Home_Styles.consulta_header}>
                             <Text style={Home_Styles.consulta_titulo}>Sua próxima consulta</Text>
@@ -77,6 +144,13 @@ export default function Home() {
                         >
                             <Text style={Home_Styles.consulta_status_text}>{consulta.status}</Text>
                         </View>
+                    </View>
+                ) : (
+                    <View style={Home_Styles.consulta_box}>
+                        <Text style={Home_Styles.consulta_titulo}>Nenhuma consulta agendada</Text>
+                        <Text style={{ textAlign: 'center', marginTop: 10, color: COLORS.placeholder_text }}>
+                            Você não tem consultas futuras. Agende uma nova consulta!
+                        </Text>
                     </View>
                 )}
 
