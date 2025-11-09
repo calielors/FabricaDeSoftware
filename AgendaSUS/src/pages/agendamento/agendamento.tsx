@@ -1,13 +1,20 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
+import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
+import React, { useState, useContext } from "react";
 import { Agendamento_Styles } from "./agendamento_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
 import { Calendar } from "react-native-calendars";
+import { AuthContext } from "../../contexts/AuthContext";
+import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, verificarHorarioDisponivel } from "../../services/consultas";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Agendamento() {
     const [day, setDay] = useState('');
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    
+    const { user } = useContext(AuthContext);
+    const navigation = useNavigation();
 
     const horarios = [
         '08:00', '08:30', '09:00', '09:30',
@@ -17,6 +24,110 @@ export default function Agendamento() {
     ];
 
     const today = new Date().toISOString().split('T')[0];
+
+    // Função para agendar a consulta
+    const handleAgendarConsulta = async () => {
+        // Validações
+        if (!user) {
+            Alert.alert('Erro', 'Você precisa estar logado para agendar uma consulta');
+            return;
+        }
+
+        if (!day) {
+            Alert.alert('Atenção', 'Por favor, selecione uma data para a consulta');
+            return;
+        }
+
+        if (!selectedTime) {
+            Alert.alert('Atenção', 'Por favor, selecione um horário para a consulta');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // 1. Busca o paciente associado ao usuário autenticado
+            const { data: paciente, error: erroPaciente } = await buscarPacientePorAuthId(user.id);
+            
+            if (erroPaciente || !paciente) {
+                Alert.alert(
+                    'Erro',
+                    'Não foi possível encontrar seus dados de paciente. Por favor, complete seu cadastro.'
+                );
+                setLoading(false);
+                return;
+            }
+
+            // 2. Combina data e horário no formato ISO
+            const dataHora = combinarDataHora(day, selectedTime);
+
+            // 3. Verifica se o horário está disponível
+            const horarioDisponivel = await verificarHorarioDisponivel(dataHora);
+            
+            if (!horarioDisponivel) {
+                Alert.alert(
+                    'Horário Indisponível',
+                    'Este horário já está ocupado. Por favor, escolha outro horário.'
+                );
+                setLoading(false);
+                return;
+            }
+
+            // 4. Cria a consulta no banco de dados
+            const { data, error } = await criarConsulta({
+                paciente_id: paciente.id,
+                data_hora: dataHora,
+                status: 'agendada',
+            });
+
+            if (error) {
+                console.error('Erro ao agendar consulta:', error);
+                Alert.alert(
+                    'Erro',
+                    'Não foi possível agendar a consulta. Por favor, tente novamente.'
+                );
+                setLoading(false);
+                return;
+            }
+
+            // Sucesso
+            Alert.alert(
+                'Consulta Agendada!',
+                `Sua consulta foi agendada com sucesso para ${formatarData(day)} às ${selectedTime}.`,
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            // Limpa os campos
+                            setDay('');
+                            setSelectedTime(null);
+                            // Navega de volta
+                            navigation.goBack();
+                        }
+                    }
+                ]
+            );
+        } catch (err) {
+            console.error('Erro inesperado:', err);
+            Alert.alert('Erro', 'Ocorreu um erro inesperado. Por favor, tente novamente.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Função auxiliar para formatar a data
+    const formatarData = (dateString: string) => {
+        const [year, month, day] = dateString.split('-');
+        return `${day}/${month}/${year}`;
+    };
+
+    // Função para cancelar
+    const handleCancelar = () => {
+        setDay('');
+        setSelectedTime(null);
+        navigation.goBack();
+    };
+
 
     return (
         <View style={Agendamento_Styles.container}>
@@ -122,10 +233,16 @@ export default function Agendamento() {
                     gap: 5,
                 }}
             >
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity 
+                    activeOpacity={0.7}
+                    onPress={handleAgendarConsulta}
+                    disabled={loading || !day || !selectedTime}
+                >
                     <View
                         style={{
-                            backgroundColor: COLORS.azul_principal,
+                            backgroundColor: loading || !day || !selectedTime 
+                                ? COLORS.placeholder_text 
+                                : COLORS.azul_principal,
                             width: 250,
                             height: 40,
                             borderRadius: 5,
@@ -134,12 +251,16 @@ export default function Agendamento() {
                         }}
                     >
                         <Text style={{ color: COLORS.branco, fontSize: 18, fontWeight: 'bold' }}>
-                            Próximo
+                            {loading ? 'Agendando...' : 'Agendar Consulta'}
                         </Text>
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity 
+                    activeOpacity={0.7}
+                    onPress={handleCancelar}
+                    disabled={loading}
+                >
                     <View
                         style={{
                             backgroundColor: COLORS.placeholder_text,
