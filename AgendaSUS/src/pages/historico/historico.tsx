@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { Top_Bar } from '../../components/top_bar';
 import { COLORS } from '../../assets/colors/colors';
 import { Historico_Styles as styles } from './historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AuthContext } from '../../contexts/AuthContext';
+import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../services/consultas';
+import { useFocusEffect } from '@react-navigation/native';
 
 type Consulta = {
-    id: string;
+    id: number;
     unidade: string;
     especialista: string;
     date: string;
@@ -14,26 +17,93 @@ type Consulta = {
     status: 'Realizada' | 'Faltou' | 'Cancelada';
 };
 
-export default function Consultas() {
+const formatarData = (dateString: string) => {
+    const [ano, mes, dia] = dateString.split('-');
+    return `${dia}/${mes}/${ano}`;
+};
+
+export default function Historico() {
     const [data, setData] = useState<Consulta[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const mock: Consulta[] = [
-            { id: '1', unidade: 'UBS Central', especialista: 'Clínico Geral', date: '2025-10-30', hora: '08:30', status: 'Realizada' },
-            { id: '2', unidade: 'UBS São José', especialista: 'Dermatologista', date: '2025-10-31', hora: '09:00', status: 'Realizada' },
-            { id: '3', unidade: 'UBS Bela Vista', especialista: 'Cardiologista', date: '2025-10-27', hora: '10:15', status: 'Faltou' },
-            { id: '4', unidade: 'UBS Central', especialista: 'Fisioterapeuta', date: '2025-10-28', hora: '14:00', status:'Cancelada' },
-        ];
-        const sorted = mock.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        setTimeout(() => { setData(sorted); setLoading(false); }, 500);
-    }, []);
+    const { user } = useContext(AuthContext);
 
-    if (loading) return (
-        <View style={styles.container}>
-            <ActivityIndicator size="large" color={COLORS.azul_principal} />
-        </View>
+    useFocusEffect(
+        React.useCallback(() => {
+            carregarHistorico();
+        }, [user])
     );
+
+    const carregarHistorico = async () => {
+        if (!user) {
+            setError('Usuário não autenticado');
+            setLoading(false);
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        const { data: paciente, error: erroPaciente } = await buscarPacientePorAuthId(user.id);
+        
+        if (erroPaciente || !paciente) {
+            setError('Não foi possível encontrar seus dados de paciente');
+            setLoading(false);
+            return;
+        }
+
+        const { data: consultas, error: erroConsultas } = await buscarConsultasPaciente(paciente.id);
+        
+        if (erroConsultas) {
+            setError('Erro ao carregar histórico');
+            setLoading(false);
+            return;
+        }
+
+        if (consultas) {
+            const agora = new Date();
+            
+            const consultasHistorico = consultas
+                .filter(c => {
+                    const dataConsulta = new Date(c.data_hora);
+                    return dataConsulta < agora || c.status === 'cancelada';
+                })
+                .map(c => {
+                    const [dataParte] = c.data_hora.split('T');
+                    const dataHora = new Date(c.data_hora);
+                    const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    
+                    let nomeUnidade = 'UBS';
+                    if (c.unidade_saude && typeof c.unidade_saude === 'object') {
+                        nomeUnidade = c.unidade_saude.nome;
+                    } else if (typeof c.unidade_saude === 'string') {
+                        nomeUnidade = c.unidade_saude;
+                    }
+
+                    let statusUI: 'Realizada' | 'Faltou' | 'Cancelada' = 'Realizada';
+                    if (c.status === 'cancelada') {
+                        statusUI = 'Cancelada';
+                    } else if (c.status === 'faltou') {
+                        statusUI = 'Faltou';
+                    }
+                    
+                    return {
+                        id: c.id!,
+                        unidade: nomeUnidade,
+                        especialista: c.especialidade || 'Consulta Médica',
+                        date: dataParte,
+                        hora: hora,
+                        status: statusUI,
+                    };
+                })
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+            setData(consultasHistorico);
+        }
+        
+        setLoading(false);
+    };
 
     const getStatusProps = (status: Consulta['status']) => {
         switch (status) {
@@ -43,6 +113,31 @@ export default function Consultas() {
         }
     };
 
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <Top_Bar />
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={COLORS.azul_principal} />
+                    <Text style={{ marginTop: 10, color: COLORS.preto, opacity: 0.6 }}>
+                        Carregando histórico...
+                    </Text>
+                </View>
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.container}>
+                <Top_Bar />
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: COLORS.vermelho, fontSize: 16 }}>{error}</Text>
+                </View>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <Top_Bar />
@@ -51,19 +146,15 @@ export default function Consultas() {
 
                 <FlatList
                     data={data}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => {
                         const statusProps = getStatusProps(item.status);
                         return (
-                            <TouchableOpacity
-                                style={styles.item}
-                                activeOpacity={0.8}
-                                onPress={() => console.log('Consulta clicada:', item.id)}
-                            >
+                            <View style={styles.item}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.itemMeta}>Unidade: {item.unidade}</Text>
                                     <Text style={styles.itemMeta}>Especialista: {item.especialista}</Text>
-                                    <Text style={styles.itemMeta}>Data: {new Date(item.date).toLocaleDateString('pt-BR')}</Text>
+                                    <Text style={styles.itemMeta}>Data: {formatarData(item.date)}</Text>
                                     <Text style={styles.itemMeta}>Hora: {item.hora}</Text>
                                 </View>
 
@@ -80,11 +171,11 @@ export default function Consultas() {
                                         </Text>
                                     </View>
                                 </View>
-                            </TouchableOpacity>
+                            </View>
                         );
                     }}
                     ListEmptyComponent={
-                        <Text style={styles.emptyText}>Nenhuma consulta encontrada</Text>
+                        <Text style={styles.emptyText}>Nenhuma consulta no histórico</Text>
                     }
                     style={styles.listContainer}
                 />
