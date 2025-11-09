@@ -17,6 +17,11 @@ type Consulta = {
     hora: string;
 };
 
+const formatarData = (dateString: string) => {
+    const [ano, mes, dia] = dateString.split('-');
+    return `${dia}/${mes}/${ano}`;
+};
+
 export default function Consultas() {
     const [data, setData] = useState<Consulta[]>([]);
     const [loading, setLoading] = useState(true);
@@ -69,21 +74,31 @@ export default function Consultas() {
                         return dataConsulta >= agora && c.status !== 'cancelada';
                     })
                     .map(c => {
+                        const [dataParte] = c.data_hora.split('T');
+                        
                         const dataHora = new Date(c.data_hora);
+                        const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                        
+                        // Busca o nome da unidade do objeto retornado pelo JOIN
+                        let nomeUnidade = 'UBS';
+                        if (c.unidade_saude && typeof c.unidade_saude === 'object') {
+                            nomeUnidade = c.unidade_saude.nome;
+                        } else if (typeof c.unidade_saude === 'string') {
+                            nomeUnidade = c.unidade_saude;
+                        }
+                        
                         return {
                             id: c.id!,
-                            unidade: c.unidade_saude || 'UBS',
+                            unidade: nomeUnidade,
                             especialista: c.especialidade || 'Consulta Médica',
-                            date: dataHora.toISOString().split('T')[0],
-                            hora: dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                            date: dataParte,
+                            hora: hora,
                         };
                     })
                     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
                 setData(consultasFuturas);
             }
-        } catch (err) {
-            setError('Erro ao carregar consultas');
         } finally {
             setLoading(false);
         }
@@ -142,7 +157,7 @@ export default function Consultas() {
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.itemMeta}>Unidade: {item.unidade}</Text>
                                     <Text style={styles.itemMeta}>Especialista: {item.especialista}</Text>
-                                    <Text style={styles.itemMeta}>Data: {new Date(item.date).toLocaleDateString('pt-BR')}</Text>
+                                    <Text style={styles.itemMeta}>Data: {formatarData(item.date)}</Text>
                                     <Text style={styles.itemMeta}>Hora: {item.hora}</Text>
                                 </View>
 
@@ -177,7 +192,7 @@ export default function Consultas() {
                 <Modal isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
                     <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>
-                            Tem certeza que deseja cancelar a consulta com {consultaSelecionada?.especialista} em {consultaSelecionada ? new Date(consultaSelecionada.date).toLocaleDateString('pt-BR') : ''}?
+                            Tem certeza que deseja cancelar a consulta com {consultaSelecionada?.especialista} em {consultaSelecionada ? formatarData(consultaSelecionada.date) : ''}?
                         </Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 15 }}>
                             <TouchableOpacity

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Home_Styles } from "./home_styles";
 import { COLORS } from "../../assets/colors/colors";
@@ -22,7 +22,7 @@ export default function Home() {
     const navigation: any = useNavigation();
     const { user } = useContext(AuthContext);
 
-    const [dataAtual, setDataAtual] = useState(() => {
+    const dataAtual = (() => {
         const hoje = new Date();
         const dataFormatada = hoje.toLocaleDateString('pt-BR', {
             weekday: 'long',
@@ -31,7 +31,7 @@ export default function Home() {
             year: 'numeric'
         });
         return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
-    });
+    })();
 
     const [consulta, setConsulta] = useState<Consulta | null>(null);
     const [loading, setLoading] = useState(true);
@@ -71,19 +71,30 @@ export default function Home() {
                     })[0];
 
                 if (proximaConsulta) {
+                    const [dataParte, horaParte] = proximaConsulta.data_hora.split('T');
+                    const [ano, mes, dia] = dataParte.split('-');
+                    const dataFormatada = `${dia}/${mes}/${ano}`;
+                    
                     const dataHora = new Date(proximaConsulta.data_hora);
+                    const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    
+                    // Busca o nome da unidade do objeto retornado pelo JOIN
+                    let nomeUnidade = 'UBS';
+                    if (proximaConsulta.unidade_saude && typeof proximaConsulta.unidade_saude === 'object') {
+                        nomeUnidade = proximaConsulta.unidade_saude.nome;
+                    } else if (typeof proximaConsulta.unidade_saude === 'string') {
+                        nomeUnidade = proximaConsulta.unidade_saude;
+                    }
                     
                     setConsulta({
-                        data: dataHora.toLocaleDateString('pt-BR'),
-                        hora: dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + 'H',
+                        data: dataFormatada,
+                        hora: hora + 'H',
                         especialidade: proximaConsulta.especialidade || 'Consulta Médica',
-                        local: proximaConsulta.unidade_saude || 'UBS',
+                        local: nomeUnidade,
                         status: proximaConsulta.status === 'agendada' ? 'Confirmada' : proximaConsulta.status || 'Agendada',
                     });
                 }
             }
-        } catch (error) {
-            console.error('Erro ao carregar próxima consulta:', error);
         } finally {
             setLoading(false);
         }
