@@ -25,9 +25,7 @@ export default function Agendamento() {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // Função para agendar a consulta
     const handleAgendarConsulta = async () => {
-        // Validações
         if (!user) {
             Alert.alert('Erro', 'Você precisa estar logado para agendar uma consulta');
             return;
@@ -46,103 +44,76 @@ export default function Agendamento() {
         setLoading(true);
 
         try {
-            // 1. Busca o paciente associado ao usuário autenticado
             const { data: paciente, error: erroPaciente } = await buscarPacientePorAuthId(user.id);
             
             if (erroPaciente || !paciente) {
-                Alert.alert(
-                    'Erro',
-                    'Não foi possível encontrar seus dados de paciente. Por favor, complete seu cadastro.'
-                );
+                Alert.alert('Erro', 'Não foi possível encontrar seus dados de paciente. Por favor, complete seu cadastro.');
                 setLoading(false);
                 return;
             }
 
-            // 2. Combina data e horário no formato ISO
             const dataHora = combinarDataHora(day, selectedTime);
-
-            // 3. Verifica se o horário está disponível
             const horarioDisponivel = await verificarHorarioDisponivel(dataHora);
             
             if (!horarioDisponivel) {
-                Alert.alert(
-                    'Horário Indisponível',
-                    'Este horário já está ocupado. Por favor, escolha outro horário.'
-                );
+                Alert.alert('Horário Indisponível', 'Este horário já está ocupado. Por favor, escolha outro horário.');
                 setLoading(false);
                 return;
             }
 
-            // 4. Cria a consulta no banco de dados
-            const { data, error } = await criarConsulta({
+            const { error } = await criarConsulta({
                 paciente_id: paciente.id,
                 data_hora: dataHora,
                 status: 'agendada',
             });
 
             if (error) {
-                console.error('Erro ao agendar consulta:', error);
-                Alert.alert(
-                    'Erro',
-                    'Não foi possível agendar a consulta. Por favor, tente novamente.'
-                );
+                Alert.alert('Erro', 'Não foi possível agendar a consulta. Por favor, tente novamente.');
                 setLoading(false);
                 return;
             }
 
-            // Sucesso
             Alert.alert(
                 'Consulta Agendada!',
                 `Sua consulta foi agendada com sucesso para ${formatarData(day)} às ${selectedTime}.`,
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => {
-                            // Limpa os campos
-                            setDay('');
-                            setSelectedTime(null);
-                            // Navega de volta
-                            navigation.goBack();
-                        }
+                [{
+                    text: 'OK',
+                    onPress: () => {
+                        setDay('');
+                        setSelectedTime(null);
+                        navigation.goBack();
                     }
-                ]
+                }]
             );
         } catch (err) {
-            console.error('Erro inesperado:', err);
             Alert.alert('Erro', 'Ocorreu um erro inesperado. Por favor, tente novamente.');
         } finally {
             setLoading(false);
         }
     };
 
-    // Função auxiliar para formatar a data
     const formatarData = (dateString: string) => {
         const [year, month, day] = dateString.split('-');
         return `${day}/${month}/${year}`;
     };
 
-    // Função para cancelar
     const handleCancelar = () => {
         setDay('');
         setSelectedTime(null);
         navigation.goBack();
     };
 
-
     return (
         <View style={Agendamento_Styles.container}>
             <Top_Bar />
 
-            {/* --------------------------Calendário--------------------------*/}
-            <Text
-                style={{
-                    color: COLORS.azul_principal,
-                    paddingLeft: 10,
-                    fontSize: 20,
-                    alignSelf: 'flex-start',
-                    paddingTop: 10
-                }}
-            >
+            <Text style={{
+                color: COLORS.azul_principal,
+                paddingLeft: 10,
+                fontSize: 20,
+                alignSelf: 'flex-start',
+                paddingTop: 10
+            }}>
                 Selecione a data
             </Text>
 
@@ -179,26 +150,21 @@ export default function Agendamento() {
                 hideExtraDays
             />
 
-            {/* -----------------------Horários----------------------- */}
-            <View
-                style={{
-                    position: 'absolute',
-                    top: 500,
-                    left: 0,
-                    right: 0,
-                    alignItems: 'center',
+            <View style={{
+                position: 'absolute',
+                top: 500,
+                left: 0,
+                right: 0,
+                alignItems: 'center',
+                width: '100%',
+            }}>
+                <Text style={{
                     width: '100%',
-                }}
-            >
-                <Text
-                    style={{
-                        width: '100%',
-                        fontSize: 20,
-                        paddingLeft: 10,
-                        paddingBottom: 10,
-                        fontStyle: 'normal',
-                    }}
-                >
+                    fontSize: 20,
+                    paddingLeft: 10,
+                    paddingBottom: 10,
+                    fontStyle: 'normal',
+                }}>
                     Horários disponíveis
                 </Text>
 
@@ -210,8 +176,9 @@ export default function Agendamento() {
                                 style={[
                                     Agendamento_Styles.horarios,
                                     {
-                                        backgroundColor:
-                                            selectedTime === hora ? COLORS.azul_principal : 'transparent',
+                                        backgroundColor: selectedTime === hora 
+                                            ? COLORS.azul_principal 
+                                            : 'transparent',
                                     },
                                 ]}
                                 activeOpacity={0.7}
@@ -224,32 +191,27 @@ export default function Agendamento() {
                 </ScrollView>
             </View>
 
-            {/* --------------------Botões-------------------- */}
-            <View
-                style={{
-                    position: 'absolute',
-                    bottom: 10,
-                    alignItems: 'center',
-                    gap: 5,
-                }}
-            >
+            <View style={{
+                position: 'absolute',
+                bottom: 10,
+                alignItems: 'center',
+                gap: 5,
+            }}>
                 <TouchableOpacity 
                     activeOpacity={0.7}
                     onPress={handleAgendarConsulta}
                     disabled={loading || !day || !selectedTime}
                 >
-                    <View
-                        style={{
-                            backgroundColor: loading || !day || !selectedTime 
-                                ? COLORS.placeholder_text 
-                                : COLORS.azul_principal,
-                            width: 250,
-                            height: 40,
-                            borderRadius: 5,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
+                    <View style={{
+                        backgroundColor: loading || !day || !selectedTime 
+                            ? COLORS.placeholder_text 
+                            : COLORS.azul_principal,
+                        width: 250,
+                        height: 40,
+                        borderRadius: 5,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
                         <Text style={{ color: COLORS.branco, fontSize: 18, fontWeight: 'bold' }}>
                             {loading ? 'Agendando...' : 'Agendar Consulta'}
                         </Text>
@@ -261,16 +223,14 @@ export default function Agendamento() {
                     onPress={handleCancelar}
                     disabled={loading}
                 >
-                    <View
-                        style={{
-                            backgroundColor: COLORS.placeholder_text,
-                            width: 250,
-                            height: 40,
-                            alignItems: 'center',
-                            borderRadius: 5,
-                            justifyContent: 'center',
-                        }}
-                    >
+                    <View style={{
+                        backgroundColor: COLORS.placeholder_text,
+                        width: 250,
+                        height: 40,
+                        alignItems: 'center',
+                        borderRadius: 5,
+                        justifyContent: 'center',
+                    }}>
                         <Text style={{ color: COLORS.branco, fontSize: 18, fontWeight: 'bold' }}>
                             Cancelar
                         </Text>
