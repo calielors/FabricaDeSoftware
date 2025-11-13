@@ -17,29 +17,23 @@ export default function Login() {
     const navigation: any = useNavigation();
 
     async function handleLogin() {
-        // Basic validation
         if (!cpf || !password) {
             Alert.alert("Atenção", "Preencha CPF e senha!");
             return;
         }
 
-        // Ensure CPF is numeric and exactly 11 digits
         const cleanCpf = cpf.replace(/\D/g, '');
         if (cleanCpf.length !== 11) {
             Alert.alert("Atenção", "CPF inválido! Deve conter 11 dígitos.");
             return;
         }
 
-        // Map CPF to fake email for Supabase Auth
-        const authEmail = `${cleanCpf}@user.com`;
-
         try {
-            await signIn(authEmail, password);
-            console.log('[Login] signIn called for', authEmail);
+            await signIn(cleanCpf, password); // 👈 now just pass CPF
             Alert.alert("Login realizado", "Você está autenticado!");
         } catch (error: any) {
             console.error("Login failed:", error);
-            Alert.alert("Login inválido", "CPF ou senha incorretos.");
+            Alert.alert("Login inválido", error.message || "CPF ou senha incorretos.");
         }
     }
 

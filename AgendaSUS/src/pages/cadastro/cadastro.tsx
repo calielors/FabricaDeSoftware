@@ -7,9 +7,9 @@ import { Top_Bar } from "../../components/top_bar";
 import { useNavigation } from '@react-navigation/native';
 import { TextInput as PaperInput } from 'react-native-paper';
 import { formatCPF } from "../../components/format_cpf";
+import { supabase } from "../../services/supabase";
 
 export default function Cadastro() {
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6YmNsb2lzd3licWl3eXllamRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNDk0OTksImV4cCI6MjA3NDkyNTQ5OX0.DjCSY_BLtydN5Fv_ShOXtv1OApVYV69nHgc9UBwEBpA";
     const [username, setUsername] = useState("");
     const [cpf, setCpf] = useState("");
     const [email, setEmail] = useState("");
@@ -58,48 +58,30 @@ export default function Cadastro() {
         }
 
         try {
-            // Call Edge Function
-            const response = await fetch("https://szbcloiswybqiwyyejdj.supabase.co/functions/v1/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-                },
-                body: JSON.stringify({
-                    nome: username,
-                    cpf,
-                    password,
-                    email
-                }),
+            const { data, error } = await supabase.functions.invoke("register", {
+            body: {
+                nome: username,
+                cpf,
+                email,
+                password,
+            },
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-            // Prefer structured message, then details, then whole error object
-            const errObj = data?.error;
-            const userMessage =
-                errObj?.message ||
-                errObj?.details ||
-                (typeof errObj === "string" ? errObj : null) ||
-                data?.message ||
-                "Erro desconhecido";
-
-            console.error("Register failed response:", data);
-            Alert.alert("Erro no cadastro", userMessage);
+            if (error) {
+            console.error("Register failed:", error);
+            Alert.alert("Erro no cadastro", error.message || "Erro desconhecido");
             return;
             }
 
-
             Alert.alert(
-                "Sucesso",
-                `Cadastro realizado com sucesso! Você fará login com o CPF: ${cpf}`
+            "Sucesso",
+            `Cadastro realizado com sucesso! Você fará login com o CPF: ${cpf}`
             );
 
-            navigation.navigate('Login');
+            navigation.navigate("Login");
 
-        } catch (error: any) {
-            console.error("Erro no fetch:", error);
+        } catch (err) {
+            console.error("Erro no fetch:", err);
             Alert.alert("Erro", "Não foi possível realizar o cadastro.");
         }
     };
