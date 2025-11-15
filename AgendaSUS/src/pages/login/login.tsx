@@ -103,7 +103,7 @@ export default function Login() {
                             <Text style={{ color: COLORS.azul_principal }}>Entrar com o gov.br </Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Cadastro')}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CadastroStack')}>
                         <Text style={Login_Styles.links}>Primeiro acesso? Cadastre-se aqui</Text>
                     </TouchableOpacity>
                 </View>

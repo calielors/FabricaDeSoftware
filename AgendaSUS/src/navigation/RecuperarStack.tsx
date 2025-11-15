@@ -3,8 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Recuperar from '../pages/recuperarSenha/tela1/recuperar';
 import Validar from '../pages/recuperarSenha/tela2/validar';
 import Alterar from '../pages/recuperarSenha/tela3/alterar';
-import PerfilStack from './PerfilStack';
-
 const Stack = createNativeStackNavigator();
 
 export default function RecuperarStack() {

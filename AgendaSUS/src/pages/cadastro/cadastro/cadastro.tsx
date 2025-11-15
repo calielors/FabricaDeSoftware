@@ -1,13 +1,14 @@
-import React, { useState } from "react";
-import { View, Text, Platform, KeyboardAvoidingView, TouchableOpacity, Alert } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { CadastroStyles } from "./cadastro_styles";
-import { COLORS } from "../../assets/colors/colors";
+import { COLORS } from "../../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { Top_Bar } from "../../components/top_bar";
+import { Top_Bar } from "../../../components/top_bar";
 import { useNavigation } from '@react-navigation/native';
 import { TextInput as PaperInput } from 'react-native-paper';
-import { formatCPF } from "../../components/format_cpf";
-import { supabase } from "../../services/supabase";
+import { formatCPF } from "../../../components/format_cpf";
+import { supabase } from "../../../services/supabase";
+import { CadastroContext } from "../CadastroContext";
 
 export default function Cadastro() {
     const [username, setUsername] = useState("");
@@ -18,6 +19,7 @@ export default function Cadastro() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const navigation: any = useNavigation();
+    const { setCadastro } = useContext(CadastroContext);
 
     const validarCampos = async () => {
         // Validation
@@ -56,41 +58,17 @@ export default function Cadastro() {
             );
             setPassword(""); setConfirmPassword(""); return;
         }
+        
+        setCadastro({ username, cpf, email, password });//Salva os dados no localmente
+        Alert.alert("Código enviado", `Simulando envio de código para ${email}`);//Enviar o email com o código de validação
+        navigation.navigate("Validacao");//Salvar os dados apenas apos validar o código
 
-        try {
-            const { data, error } = await supabase.functions.invoke("register", {
-            body: {
-                nome: username,
-                cpf,
-                email,
-                password,
-            },
-            });
-
-            if (error) {
-            console.error("Register failed:", error);
-            Alert.alert("Erro no cadastro", error.message || "Erro desconhecido");
-            return;
-            }
-
-            Alert.alert(
-            "Sucesso",
-            `Cadastro realizado com sucesso! Você fará login com o CPF: ${cpf}`
-            );
-
-            navigation.navigate("Login");
-
-        } catch (err) {
-            console.error("Erro no fetch:", err);
-            Alert.alert("Erro", "Não foi possível realizar o cadastro.");
-        }
+     
     };
 
     return (
-        <KeyboardAvoidingView
+        <View
             style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
         >
             <View style={CadastroStyles.container}>
                 <Top_Bar />
@@ -172,7 +150,7 @@ export default function Cadastro() {
 
                 <View style={CadastroStyles.gov_box_container}>
                     <View style={CadastroStyles.gov_box}>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} activeOpacity={0.7}>
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} activeOpacity={0.7} onPress={() => Alert.alert("Work in progress!")}>
                             <Fontisto name="world" size={18} color={COLORS.azul_principal} />
                             <Text style={{ color: COLORS.azul_principal }}>Entrar com o gov.br </Text>
                         </TouchableOpacity>
@@ -182,6 +160,6 @@ export default function Cadastro() {
                     </TouchableOpacity>
                 </View>
             </View>
-        </KeyboardAvoidingView>
+        </View>
     );
 }
