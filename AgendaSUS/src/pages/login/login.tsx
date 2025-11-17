@@ -29,7 +29,7 @@ export default function Login() {
         }
 
         try {
-            await signIn(cleanCpf, password); // 👈 now just pass CPF
+            await signIn(cleanCpf, password);
             Alert.alert("Login realizado", "Você está autenticado!");
         } catch (error: any) {
             console.error("Login failed:", error);

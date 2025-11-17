@@ -7,7 +7,6 @@ import { Top_Bar } from "../../../components/top_bar";
 import { useNavigation } from '@react-navigation/native';
 import { TextInput as PaperInput } from 'react-native-paper';
 import { formatCPF } from "../../../components/format_cpf";
-import { supabase } from "../../../services/supabase";
 import { CadastroContext } from "../CadastroContext";
 
 export default function Cadastro() {

@@ -6,6 +6,7 @@ import { Top_Bar } from "../../../components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { CadastroContext } from "../CadastroContext";
+import { supabase } from "../../../services/supabase";
 
 export default function Validacao() {
   const [codigo, setCodigo] = useState("");
@@ -16,31 +17,46 @@ export default function Validacao() {
 
   const { username, cpf, email, password } = cadastro;
 
-  function handleProximo() {
+  async function handleProximo() {
     if (codigo.length !== 6) {
       Alert.alert("Atenção", "O código deve ter 6 dígitos.");
       return;
     }
 
-    // Simulando validação do código localmente
     if (codigo !== "123456") {
       Alert.alert("Código inválido", "O código informado está incorreto. Use 123456 para teste.");
       return;
     }
 
-    // Chamar o suapabase para criar o usuário
-    console.log("Cadastro finalizado:", cadastro);
+    try {
+      const { data, error } = await supabase.functions.invoke("register", {
+        body: {
+          nome: username,
+          cpf: cpf,
+          email: email,
+          password: password,
+        },
+      });
 
-    Alert.alert("Sucesso", "Conta criada com sucesso!" ,[
-     {
-      text: "OK",
-      onPress: () => {
-        navigation.getParent()?.navigate("Login");
-        clearCadastro(); 
-      },
-    },
-  ]);
+      if (error) {
+        Alert.alert("Erro", error.message || "Erro ao criar conta");
+        return;
+      }
+
+      Alert.alert("Sucesso", "Conta criada com sucesso!", [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.getParent()?.navigate("Login");
+            clearCadastro();
+          },
+        },
+      ]);
+    } catch (err) {
+      Alert.alert("Erro", "Falha ao conectar com o servidor.");
+    }
   }
+
 
   return (
     <View style={{ flex: 1 }}>
