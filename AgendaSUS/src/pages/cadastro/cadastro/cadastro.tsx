@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { TextInput as PaperInput } from 'react-native-paper';
 import { formatCPF } from "../../../components/format_cpf";
 import { CadastroContext } from "../CadastroContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Cadastro() {
     const [username, setUsername] = useState("");
@@ -66,9 +67,7 @@ export default function Cadastro() {
     };
 
     return (
-        <View
-            style={{ flex: 1 }}
-        >
+        <SafeAreaView style={{ flex: 1 }}>
             <View style={CadastroStyles.container}>
                 <Top_Bar />
                 <View style={CadastroStyles.cadastro_box}>
@@ -154,11 +153,11 @@ export default function Cadastro() {
                             <Text style={{ color: COLORS.azul_principal }}>Entrar com o gov.br </Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Login')}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.goBack()}>
                         <Text style={CadastroStyles.links}>Já tem uma conta? Acesse aqui!</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }

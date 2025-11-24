@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, Platform, KeyboardAvoidingView, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Login_Styles } from "./login_styles";
 import { COLORS } from "../../assets/colors/colors";
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -8,6 +8,9 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../contexts/AuthContext';
 import { TextInput as PaperInput } from 'react-native-paper';
 import { formatCPF } from "../../components/format_cpf";
+
+// IMPORTAÇÃO CORRETA!
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login() {
     const [cpf, setCpf] = useState("");
@@ -38,13 +41,11 @@ export default function Login() {
     }
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-        >
+        <SafeAreaView style={{ flex: 1 }}>
             <View style={Login_Styles.container}>
+
                 <Top_Bar />
+
                 <View style={Login_Styles.login_box}>
 
                     {/* CPF */}
@@ -85,29 +86,49 @@ export default function Login() {
                     />
 
                     {/* Login Button */}
-                    <TouchableOpacity style={Login_Styles.acessar} onPress={handleLogin} activeOpacity={0.7}>
+                    <TouchableOpacity
+                        style={Login_Styles.acessar}
+                        onPress={handleLogin}
+                        activeOpacity={0.7}
+                    >
                         <Text style={Login_Styles.acessar_text}>Acessar</Text>
                     </TouchableOpacity>
 
                     {/* Forgot password */}
-                    <TouchableOpacity onPress={() => navigation.navigate('Recuperar')} activeOpacity={0.7}>
-                        <Text style={Login_Styles.links}>Esqueci minha senha </Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Recuperar')}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={Login_Styles.links}>Esqueci minha senha</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* gov.br login & navigation to register */}
                 <View style={Login_Styles.gov_box_container}>
                     <View style={Login_Styles.gov_box}>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }} activeOpacity={0.7}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}
+                            activeOpacity={0.7}
+                        >
                             <Fontisto name="world" size={18} color={COLORS.azul_principal} />
-                            <Text style={{ color: COLORS.azul_principal }}>Entrar com o gov.br </Text>
+                            <Text style={{ color: COLORS.azul_principal }}>
+                                Entrar com o gov.br
+                            </Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('CadastroStack')}>
-                        <Text style={Login_Styles.links}>Primeiro acesso? Cadastre-se aqui</Text>
+
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => navigation.navigate('CadastroStack')}
+                        style={{paddingHorizontal: 50}}
+                    >
+                        <Text style={Login_Styles.links}>
+                            Primeiro acesso? Cadastre-se aqui
+                        </Text>
                     </TouchableOpacity>
                 </View>
+
             </View>
-        </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

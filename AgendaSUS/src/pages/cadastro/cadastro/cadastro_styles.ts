@@ -10,7 +10,7 @@ export const CadastroStyles = StyleSheet.create({
     },
     cadastro_box: {
         width: '90%',
-        height: '50%',
+        height: '55%',
         alignItems: 'center',
         gap: 15,
         justifyContent: 'center',
