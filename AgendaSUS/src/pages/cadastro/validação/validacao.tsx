@@ -13,34 +13,37 @@ export default function Validacao() {
   const navigation: any = useNavigation();
   const { cadastro, clearCadastro } = useContext(CadastroContext);
 
-  if (!cadastro) return null; 
+  if (!cadastro) return null;
 
   const { username, cpf, email, password } = cadastro;
 
+  function showError(message: string) {
+    Alert.alert("Erro", message);
+  }
+
   async function handleProximo() {
     if (codigo.length !== 6) {
-      Alert.alert("Atenção", "O código deve ter 6 dígitos.");
-      return;
+      return showError("O código deve ter 6 dígitos.");
     }
 
     if (codigo !== "123456") {
-      Alert.alert("Código inválido", "O código informado está incorreto. Use 123456 para teste.");
-      return;
+      return showError("O código informado está incorreto. Use 123456 para teste.");
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("register", {
+      const { data, error } = await supabase.functions.invoke("register-paciente", {
         body: {
           nome: username,
           cpf: cpf,
           email: email,
-          password: password,
+          senha: password,
         },
       });
-
       if (error) {
-        Alert.alert("Erro", error.message || "Erro ao criar conta");
-        return;
+        return showError(error.message || "Não foi possível criar a conta.");
+      }
+      if (data?.error) {
+        return showError(data.error || "Falha ao registrar usuário.");
       }
 
       Alert.alert("Sucesso", "Conta criada com sucesso!", [
@@ -52,11 +55,14 @@ export default function Validacao() {
           },
         },
       ]);
-    } catch (err) {
-      Alert.alert("Erro", "Falha ao conectar com o servidor.");
+    } catch (err: any) {
+      if (err?.message?.includes("fetch")) {
+        return showError("Falha de conexão. Verifique sua internet e tente novamente.");
+      }
+
+      return showError("Ocorreu um erro inesperado. Tente novamente.");
     }
   }
-
 
   return (
     <View style={{ flex: 1 }}>
@@ -89,12 +95,8 @@ export default function Validacao() {
           >
             <Text style={style.botao_text}>Concluir</Text>
           </TouchableOpacity>
-         
-          <TouchableOpacity
-            style={style.voltar}
-            //Funçao reenvio de e-mail
-            activeOpacity={0.7}
-          >
+
+          <TouchableOpacity style={style.voltar} activeOpacity={0.7}>
             <Text style={style.voltar_text}>Reenviar o e-mail</Text>
           </TouchableOpacity>
 
@@ -105,7 +107,6 @@ export default function Validacao() {
           >
             <Text style={style.voltar_text}>Alterar e-mail</Text>
           </TouchableOpacity>
-
         </View>
       </View>
     </View>

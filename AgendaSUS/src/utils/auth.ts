@@ -35,7 +35,10 @@ export async function restoreSession() {
     }
 
     console.log('[Auth] Session restored successfully.');
-    return data.session;
+    return {
+      session: data.session,
+      user: data.user
+    };
   } catch (err) {
     console.error('[Auth] Failed to restore session:', err);
     return null;

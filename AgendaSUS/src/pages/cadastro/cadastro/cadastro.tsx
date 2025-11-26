@@ -58,12 +58,12 @@ export default function Cadastro() {
             );
             setPassword(""); setConfirmPassword(""); return;
         }
-        
+
         setCadastro({ username, cpf, email, password });//Salva os dados no localmente
         Alert.alert("Código enviado", `Simulando envio de código para ${email}`);//Enviar o email com o código de validação
         navigation.navigate("Validacao");//Salvar os dados apenas apos validar o código
 
-     
+
     };
 
     return (
@@ -123,7 +123,14 @@ export default function Cadastro() {
                         style={CadastroStyles.inputs}
                         theme={{ roundness: 30 }}
                         secureTextEntry={!passwordVisible}
-                        right={<PaperInput.Icon icon={passwordVisible ? "eye" : "eye-off"} onPress={() => setPasswordVisible(!passwordVisible)} />}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        right={
+                            <PaperInput.Icon
+                                icon={passwordVisible ? "eye" : "eye-off"}
+                                onPress={() => setPasswordVisible(!passwordVisible)}
+                            />
+                        }
                     />
 
                     {/* Confirmação da senha */}
@@ -138,7 +145,14 @@ export default function Cadastro() {
                         style={CadastroStyles.inputs}
                         theme={{ roundness: 30 }}
                         secureTextEntry={!confirmPasswordVisible}
-                        right={<PaperInput.Icon icon={confirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        right={
+                            <PaperInput.Icon
+                                icon={confirmPasswordVisible ? "eye" : "eye-off"}
+                                onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+                            />
+                        }
                     />
 
                     <TouchableOpacity style={CadastroStyles.criar} activeOpacity={0.7} onPress={validarCampos}>
