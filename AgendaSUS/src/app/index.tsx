@@ -1,22 +1,29 @@
-import Login from "../pages/login/login";
-import React, { useContext } from "react";
-import TabNavigator from "../navigation/TabNavigator";
-import { AuthProvider, AuthContext } from "../contexts/AuthContext";
-import AuthStack from '../navigation/AuthStack';
+import { useContext, useEffect } from "react";
+import { Slot, useRouter } from "expo-router";
+import { AuthContext } from "../contexts/AuthContext";
+import { ActivityIndicator, View } from "react-native";
 
-function Root() {
-  const auth: any = useContext(AuthContext as any);
-  const { logged, loading } = auth || { logged: false, loading: true };
+export default function Index() {
+  const { logged, loading } = useContext(AuthContext);
+  const router = useRouter();
 
-  if (loading) return null;
+  useEffect(() => {
+    if (!loading) {
+      if (!logged) {
+        router.replace("/auth/login");
+      } else {
+        router.replace("/home/home");
+      }
+    }
+  }, [loading, logged]);
 
-  return logged ? <TabNavigator /> : <AuthStack />;
-}
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
-export default function HomePage() {
-  return (
-    <AuthProvider>
-      <Root />
-    </AuthProvider>
-  );
+  return null;
 }

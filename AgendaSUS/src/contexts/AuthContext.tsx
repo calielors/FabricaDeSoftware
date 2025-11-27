@@ -7,6 +7,8 @@ type User = {
   email: string;
   nome: string;
   cpf?: string;
+  nascimento?: string;
+  unidade?: string;
 };
 
 type AuthContextType = {
@@ -30,11 +32,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
-  // Restore session
   useEffect(() => {
     async function init() {
       try {
         const restored = await Auth.restoreSession();
+        console.log("[Auth] restored session:", restored);
 
         if (restored?.user) {
           const u = restored.user;
@@ -44,12 +46,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: u.email ?? "",
             nome: u.user_metadata?.display_name ?? "",
             cpf: u.user_metadata?.cpf,
+            nascimento: u.user_metadata?.nascimento,
+            unidade: u.user_metadata?.unidade,
           });
 
           setLogged(true);
+        } else {
+          setLogged(false);
+          setUser(null);
         }
       } catch (err) {
         console.error("[Auth] Session restore failed:", err);
+        setLogged(false);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -58,7 +67,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     init();
   }, []);
 
-  // Login
   async function signIn(cpf: string, password: string) {
     try {
       const { data, error } = await supabase.functions.invoke(
@@ -71,9 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const { session, user } = data;
 
-      if (!session?.access_token) {
-        throw new Error("Falha ao criar sessão.");
-      }
+      if (!session?.access_token) throw new Error("Falha ao criar sessão.");
 
       await supabase.auth.setSession(session);
       await Auth.saveSession(session, user?.email ?? "");
@@ -87,11 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setLogged(true);
     } catch (err: any) {
+      console.error("[Auth] signIn error:", err);
       setLogged(false);
       setUser(null);
-      throw new Error(
-        err?.message || "Não foi possível realizar o login."
-      );
+      throw new Error(err?.message || "Não foi possível realizar o login.");
     }
   }
 
