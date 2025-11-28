@@ -4,11 +4,11 @@ import { Home_Styles } from "../../styles/home_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { AuthContext } from '../../contexts/AuthContext';
-import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../services/consultas';
+import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useRouter, useFocusEffect } from "expo-router";
+import { AuthContext } from "../../contexts/AuthContext";
+import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../services/consultas";
 
 interface Consulta {
     data: string;
@@ -19,16 +19,16 @@ interface Consulta {
 }
 
 export default function Home() {
-    const navigation: any = useNavigation();
+    const router = useRouter();
     const { user } = useContext(AuthContext);
 
     const dataAtual = (() => {
         const hoje = new Date();
-        const dataFormatada = hoje.toLocaleDateString('pt-BR', {
-            weekday: 'long',
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
+        const dataFormatada = hoje.toLocaleDateString("pt-BR", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
         });
         return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
     })();
@@ -50,48 +50,55 @@ export default function Home() {
 
         try {
             const { data: paciente } = await buscarPacientePorAuthId(user.id);
-            
+
             if (!paciente) {
                 setLoading(false);
                 return;
             }
 
             const { data: consultas } = await buscarConsultasPaciente(paciente.id);
-            
+
             if (consultas && consultas.length > 0) {
                 const agora = new Date();
-                
+
                 const proximaConsulta = consultas
-                    .filter(c => {
+                    .filter((c) => {
                         const dataConsulta = new Date(c.data_hora);
-                        return dataConsulta >= agora && c.status === 'agendada';
+                        return dataConsulta >= agora && c.status === "agendada";
                     })
-                    .sort((a, b) => {
-                        return new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime();
-                    })[0];
+                    .sort(
+                        (a, b) =>
+                            new Date(a.data_hora).getTime() -
+                            new Date(b.data_hora).getTime()
+                    )[0];
 
                 if (proximaConsulta) {
-                    const [dataParte, horaParte] = proximaConsulta.data_hora.split('T');
-                    const [ano, mes, dia] = dataParte.split('-');
+                    const [dataParte] = proximaConsulta.data_hora.split("T");
+                    const [ano, mes, dia] = dataParte.split("-");
                     const dataFormatada = `${dia}/${mes}/${ano}`;
-                    
+
                     const dataHora = new Date(proximaConsulta.data_hora);
-                    const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                    
-                    // Busca o nome da unidade do objeto retornado pelo JOIN
-                    let nomeUnidade = 'UBS';
-                    if (proximaConsulta.unidade_saude && typeof proximaConsulta.unidade_saude === 'object') {
+                    const hora = dataHora.toLocaleTimeString("pt-BR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    });
+
+                    let nomeUnidade = "UBS";
+                    if (proximaConsulta.unidade_saude && typeof proximaConsulta.unidade_saude === "object") {
                         nomeUnidade = proximaConsulta.unidade_saude.nome;
-                    } else if (typeof proximaConsulta.unidade_saude === 'string') {
+                    } else if (typeof proximaConsulta.unidade_saude === "string") {
                         nomeUnidade = proximaConsulta.unidade_saude;
                     }
-                    
+
                     setConsulta({
                         data: dataFormatada,
-                        hora: hora + 'H',
-                        especialidade: proximaConsulta.especialidade || 'Consulta Médica',
+                        hora: hora + "H",
+                        especialidade: proximaConsulta.especialidade || "Consulta Médica",
                         local: nomeUnidade,
-                        status: proximaConsulta.status === 'agendada' ? 'Confirmada' : proximaConsulta.status || 'Agendada',
+                        status:
+                            proximaConsulta.status === "agendada"
+                                ? "Confirmada"
+                                : proximaConsulta.status || "Agendada",
                     });
                 }
             }
@@ -114,7 +121,7 @@ export default function Home() {
                 {loading ? (
                     <View style={Home_Styles.consulta_box}>
                         <ActivityIndicator size="large" color={COLORS.azul_principal} />
-                        <Text style={{ textAlign: 'center', marginTop: 10, color: COLORS.preto }}>
+                        <Text style={{ textAlign: "center", marginTop: 10, color: COLORS.preto }}>
                             Carregando consultas...
                         </Text>
                     </View>
@@ -148,7 +155,7 @@ export default function Home() {
                 ) : (
                     <View style={Home_Styles.consulta_box}>
                         <Text style={Home_Styles.consulta_titulo}>Nenhuma consulta agendada</Text>
-                        <Text style={{ textAlign: 'center', marginTop: 10, color: COLORS.placeholder_text }}>
+                        <Text style={{ textAlign: "center", marginTop: 10, color: COLORS.placeholder_text }}>
                             Você não tem consultas futuras. Agende uma nova consulta!
                         </Text>
                     </View>
@@ -158,22 +165,38 @@ export default function Home() {
                 <Text style={Home_Styles.servicos_titulo}>Serviços</Text>
 
                 <View style={Home_Styles.servicos_container}>
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Agendar')}>
+                    <TouchableOpacity
+                        style={Home_Styles.servico_item}
+                        activeOpacity={0.7}
+                        onPress={() => router.push("./agendar")}
+                    >
                         <FontAwesome6 name="calendar-plus" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Agendar consulta</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Consultas')}>
+                    <TouchableOpacity
+                        style={Home_Styles.servico_item}
+                        activeOpacity={0.7}
+                        onPress={() => router.push("./consultas")}
+                    >
                         <AntDesign name="bars" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Minhas consultas</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Medicamentos')}>
+                    <TouchableOpacity
+                        style={Home_Styles.servico_item}
+                        activeOpacity={0.7}
+                        onPress={() => router.push("./medicamentos")}
+                    >
                         <FontAwesome5 name="pills" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Medicamentos</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Home_Styles.servico_item} activeOpacity={0.7} onPress={() => navigation.navigate('Historico')}>
+                    <TouchableOpacity
+                        style={Home_Styles.servico_item}
+                        activeOpacity={0.7}
+                        onPress={() => router.push("./historico")}
+                    >
                         <FontAwesome5 name="file-medical" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Meu histórico</Text>
                     </TouchableOpacity>

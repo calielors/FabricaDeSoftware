@@ -1,65 +1,57 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Validacao_Styles as style } from "../../styles/validacao_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
 import { CadastroContext } from "../../contexts/CadastroContext";
 import { supabase } from "../../services/supabase";
+import { useRouter } from "expo-router";
 
 export default function Validacao() {
   const [codigo, setCodigo] = useState("");
-  const navigation: any = useNavigation();
   const { cadastro, clearCadastro } = useContext(CadastroContext);
+  const router = useRouter();
 
-  if (!cadastro) return null;
+  if (!cadastro) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Carregando...</Text>
+      </View>
+    );
+  }
 
   const { username, cpf, email, password } = cadastro;
 
   function showError(message: string) {
+    console.error("[Validacao] showError:", message);
     Alert.alert("Erro", message);
   }
 
   async function handleProximo() {
-    if (codigo.length !== 6) {
-      return showError("O código deve ter 6 dígitos.");
-    }
 
-    if (codigo !== "123456") {
-      return showError("O código informado está incorreto. Use 123456 para teste.");
-    }
+    if (codigo.length !== 6) return showError("O código deve ter 6 dígitos.");
+    if (codigo !== "123456") return showError("O código informado está incorreto. Use 123456 para teste.");
 
     try {
       const { data, error } = await supabase.functions.invoke("register-paciente", {
-        body: {
-          nome: username,
-          cpf: cpf,
-          email: email,
-          senha: password,
-        },
+        body: { nome: username, cpf, email, senha: password },
       });
-      if (error) {
-        return showError(error.message || "Não foi possível criar a conta.");
-      }
-      if (data?.error) {
-        return showError(data.error || "Falha ao registrar usuário.");
-      }
+
+      if (error || data?.error) return showError(error?.message || data?.error || "Falha ao registrar usuário.");
 
       Alert.alert("Sucesso", "Conta criada com sucesso!", [
         {
           text: "OK",
           onPress: () => {
-            navigation.getParent()?.navigate("Login");
+            router.replace("/auth/login");
             clearCadastro();
           },
         },
       ]);
     } catch (err: any) {
-      if (err?.message?.includes("fetch")) {
-        return showError("Falha de conexão. Verifique sua internet e tente novamente.");
-      }
-
+      console.error("[Validacao] handleProximo catch error:", err);
+      if (err?.message?.includes("fetch")) return showError("Falha de conexão. Verifique sua internet e tente novamente.");
       return showError("Ocorreu um erro inesperado. Tente novamente.");
     }
   }
@@ -78,9 +70,9 @@ export default function Validacao() {
           <PaperInput
             mode="outlined"
             value={codigo}
-            onChangeText={(text) =>
-              setCodigo(text.replace(/\D/g, "").slice(0, 6))
-            }
+            onChangeText={(text) => {
+              setCodigo(text.replace(/\D/g, "").slice(0, 6));
+            }}
             placeholder="Digite o código"
             keyboardType="numeric"
             activeOutlineColor={COLORS.azul_principal}
@@ -102,7 +94,9 @@ export default function Validacao() {
 
           <TouchableOpacity
             style={style.voltar}
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              router.back();
+            }}
             activeOpacity={0.7}
           >
             <Text style={style.voltar_text}>Alterar e-mail</Text>

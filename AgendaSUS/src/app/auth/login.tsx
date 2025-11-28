@@ -1,4 +1,3 @@
-// src/app/auth/login.tsx
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Login_Styles } from "../../styles/login_styles";
@@ -33,7 +32,6 @@ export default function Login() {
 
     try {
       await signIn(cleanCpf, password);
-      // After login, redirect to main page
       router.replace("/home/home");
     } catch (error: any) {
       Alert.alert("Erro ao entrar", error.message || "CPF ou senha incorretos.");
@@ -47,8 +45,6 @@ export default function Login() {
         <Top_Bar />
 
         <View style={Login_Styles.login_box}>
-
-          {/* CPF */}
           <Text style={Login_Styles.textos}>CPF</Text>
           <PaperInput
             mode="outlined"
@@ -62,7 +58,6 @@ export default function Login() {
             theme={{ roundness: 30 }}
           />
 
-          {/* SENHA */}
           <Text style={Login_Styles.textos}>Senha</Text>
           <PaperInput
             mode="outlined"
@@ -82,7 +77,6 @@ export default function Login() {
             }
           />
 
-          {/* BOTÃO */}
           <TouchableOpacity
             style={Login_Styles.acessar}
             onPress={handleLogin}
@@ -99,7 +93,6 @@ export default function Login() {
           </TouchableOpacity>
         </View>
 
-        {/* GOV BR */}
         <View style={Login_Styles.gov_box_container}>
           <View style={Login_Styles.gov_box}>
             <TouchableOpacity
@@ -127,7 +120,6 @@ export default function Login() {
             </Text>
           </TouchableOpacity>
         </View>
-
       </View>
     </SafeAreaView>
   );

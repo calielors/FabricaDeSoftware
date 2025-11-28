@@ -14,7 +14,6 @@ export async function saveSession(session: any, username?: string) {
       await AsyncStorage.setItem(USERNAME_KEY, username);
     }
 
-    console.log('[Auth] Session saved to storage.');
   } catch (err) {
     console.error('[Auth] Failed to save session:', err);
   }
@@ -34,7 +33,6 @@ export async function restoreSession() {
       return null;
     }
 
-    console.log('[Auth] Session restored successfully.');
     return {
       session: data.session,
       user: data.user
@@ -56,7 +54,6 @@ export async function clearSession() {
     await AsyncStorage.removeItem(SESSION_KEY);
     await AsyncStorage.removeItem(USERNAME_KEY);
     await supabase.auth.signOut();
-    console.log('[Auth] Session cleared.');
   } catch (err) {
     console.error('[Auth] Failed to clear session:', err);
   }

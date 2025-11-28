@@ -5,10 +5,10 @@ import { COLORS } from "../assets/colors/colors";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { Perfil_Styles } from "./perfil_styles";
 import { AuthContext } from "../contexts/AuthContext";
-import { useNavigation } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function Perfil() {
-    const navigation: any = useNavigation();
+    const router = useRouter();
     const { signOut, user } = useContext(AuthContext);
     const [notificacoes, setNotificacoes] = useState(true);
     const [temaEscuro, setTemaEscuro] = useState(false);
@@ -101,7 +101,7 @@ export default function Perfil() {
 
                 {/* Segurança */}
                 <Card titulo="Segurança">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => navigation.navigate('RecuperarStack')}>
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/recuperarSenha/recuperar')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="lock" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Alterar Senha</Text>

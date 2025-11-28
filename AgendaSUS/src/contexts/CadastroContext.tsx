@@ -1,4 +1,3 @@
-// CadastroContext.tsx
 import React, { createContext, useState, ReactNode } from "react";
 
 type CadastroData = {

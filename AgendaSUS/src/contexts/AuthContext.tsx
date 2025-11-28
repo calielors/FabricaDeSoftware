@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "../services/supabase";
 import * as Auth from "../utils/auth";
+import { useRouter } from "expo-router";
 
 type User = {
   id: string;
@@ -31,12 +32,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [logged, setLogged] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function init() {
       try {
         const restored = await Auth.restoreSession();
-        console.log("[Auth] restored session:", restored);
 
         if (restored?.user) {
           const u = restored.user;
@@ -104,6 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await Auth.clearSession();
     setLogged(false);
     setUser(null);
+    router.replace("/auth/login");
   }
 
   return (
