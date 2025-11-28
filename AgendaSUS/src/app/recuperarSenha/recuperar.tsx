@@ -12,7 +12,7 @@ import { Recuperar_Styles } from "../../styles/recuperar_styles";
 import { COLORS } from "../../assets/colors/colors";
 import { Top_Bar } from "../../components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import BarraProgresso from "../../components/barra_progresso";
 import { formatCPF } from "../../components/format_cpf";
 import { supabase } from "../../services/supabase";
@@ -105,7 +105,7 @@ export default function Recuperar() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => router.replace("/auth/login")}
             activeOpacity={0.7}
           >
             <Text style={Recuperar_Styles.link}>Voltar</Text>

@@ -187,7 +187,7 @@ export default function Consultas() {
                         }
                         style={styles.listContainer}
                     />
-                )}                
+                )}
                 
                 <Modal isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
                     <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
