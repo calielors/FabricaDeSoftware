@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { Top_Bar } from '../../components/top_bar';
-import { COLORS } from '../../assets/colors/colors';
-import { Consultas_Styles as styles } from '../../styles/consultas_styles';
+import { Top_Bar } from '../../src/components/top_bar';
+import { COLORS } from '../../src/assets/colors/colors';
+import { Consultas_Styles as styles } from '../../src/styles/consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
-import { AuthContext } from '../../contexts/AuthContext';
-import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } from '../../services/consultas';
+import { AuthContext } from '../../src/contexts/AuthContext';
+import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } from '../../src/services/consultas';
 import { useFocusEffect } from '@react-navigation/native';
 
 type Consulta = {
@@ -58,7 +58,6 @@ export default function Consultas() {
             }
 
             const { data: consultas, error: erroConsultas } = await buscarConsultasPaciente(paciente.id);
-            
             if (erroConsultas) {
                 setError('Erro ao carregar consultas');
                 setLoading(false);

@@ -107,8 +107,8 @@ export async function buscarConsultasPaciente(pacienteId: number): Promise<{ dat
         `)
         .eq('paciente_id', pacienteId)
         .order('data_hora', { ascending: true });
-
     return { data, error };
+
 }
 
 /**
@@ -121,7 +121,6 @@ export async function cancelarConsulta(consultaId: number): Promise<{ data: Cons
         .eq('id', consultaId)
         .select()
         .single();
-
     return { data, error };
 }
 

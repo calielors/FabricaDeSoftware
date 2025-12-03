@@ -50,7 +50,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             nascimento: u.user_metadata?.nascimento,
             unidade: u.user_metadata?.unidade,
           });
-
           setLogged(true);
         } else {
           setLogged(false);

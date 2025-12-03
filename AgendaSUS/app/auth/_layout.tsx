@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import React from "react";
-import { CadastroProvider } from "../../contexts/CadastroContext";
+import { CadastroProvider } from "../../src/contexts/CadastroContext";
 
 export default function AuthLayout() {
   return (

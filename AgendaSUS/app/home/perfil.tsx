@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Switch } from "react-native";
-import { Top_Bar } from "../components/top_bar";
-import { COLORS } from "../assets/colors/colors";
+import { Top_Bar } from "../../src/components/top_bar";
+import { COLORS } from "../../src/assets/colors/colors";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
-import { Perfil_Styles } from "./perfil_styles";
-import { AuthContext } from "../contexts/AuthContext";
+import { Perfil_Styles } from "../../src/styles/perfil_styles";
+import { AuthContext } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 
 export default function Perfil() {

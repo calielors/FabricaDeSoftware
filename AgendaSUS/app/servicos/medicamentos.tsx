@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { COLORS } from '../../assets/colors/colors';
-import { Top_Bar } from '../../components/top_bar';
-import { Medicamentos_Styles as styles } from '../../styles/medicamentos_styles';
-import { CampoPesquisa } from '../../components/campo_pesquisa';
-import { supabase } from '../../services/supabase';
+import { COLORS } from '../../src/assets/colors/colors';
+import { Top_Bar } from '../../src/components/top_bar';
+import { Medicamentos_Styles as styles } from '../../src/styles/medicamentos_styles';
+import { CampoPesquisa } from '../../src/components/campo_pesquisa';
+import { supabase } from '../../src/services/supabase';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 type Medicamento = {
   id: string;
@@ -42,13 +42,13 @@ export default function Medicamentos() {
         .order('id_medicamento');
 
       if (error) {
-        console.log('Supabase error:', error);
+        console.error('Supabase error:', error);
         setData([]);
       } else if (fetchedData) {
         const mappedData: Medicamento[] = fetchedData.map((item: any, index: number) => ({
-          id: `${item.id_medicamento}-${index}`, // ensure unique key
+          id: `${item.id_medicamento}-${index}`,
           name: item.medicamento.nome,
-          dose_mg: `${item.medicamento.dose_mg}mg`, // this is dosage
+          dose_mg: `${item.medicamento.dose_mg}mg`,
           quantidade: item.unidades_disponiveis,
           hospital: item.unidade_saude?.nome || 'Desconhecido',
         }));
@@ -95,7 +95,7 @@ export default function Medicamentos() {
 
       <FlatList
         data={results.length > 0 ? results : data}
-        keyExtractor={(item) => item.id} // IDs are unique now
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           const disponivel = item.quantidade && item.quantidade > 0;
 

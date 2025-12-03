@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Validacao_Styles as style } from "../../styles/validacao_styles";
-import { COLORS } from "../../assets/colors/colors";
-import { Top_Bar } from "../../components/top_bar";
+import { Validacao_Styles as style } from "../../src/styles/validacao_styles";
+import { COLORS } from "../../src/assets/colors/colors";
+import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
-import { CadastroContext } from "../../contexts/CadastroContext";
-import { supabase } from "../../services/supabase";
+import { CadastroContext } from "../../src/contexts/CadastroContext";
+import { supabase } from "../../src/services/supabase";
 import { useRouter } from "expo-router";
 
 export default function Validacao() {

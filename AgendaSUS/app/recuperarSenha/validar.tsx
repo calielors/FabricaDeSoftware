@@ -8,11 +8,11 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { Validar_Styles as style } from "../../styles/validar_styles";
-import { Top_Bar } from "../../components/top_bar";
+import { Validar_Styles as style } from "../../src/styles/validar_styles";
+import { Top_Bar } from "../../src/components/top_bar";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import BarraProgresso from "../../components/barra_progresso";
-import { supabase } from "../../services/supabase";
+import BarraProgresso from "../../src/components/barra_progresso";
+import { supabase } from "../../src/services/supabase";
 
 export default function Validar() {
   const router = useRouter();

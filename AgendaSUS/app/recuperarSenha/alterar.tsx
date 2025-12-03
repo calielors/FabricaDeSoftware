@@ -9,13 +9,13 @@ import {
   Platform,
 } from "react-native";
 import * as Linking from "expo-linking";
-import { Alterar_Styles as styles } from "../../styles/alterar_styles";
-import { COLORS } from "../../assets/colors/colors";
-import { Top_Bar } from "../../components/top_bar";
+import { Alterar_Styles as styles } from "../../src/styles/alterar_styles";
+import { COLORS } from "../../src/assets/colors/colors";
+import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useRouter } from "expo-router";
-import BarraProgresso from "../../components/barra_progresso";
-import { supabase } from "../../services/supabase";
+import BarraProgresso from "../../src/components/barra_progresso";
+import { supabase } from "../../src/services/supabase";
 
 export default function Alterar() {
   const router = useRouter();
@@ -31,7 +31,6 @@ export default function Alterar() {
     const initPasswordRecovery = async () => {
       try {
         const initialUrl = await Linking.getInitialURL();
-        console.log("[DEBUG] initialUrl:", initialUrl);
 
         if (!initialUrl) {
           Alert.alert("Erro", "Link de recuperação inválido ou expirado.");
@@ -51,7 +50,6 @@ export default function Alterar() {
           return;
         }
 
-        console.log("[DEBUG] Setting Supabase session with tokens");
         const { error } = await supabase.auth.setSession({ access_token, refresh_token });
 
         if (error) {
@@ -61,7 +59,6 @@ export default function Alterar() {
           return;
         }
 
-        console.log("[DEBUG] Session set successfully, showing password form");
         setReady(true);
       } catch (err) {
         console.error("[ERROR] initPasswordRecovery failed:", err);

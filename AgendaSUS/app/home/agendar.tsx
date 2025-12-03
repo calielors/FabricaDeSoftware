@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, FlatList } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import { Agendamento_Styles } from "../../styles/agendamento_styles";
-import { COLORS } from "../../assets/colors/colors";
-import { Top_Bar } from "../../components/top_bar";
+import { Agendamento_Styles } from "../../src/styles/agendamento_styles";
+import { COLORS } from "../../src/assets/colors/colors";
+import { Top_Bar } from "../../src/components/top_bar";
 import { Calendar } from "react-native-calendars";
-import { AuthContext } from "../../contexts/AuthContext";
-import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, buscarUnidadesSaude, UnidadeSaude } from "../../services/consultas";
+import { AuthContext } from "../../src/contexts/AuthContext";
+import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, buscarUnidadesSaude, UnidadeSaude } from "../../src/services/consultas";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import Modal from "react-native-modal";
 
@@ -19,7 +19,7 @@ export default function Agendamento() {
     const [modalVisible, setModalVisible] = useState(false);
     const [unidades, setUnidades] = useState<UnidadeSaude[]>([]);
     const [loadingUnidades, setLoadingUnidades] = useState(false);
-    
+
     const { user } = useContext(AuthContext);
     const navigation = useNavigation();
     const route = useRoute();
@@ -29,14 +29,13 @@ export default function Agendamento() {
         '10:00', '10:30', '11:00', '11:30',
         '12:00', '12:30', '13:00', '13:30',
         '14:00', '14:30', '15:00', '15:30',
-        '16:00', '16:30', '17:00', '17:30',
-        '18:00', '18:30', '19:00', '19:30'
+        '16:00', '16:30', '17:00', '17:30'
     ];
 
     useFocusEffect(
         React.useCallback(() => {
             const params = route.params as { unidadeSelecionada?: UnidadeSaude };
-            
+
             if (params?.unidadeSelecionada) {
                 // Veio unidade por parâmetro da home
                 setUnidadeSelecionada(params.unidadeSelecionada);
@@ -48,7 +47,7 @@ export default function Agendamento() {
                 setDay('');
                 setSelectedTime(null);
                 setHorariosDisponiveis([]);
-                
+
                 // Pequeno delay para garantir que a tela foi montada
                 setTimeout(() => {
                     abrirModalUnidades();
@@ -71,31 +70,45 @@ export default function Agendamento() {
         if (!day) return;
 
         setLoadingHorarios(true);
-        
+
         const horariosOcupados = await buscarHorariosOcupados(day, unidadeSelecionada?.id);
-        
-        const disponiveis = todosHorarios.filter(horario => !horariosOcupados.includes(horario));
-        
+
+        // Filtrar horários ocupados
+        let disponiveis = todosHorarios.filter(horario => !horariosOcupados.includes(horario));
+
+        const now = new Date();
+        if (day === today) {
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            disponiveis = disponiveis.filter(horario => {
+                const [h, m] = horario.split(":").map(Number);
+                const horarioMin = h * 60 + m;
+                return horarioMin > currentMinutes;
+            });
+        }
+
         setHorariosDisponiveis(disponiveis);
         setLoadingHorarios(false);
-        
+
+        // Se o horário selecionado ficou indisponível, limpar
         if (selectedTime && horariosOcupados.includes(selectedTime)) {
             setSelectedTime(null);
         }
     };
 
+
     const abrirModalUnidades = async () => {
         setModalVisible(true);
         setLoadingUnidades(true);
-        
+
         const { data } = await buscarUnidadesSaude();
-        
+
         if (data) {
             setUnidades(data);
         } else {
             setUnidades([]);
         }
-        
+
         setLoadingUnidades(false);
     };
 
@@ -127,7 +140,6 @@ export default function Agendamento() {
     };
 
     const today = new Date().toISOString().split('T')[0];
-
     const handleAgendarConsulta = async () => {
         if (!user) {
             Alert.alert('Erro', 'Você precisa estar logado para agendar uma consulta');
@@ -158,7 +170,7 @@ export default function Agendamento() {
 
         try {
             const { data: paciente, error: erroPaciente } = await buscarPacientePorAuthId(user.id);
-            
+
             if (erroPaciente || !paciente) {
                 Alert.alert('Erro', 'Não foi possível encontrar seus dados de paciente. Por favor, complete seu cadastro.');
                 setLoading(false);
@@ -214,16 +226,16 @@ export default function Agendamento() {
     return (
         <View style={Agendamento_Styles.container}>
             <Top_Bar />
-            
-            <ScrollView 
+
+            <ScrollView
                 style={{ flex: 1, width: '100%' }}
                 contentContainerStyle={{ paddingBottom: 120 }}
                 showsVerticalScrollIndicator={false}
             >
                 {unidadeSelecionada && (
-                    <View style={{ 
-                        backgroundColor: COLORS.azul_principal, 
-                        padding: 10, 
+                    <View style={{
+                        backgroundColor: COLORS.azul_principal,
+                        padding: 10,
                         marginHorizontal: 10,
                         marginTop: 10,
                         marginBottom: 5,
@@ -245,13 +257,13 @@ export default function Agendamento() {
                                 </Text>
                             )}
                         </View>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             onPress={abrirModalUnidades}
-                            style={{ 
-                                backgroundColor: COLORS.branco, 
-                                paddingHorizontal: 12, 
-                                paddingVertical: 6, 
-                                borderRadius: 5 
+                            style={{
+                                backgroundColor: COLORS.branco,
+                                paddingHorizontal: 12,
+                                paddingVertical: 6,
+                                borderRadius: 5
                             }}
                         >
                             <Text style={{ color: COLORS.azul_principal, fontSize: 12, fontWeight: 'bold' }}>
@@ -301,7 +313,7 @@ export default function Agendamento() {
                     disableAllTouchEventsForDisabledDays
                     enableSwipeMonths
                     onDayPress={(day) => setDay(day.dateString)}
-                    minDate={new Date().toDateString()}
+                    minDate={today}
                     hideExtraDays
                 />
 
@@ -345,8 +357,8 @@ export default function Agendamento() {
                                     style={[
                                         Agendamento_Styles.horarios,
                                         {
-                                            backgroundColor: selectedTime === hora 
-                                                ? COLORS.azul_principal 
+                                            backgroundColor: selectedTime === hora
+                                                ? COLORS.azul_principal
                                                 : 'transparent',
                                         },
                                     ]}
@@ -373,14 +385,14 @@ export default function Agendamento() {
                 borderTopColor: COLORS.placeholder_text,
                 gap: 8,
             }}>
-                <TouchableOpacity 
+                <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={handleAgendarConsulta}
                     disabled={loading || !day || !selectedTime}
                 >
                     <View style={{
-                        backgroundColor: loading || !day || !selectedTime 
-                            ? COLORS.placeholder_text 
+                        backgroundColor: loading || !day || !selectedTime
+                            ? COLORS.placeholder_text
                             : COLORS.azul_principal,
                         width: '100%',
                         height: 45,
@@ -394,7 +406,7 @@ export default function Agendamento() {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={handleCancelar}
                     disabled={loading}
@@ -416,8 +428,8 @@ export default function Agendamento() {
                 </TouchableOpacity>
             </View>
 
-            <Modal 
-                isVisible={modalVisible} 
+            <Modal
+                isVisible={modalVisible}
                 onBackdropPress={fecharModalSemSelecionar}
                 onBackButtonPress={fecharModalSemSelecionar}
             >
@@ -425,7 +437,7 @@ export default function Agendamento() {
                     <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 15, color: COLORS.azul_principal }}>
                         Selecione a Unidade de Saúde
                     </Text>
-                    
+
                     {loadingUnidades ? (
                         <View style={{ padding: 20, alignItems: 'center' }}>
                             <ActivityIndicator size="large" color={COLORS.azul_principal} />
@@ -461,7 +473,7 @@ export default function Agendamento() {
                             }
                         />
                     )}
-                    
+
                     <TouchableOpacity
                         style={{
                             backgroundColor: COLORS.vermelho,

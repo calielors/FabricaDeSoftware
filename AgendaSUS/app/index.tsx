@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useRouter } from "expo-router";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../src/contexts/AuthContext";
 import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
@@ -12,7 +12,7 @@ export default function Index() {
       if (!logged) {
         router.replace("/auth/login");
       } else {
-        router.replace("/home/home");
+        router.replace("/home");
       }
     }
   }, [loading, logged]);

@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { Top_Bar } from '../../components/top_bar';
-import { COLORS } from '../../assets/colors/colors';
-import { Historico_Styles as styles } from '../../styles/historico_styles';
+import { Top_Bar } from '../../src/components/top_bar';
+import { COLORS } from '../../src/assets/colors/colors';
+import { Historico_Styles as styles } from '../../src/styles/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { AuthContext } from '../../contexts/AuthContext';
-import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../services/consultas';
+import { AuthContext } from '../../src/contexts/AuthContext';
+import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../src/services/consultas';
 import { useFocusEffect } from '@react-navigation/native';
 
 type Consulta = {

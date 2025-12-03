@@ -8,14 +8,14 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { Recuperar_Styles } from "../../styles/recuperar_styles";
-import { COLORS } from "../../assets/colors/colors";
-import { Top_Bar } from "../../components/top_bar";
+import { Recuperar_Styles } from "../../src/styles/recuperar_styles";
+import { COLORS } from "../../src/assets/colors/colors";
+import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useNavigation, useRouter } from "expo-router";
-import BarraProgresso from "../../components/barra_progresso";
-import { formatCPF } from "../../components/format_cpf";
-import { supabase } from "../../services/supabase";
+import BarraProgresso from "../../src/components/barra_progresso";
+import { formatCPF } from "../../src/components/format_cpf";
+import { supabase } from "../../src/services/supabase";
 
 export default function Recuperar() {
   const [cpf, setCpf] = useState("");

@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Home_Styles } from "../../styles/home_styles";
-import { COLORS } from "../../assets/colors/colors";
-import { Top_Bar } from "../../components/top_bar";
+import { Home_Styles } from "../../src/styles/home_styles";
+import { COLORS } from "../../src/assets/colors/colors";
+import { Top_Bar } from "../../src/components/top_bar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter, useFocusEffect } from "expo-router";
-import { AuthContext } from "../../contexts/AuthContext";
-import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../services/consultas";
+import { AuthContext } from "../../src/contexts/AuthContext";
+import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../src/services/consultas";
 
 interface Consulta {
     data: string;
@@ -168,7 +168,7 @@ export default function Home() {
                     <TouchableOpacity
                         style={Home_Styles.servico_item}
                         activeOpacity={0.7}
-                        onPress={() => router.push("./agendar")}
+                        onPress={() => router.push("/home/agendar")}
                     >
                         <FontAwesome6 name="calendar-plus" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Agendar consulta</Text>
@@ -177,7 +177,7 @@ export default function Home() {
                     <TouchableOpacity
                         style={Home_Styles.servico_item}
                         activeOpacity={0.7}
-                        onPress={() => router.push("./consultas")}
+                        onPress={() => router.push("/home/consultas")}
                     >
                         <AntDesign name="bars" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Minhas consultas</Text>
@@ -186,7 +186,7 @@ export default function Home() {
                     <TouchableOpacity
                         style={Home_Styles.servico_item}
                         activeOpacity={0.7}
-                        onPress={() => router.push("./medicamentos")}
+                        onPress={() => router.push("/servicos/medicamentos")}
                     >
                         <FontAwesome5 name="pills" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Medicamentos</Text>
@@ -195,7 +195,7 @@ export default function Home() {
                     <TouchableOpacity
                         style={Home_Styles.servico_item}
                         activeOpacity={0.7}
-                        onPress={() => router.push("./historico")}
+                        onPress={() => router.push("/servicos/historico")}
                     >
                         <FontAwesome5 name="file-medical" size={30} color={COLORS.azul_principal} />
                         <Text style={Home_Styles.servico_text}>Meu histórico</Text>

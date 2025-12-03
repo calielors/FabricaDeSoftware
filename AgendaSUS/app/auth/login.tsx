@@ -1,12 +1,12 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Login_Styles } from "../../styles/login_styles";
-import { COLORS } from "../../assets/colors/colors";
+import { Login_Styles } from "../../src/styles/login_styles";
+import { COLORS } from "../../src/assets/colors/colors";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import { Top_Bar } from "../../components/top_bar";
-import { AuthContext } from "../../contexts/AuthContext";
+import { Top_Bar } from "../../src/components/top_bar";
+import { AuthContext } from "../../src/contexts/AuthContext";
 import { TextInput as PaperInput } from "react-native-paper";
-import { formatCPF } from "../../components/format_cpf";
+import { formatCPF } from "../../src/components/format_cpf";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
@@ -32,7 +32,7 @@ export default function Login() {
 
     try {
       await signIn(cleanCpf, password);
-      router.replace("/home/home");
+      router.replace("/home");
     } catch (error: any) {
       Alert.alert("Erro ao entrar", error.message || "CPF ou senha incorretos.");
     }
