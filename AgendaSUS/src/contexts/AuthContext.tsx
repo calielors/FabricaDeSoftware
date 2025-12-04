@@ -10,6 +10,16 @@ type User = {
   cpf?: string;
   nascimento?: string;
   unidade?: string;
+ endereco?: {
+    rua: string;
+    numero: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    cep: string;
+  };
+
+  telefone?: string;
 };
 
 type AuthContextType = {
@@ -18,6 +28,8 @@ type AuthContextType = {
   user: User | null;
   signIn: (cpf: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+//added
+  updateUser: (updates: Partial<User>) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType>({
@@ -26,6 +38,9 @@ export const AuthContext = createContext<AuthContextType>({
   user: null,
   signIn: async () => {},
   signOut: async () => {},
+
+//added
+  updateUser: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -34,6 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
+  // -----------------------------------------------------------------------
+  // SESSION RESTORE
+  // -----------------------------------------------------------------------
   useEffect(() => {
     async function init() {
       try {
@@ -67,6 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     init();
   }, []);
 
+  // -----------------------------------------------------------------------
+  // SIGN IN
+  // -----------------------------------------------------------------------
   async function signIn(cpf: string, password: string) {
     try {
       const { data, error } = await supabase.functions.invoke(
@@ -107,9 +128,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.replace("/auth/login");
   }
 
+  async function updateUser(updates: Partial<User>) {
+    try {
+      if (!user) return;
+
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          display_name: updates.nome ?? user.nome,
+          cpf: updates.cpf ?? user.cpf,
+          nascimento: updates.nascimento ?? user.nascimento,
+          unidade: updates.unidade ?? user.unidade,
+          telefone: updates.telefone ?? user.telefone,
+          endereco: updates.endereco ?? user.endereco,
+        },
+      });
+
+      if (error) {
+        console.log(error);
+        throw new Error("Erro ao atualizar dados no servidor.");
+      }
+
+      // Atualiza LOCALMENTE ---------------------------------------------
+      setUser(prev => ({
+        ...prev!,
+        ...updates,
+      }));
+
+    } catch (err) {
+      console.error("[Auth] updateUser error:", err);
+      throw err;
+    }
+  }
+
   return (
     <AuthContext.Provider
-      value={{ logged, loading, user, signIn, signOut }}
+      value={{
+        logged,
+        loading,
+        user,
+        signIn,
+        signOut,
+
+        // 🚀 necessário para todas as telas de edição
+        updateUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

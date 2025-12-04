@@ -36,7 +36,11 @@ export default function Perfil() {
 
                 {/* Informações Pessoais */}
                 <Card titulo="Informações Pessoais">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                    <TouchableOpacity
+                        style={Perfil_Styles.menuItem}
+                        activeOpacity={0.7}
+                        onPress={() => router.push("../editarDadosPessoais")}
+                    >
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="user" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Dados Pessoais</Text>
@@ -44,7 +48,8 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push("../editarEndereco")}
+                    >
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="map-marker-alt" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Endereço</Text>
@@ -52,7 +57,8 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}onPress={() => router.push("../editarContato")}
+>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="phone" size={19} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Contato</Text>

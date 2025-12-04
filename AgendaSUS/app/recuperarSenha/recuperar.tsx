@@ -16,11 +16,17 @@ import { useNavigation, useRouter } from "expo-router";
 import BarraProgresso from "../../src/components/barra_progresso";
 import { formatCPF } from "../../src/components/format_cpf";
 import { supabase } from "../../src/services/supabase";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../../src/contexts/AuthContext";
+
+
 
 export default function Recuperar() {
   const [cpf, setCpf] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { logged } = useContext(AuthContext);
+
 
   async function handleProximo() {
     const cleanCpf = cpf.replace(/\D/g, "");
@@ -105,7 +111,13 @@ export default function Recuperar() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.replace("/auth/login")}
+            onPress={() => {
+              if (logged){
+                router.replace("/home/perfil");
+              } else {
+                router.back();
+              }
+            }}
             activeOpacity={0.7}
           >
             <Text style={Recuperar_Styles.link}>Voltar</Text>
