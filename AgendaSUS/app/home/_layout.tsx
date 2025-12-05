@@ -15,7 +15,7 @@ export default function TabsLayout() {
           if (route.name === "agendar")
             return <MaterialIcons name="event-available" size={size} color={color} />;
 
-          if (route.name === "perfil")
+          if (route.name === "(perfil)")
             return <FontAwesome5 name="user-cog" size={18} color={color} />;
 
           return null;
@@ -34,11 +34,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" options={{ title: "Início" }} />
       <Tabs.Screen name="consultas" options={{ title: "Consultas" }} />
       <Tabs.Screen name="agendar" options={{ title: "Agendar" }} />
-      <Tabs.Screen name="perfil" options={{ title: "Perfil" }} />
-      <Tabs.Screen name="dadosPessoais" options={{ href: null }} />
-      <Tabs.Screen name="endereco" options={{ href: null }} />
-      <Tabs.Screen name="sobreApp" options={{ href: null }} />
-      <Tabs.Screen name="centralAjuda" options={{ href: null }} />
+      <Tabs.Screen name="(perfil)" options={{ title: "Perfil" }} />
     </Tabs>
   );
 }

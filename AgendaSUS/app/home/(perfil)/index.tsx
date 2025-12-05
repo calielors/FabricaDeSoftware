@@ -1,10 +1,10 @@
 import React, { useContext, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Switch } from "react-native";
-import { Top_Bar } from "../../src/components/top_bar";
-import { COLORS } from "../../src/assets/colors/colors";
+import { Top_Bar } from "../../../src/components/top_bar";
+import { COLORS } from "../../../src/assets/colors/colors";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
-import { Perfil_Styles } from "../../src/styles/perfil_styles";
-import { AuthContext } from "../../src/contexts/AuthContext";
+import { Perfil_Styles } from "../../../src/styles/perfil_styles";
+import { AuthContext } from "../../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 
 export default function Perfil() {
@@ -18,7 +18,7 @@ export default function Perfil() {
     }
 
     return (
-        <View style={[Perfil_Styles.container, { backgroundColor: COLORS.branco }]}>
+        <View style={Perfil_Styles.container}>
             <Top_Bar />
             <ScrollView contentContainerStyle={Perfil_Styles.content}>
                 {/* Cabeçalho */}
@@ -36,7 +36,7 @@ export default function Perfil() {
 
                 {/* Informações Pessoais */}
                 <Card titulo="Informações Pessoais">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/dadosPessoais')}>
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/dadosPessoais')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="user" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Dados Pessoais</Text>
@@ -44,7 +44,7 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/endereco')}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/endereco')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="map-marker-alt" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Endereço</Text>
@@ -120,7 +120,7 @@ export default function Perfil() {
 
                 {/* Ajuda e Suporte */}
                 <Card titulo="Ajuda e Suporte">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/centralAjuda')}>
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/centralAjuda')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="question-circle" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Central de Ajuda</Text>
@@ -136,7 +136,7 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/sobreApp')}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/sobreApp')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="info-circle" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Sobre o Aplicativo</Text>

@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import { COLORS } from "../../src/assets/colors/colors";
-import { Top_Bar } from "../../src/components/top_bar";
+import { COLORS } from "../../../src/assets/colors/colors";
+import { Top_Bar } from "../../../src/components/top_bar";
 
 export default function SobreApp() {
     const router = useRouter();
@@ -14,7 +14,7 @@ export default function SobreApp() {
             <ScrollView style={{ flex: 1, padding: 16 }}>
                 {/* Header com botão voltar */}
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
-                    <TouchableOpacity onPress={() => router.push('/home/perfil')} style={{ padding: 8 }}>
+                    <TouchableOpacity onPress={() => router.push('/home/(perfil)')} style={{ padding: 8 }}>
                         <FontAwesome5 name="arrow-left" size={20} color={COLORS.azul_principal} />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 24, fontWeight: "700", color: COLORS.preto, marginLeft: 12 }}>

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { supabase } from "../../src/services/supabase";
-import { COLORS } from "../../src/assets/colors/colors";
-import { Top_Bar } from "../../src/components/top_bar";
-import { formatCPF } from "../../src/components/format_cpf";
+import { supabase } from "../../../src/services/supabase";
+import { COLORS } from "../../../src/assets/colors/colors";
+import { Top_Bar } from "../../../src/components/top_bar";
+import { formatCPF } from "../../../src/components/format_cpf";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 
 export default function DadosPessoais() {
     const router = useRouter();
@@ -152,7 +153,7 @@ export default function DadosPessoais() {
             <ScrollView style={{ flex: 1, padding: 16 }}>
                 {/* Header com botão voltar */}
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
-                    <TouchableOpacity onPress={() => router.push('/home/perfil')} style={{ padding: 8 }}>
+                    <TouchableOpacity onPress={() => router.push('/home/(perfil)')} style={{ padding: 8 }}>
                         <FontAwesome5 name="arrow-left" size={20} color={COLORS.azul_principal} />
                     </TouchableOpacity>
                     <Text style={{ fontSize: 24, fontWeight: "700", color: COLORS.preto, marginLeft: 12 }}>
