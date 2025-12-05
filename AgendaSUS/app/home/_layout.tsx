@@ -35,6 +35,10 @@ export default function TabsLayout() {
       <Tabs.Screen name="consultas" options={{ title: "Consultas" }} />
       <Tabs.Screen name="agendar" options={{ title: "Agendar" }} />
       <Tabs.Screen name="perfil" options={{ title: "Perfil" }} />
+      <Tabs.Screen name="dadosPessoais" options={{ href: null }} />
+      <Tabs.Screen name="endereco" options={{ href: null }} />
+      <Tabs.Screen name="sobreApp" options={{ href: null }} />
+      <Tabs.Screen name="centralAjuda" options={{ href: null }} />
     </Tabs>
   );
 }

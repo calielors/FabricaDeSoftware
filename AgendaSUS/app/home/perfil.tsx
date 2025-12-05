@@ -36,7 +36,7 @@ export default function Perfil() {
 
                 {/* Informações Pessoais */}
                 <Card titulo="Informações Pessoais">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/dadosPessoais')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="user" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Dados Pessoais</Text>
@@ -44,7 +44,7 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/endereco')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="map-marker-alt" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Endereço</Text>
@@ -52,13 +52,13 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
+                    {/* <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="phone" size={19} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Contato</Text>
                         </View>
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </Card>
 
                 {/* Preferências */}
@@ -101,26 +101,26 @@ export default function Perfil() {
 
                 {/* Segurança */}
                 <Card titulo="Segurança">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/recuperarSenha/recuperar')}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/recuperarSenha/recuperar')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="lock" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Alterar Senha</Text>
                         </View>
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
+                        
+                   {/* <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="shield-alt" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Privacidade</Text>
                         </View>
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </Card>
 
                 {/* Ajuda e Suporte */}
                 <Card titulo="Ajuda e Suporte">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/centralAjuda')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="question-circle" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Central de Ajuda</Text>
@@ -128,15 +128,15 @@ export default function Perfil() {
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
+                 {/*   <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="comments" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Fale Conosco</Text>
                         </View>
                         <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
+                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/sobreApp')}>
                         <View style={Perfil_Styles.menuLeft}>
                             <FontAwesome5 name="info-circle" size={20} color={COLORS.azul_principal} />
                             <Text style={Perfil_Styles.menuText}>Sobre o Aplicativo</Text>
