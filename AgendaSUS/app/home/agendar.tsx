@@ -1,15 +1,17 @@
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, FlatList } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { Agendamento_Styles } from "../../src/styles/agendamento_styles";
-import { COLORS } from "../../src/assets/colors/colors";
 import { Top_Bar } from "../../src/components/top_bar";
 import { Calendar } from "react-native-calendars";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, buscarUnidadesSaude, UnidadeSaude } from "../../src/services/consultas";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import Modal from "react-native-modal";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 export default function Agendamento() {
+    const { theme } = useTheme();
+    const styles = Agendamento_Styles(theme);
     const [day, setDay] = useState('');
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -224,9 +226,8 @@ export default function Agendamento() {
     };
 
     return (
-        <View style={Agendamento_Styles.container}>
+        <View style={styles.container}>
             <Top_Bar />
-
             <ScrollView
                 style={{ flex: 1, width: '100%' }}
                 contentContainerStyle={{ paddingBottom: 120 }}
@@ -234,7 +235,7 @@ export default function Agendamento() {
             >
                 {unidadeSelecionada && (
                     <View style={{
-                        backgroundColor: COLORS.azul_principal,
+                        backgroundColor: theme.primary,
                         padding: 10,
                         marginHorizontal: 10,
                         marginTop: 10,
@@ -245,14 +246,14 @@ export default function Agendamento() {
                         alignItems: 'center',
                     }}>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: COLORS.branco, fontSize: 12, fontWeight: '600' }}>
+                            <Text style={{ color: theme.background, fontSize: 12, fontWeight: '600' }}>
                                 Unidade Selecionada:
                             </Text>
-                            <Text style={{ color: COLORS.branco, fontSize: 14, fontWeight: 'bold', marginTop: 3 }}>
+                            <Text style={{ color: theme.background, fontSize: 14, fontWeight: 'bold', marginTop: 3 }}>
                                 {unidadeSelecionada.nome}
                             </Text>
                             {unidadeSelecionada.endereco && (
-                                <Text style={{ color: COLORS.branco, fontSize: 11, marginTop: 2 }}>
+                                <Text style={{ color: theme.background, fontSize: 11, marginTop: 2 }}>
                                     {unidadeSelecionada.endereco}
                                 </Text>
                             )}
@@ -260,13 +261,13 @@ export default function Agendamento() {
                         <TouchableOpacity
                             onPress={abrirModalUnidades}
                             style={{
-                                backgroundColor: COLORS.branco,
+                                backgroundColor: theme.background,
                                 paddingHorizontal: 12,
                                 paddingVertical: 6,
                                 borderRadius: 5
                             }}
                         >
-                            <Text style={{ color: COLORS.azul_principal, fontSize: 12, fontWeight: 'bold' }}>
+                            <Text style={{ color: theme.primary, fontSize: 12, fontWeight: 'bold' }}>
                                 Trocar
                             </Text>
                         </TouchableOpacity>
@@ -274,7 +275,7 @@ export default function Agendamento() {
                 )}
 
                 <Text style={{
-                    color: COLORS.azul_principal,
+                    color: theme.primary,
                     paddingLeft: 10,
                     fontSize: 18,
                     alignSelf: 'flex-start',
@@ -285,30 +286,31 @@ export default function Agendamento() {
                 </Text>
 
                 <Calendar
-                    style={Agendamento_Styles.calendario}
+                    style={styles.calendario}
                     markedDates={{
-                        [today]: { marked: false, selectedColor: COLORS.verde },
-                        [day]: { selected: true, selectedColor: COLORS.azul_principal }
+                        [today]: { marked: false, selectedColor: theme.success },
+                        [day]: { selected: true, selectedColor: theme.primary }
                     }}
                     headerStyle={{
                         backgroundColor: 'transparent',
-                        borderBottomColor: COLORS.placeholder_text,
+                        borderBottomColor: theme.placeholder,
                         borderBottomWidth: 1,
                     }}
                     theme={{
-                        textSectionTitleColor: COLORS.preto,
-                        monthTextColor: COLORS.preto,
-                        selectedDayBackgroundColor: COLORS.verde,
-                        todayTextColor: COLORS.verde,
-                        arrowColor: COLORS.azul_principal,
+                        textSectionTitleColor: theme.text,
+                        monthTextColor: theme.text,
+                        selectedDayBackgroundColor: theme.success,
+                        todayTextColor: theme.success,
+                        arrowColor: theme.primary,
                         textDayFontWeight: 'bold',
                         textMonthFontWeight: 'bold',
                         textDayHeaderFontWeight: 'bold',
+                        dayTextColor: theme.text,
                         textDayFontSize: 14,
                         textMonthFontSize: 18,
                         textDayHeaderFontSize: 12,
                         calendarBackground: 'transparent',
-                        textDisabledColor: COLORS.placeholder_text,
+                        textDisabledColor: theme.placeholder,
                     }}
                     disableAllTouchEventsForDisabledDays
                     enableSwipeMonths
@@ -320,7 +322,7 @@ export default function Agendamento() {
                 <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
                     <Text style={{
                         fontSize: 18,
-                        color: COLORS.azul_principal,
+                        color: theme.primary,
                         fontWeight: '600',
                         marginBottom: 10,
                     }}>
@@ -329,43 +331,43 @@ export default function Agendamento() {
 
                     {loadingHorarios ? (
                         <View style={{ padding: 20, alignItems: 'center' }}>
-                            <ActivityIndicator size="large" color={COLORS.azul_principal} />
-                            <Text style={{ marginTop: 10, color: COLORS.preto }}>
+                            <ActivityIndicator size="large" color={theme.primary} />
+                            <Text style={{ marginTop: 10, color: theme.text }}>
                                 Carregando horários...
                             </Text>
                         </View>
                     ) : horariosDisponiveis.length === 0 && day ? (
                         <View style={{ padding: 20, alignItems: 'center' }}>
-                            <Text style={{ color: COLORS.vermelho, textAlign: 'center', fontWeight: '600' }}>
+                            <Text style={{ color: theme.danger, textAlign: 'center', fontWeight: '600' }}>
                                 Nenhum horário disponível para esta data
                             </Text>
-                            <Text style={{ color: COLORS.placeholder_text, textAlign: 'center', marginTop: 5, fontSize: 12 }}>
+                            <Text style={{ color: theme.placeholder, textAlign: 'center', marginTop: 5, fontSize: 12 }}>
                                 Tente outra data
                             </Text>
                         </View>
                     ) : !day ? (
                         <View style={{ padding: 20, alignItems: 'center' }}>
-                            <Text style={{ color: COLORS.placeholder_text, textAlign: 'center' }}>
+                            <Text style={{ color: theme.placeholder, textAlign: 'center' }}>
                                 Selecione uma data para ver os horários
                             </Text>
                         </View>
                     ) : (
-                        <View style={Agendamento_Styles.horarios_box}>
+                        <View style={styles.horarios_box}>
                             {horariosDisponiveis.map((hora: string) => (
                                 <TouchableOpacity
                                     key={hora}
                                     style={[
-                                        Agendamento_Styles.horarios,
+                                        styles.horarios,
                                         {
                                             backgroundColor: selectedTime === hora
-                                                ? COLORS.azul_principal
+                                                ? theme.primary
                                                 : 'transparent',
                                         },
                                     ]}
                                     activeOpacity={0.7}
                                     onPress={() => setSelectedTime(hora)}
                                 >
-                                    <Text style={Agendamento_Styles.horarios_texto}>{hora}</Text>
+                                    <Text style={styles.horarios_texto}>{hora}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -378,11 +380,11 @@ export default function Agendamento() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                backgroundColor: COLORS.branco,
+                backgroundColor: theme.background,
                 paddingVertical: 10,
                 paddingHorizontal: 15,
                 borderTopWidth: 1,
-                borderTopColor: COLORS.placeholder_text,
+                borderTopColor: theme.placeholder,
                 gap: 8,
             }}>
                 <TouchableOpacity
@@ -392,15 +394,15 @@ export default function Agendamento() {
                 >
                     <View style={{
                         backgroundColor: loading || !day || !selectedTime
-                            ? COLORS.placeholder_text
-                            : COLORS.azul_principal,
+                            ? theme.placeholder
+                            : theme.primary,
                         width: '100%',
                         height: 45,
                         borderRadius: 8,
                         alignItems: 'center',
                         justifyContent: 'center',
                     }}>
-                        <Text style={{ color: COLORS.branco, fontSize: 16, fontWeight: 'bold' }}>
+                        <Text style={{ color: theme.background, fontSize: 16, fontWeight: 'bold' }}>
                             {loading ? 'Agendando...' : 'Agendar Consulta'}
                         </Text>
                     </View>
@@ -412,16 +414,16 @@ export default function Agendamento() {
                     disabled={loading}
                 >
                     <View style={{
-                        backgroundColor: COLORS.branco,
+                        backgroundColor: theme.background,
                         borderWidth: 1,
-                        borderColor: COLORS.placeholder_text,
+                        borderColor: theme.placeholder,
                         width: '100%',
                         height: 45,
                         alignItems: 'center',
                         borderRadius: 8,
                         justifyContent: 'center',
                     }}>
-                        <Text style={{ color: COLORS.preto, fontSize: 16, fontWeight: 'bold' }}>
+                        <Text style={{ color: theme.text, fontSize: 16, fontWeight: 'bold' }}>
                             Cancelar
                         </Text>
                     </View>
@@ -433,15 +435,15 @@ export default function Agendamento() {
                 onBackdropPress={fecharModalSemSelecionar}
                 onBackButtonPress={fecharModalSemSelecionar}
             >
-                <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, maxHeight: '80%' }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 15, color: COLORS.azul_principal }}>
+                <View style={{ backgroundColor: theme.background, padding: 20, borderRadius: 10, maxHeight: '80%' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 15, color: theme.primary }}>
                         Selecione a Unidade de Saúde
                     </Text>
 
                     {loadingUnidades ? (
                         <View style={{ padding: 20, alignItems: 'center' }}>
-                            <ActivityIndicator size="large" color={COLORS.azul_principal} />
-                            <Text style={{ marginTop: 10, color: COLORS.preto }}>Carregando unidades...</Text>
+                            <ActivityIndicator size="large" color={theme.primary} />
+                            <Text style={{ marginTop: 10, color: theme.text }}>Carregando unidades...</Text>
                         </View>
                     ) : (
                         <FlatList
@@ -452,22 +454,22 @@ export default function Agendamento() {
                                     style={{
                                         padding: 15,
                                         borderBottomWidth: 1,
-                                        borderBottomColor: COLORS.placeholder_text,
+                                        borderBottomColor: theme.placeholder,
                                     }}
                                     onPress={() => selecionarUnidade(item)}
                                 >
-                                    <Text style={{ fontSize: 16, fontWeight: '600', color: COLORS.preto }}>
+                                    <Text style={{ fontSize: 16, fontWeight: '600', color: theme.text }}>
                                         {item.nome}
                                     </Text>
                                     {item.endereco && (
-                                        <Text style={{ fontSize: 14, color: COLORS.placeholder_text, marginTop: 5 }}>
+                                        <Text style={{ fontSize: 14, color: theme.placeholder, marginTop: 5 }}>
                                             {item.endereco}
                                         </Text>
                                     )}
                                 </TouchableOpacity>
                             )}
                             ListEmptyComponent={
-                                <Text style={{ textAlign: 'center', padding: 20, color: COLORS.placeholder_text }}>
+                                <Text style={{ textAlign: 'center', padding: 20, color: theme.placeholder }}>
                                     Nenhuma unidade disponível
                                 </Text>
                             }
@@ -476,7 +478,7 @@ export default function Agendamento() {
 
                     <TouchableOpacity
                         style={{
-                            backgroundColor: COLORS.vermelho,
+                            backgroundColor: theme.danger,
                             padding: 12,
                             borderRadius: 5,
                             alignItems: 'center',
@@ -484,7 +486,7 @@ export default function Agendamento() {
                         }}
                         onPress={fecharModalSemSelecionar}
                     >
-                        <Text style={{ color: COLORS.branco, fontWeight: 'bold', fontSize: 16 }}>
+                        <Text style={{ color: theme.background, fontWeight: 'bold', fontSize: 16 }}>
                             {unidadeSelecionada ? 'Fechar' : 'Voltar'}
                         </Text>
                     </TouchableOpacity>

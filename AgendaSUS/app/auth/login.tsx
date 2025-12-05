@@ -1,16 +1,18 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Login_Styles } from "../../src/styles/login_styles";
-import { COLORS } from "../../src/assets/colors/colors";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { Top_Bar } from "../../src/components/top_bar";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { TextInput as PaperInput } from "react-native-paper";
 import { formatCPF } from "../../src/components/format_cpf";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../src/contexts/ThemeContext";
 import { useRouter } from "expo-router";
 
 export default function Login() {
+  const { theme } = useTheme();
+  const styles = Login_Styles(theme);
   const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -39,34 +41,34 @@ export default function Login() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={Login_Styles.container}>
+    <View style={{ flex: 1 }}>
 
-        <Top_Bar />
+      <Top_Bar />
+      <SafeAreaView style={styles.container}>
 
-        <View style={Login_Styles.login_box}>
-          <Text style={Login_Styles.textos}>CPF</Text>
+        <View style={styles.login_box}>
+          <Text style={styles.textos}>CPF</Text>
           <PaperInput
             mode="outlined"
-            label={<Text style={{ color: COLORS.placeholder_text }}>CPF</Text>}
+            label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
             value={formatCPF(cpf)}
             onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
             placeholder="Digite seu CPF"
             keyboardType="numeric"
-            activeOutlineColor={COLORS.azul_principal}
-            style={Login_Styles.inputs}
+            activeOutlineColor={theme.primary}
+            style={styles.inputs}
             theme={{ roundness: 30 }}
           />
 
-          <Text style={Login_Styles.textos}>Senha</Text>
+          <Text style={styles.textos}>Senha</Text>
           <PaperInput
             mode="outlined"
-            label={<Text style={{ color: COLORS.placeholder_text }}>Senha</Text>}
+            label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
             value={password}
             onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
             placeholder="Digite sua senha"
-            activeOutlineColor={COLORS.azul_principal}
-            style={Login_Styles.inputs}
+            activeOutlineColor={theme.primary}
+            style={styles.inputs}
             theme={{ roundness: 30 }}
             secureTextEntry={!passwordVisible}
             right={
@@ -78,23 +80,23 @@ export default function Login() {
           />
 
           <TouchableOpacity
-            style={Login_Styles.acessar}
+            style={styles.acessar}
             onPress={handleLogin}
             activeOpacity={0.7}
           >
-            <Text style={Login_Styles.acessar_text}>Acessar</Text>
+            <Text style={styles.acessar_text}>Acessar</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => router.push("/recuperarSenha/recuperar")}
           >
-            <Text style={Login_Styles.links}>Esqueci minha senha</Text>
+            <Text style={styles.links}>Esqueci minha senha</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={Login_Styles.gov_box_container}>
-          <View style={Login_Styles.gov_box}>
+        <View style={styles.gov_box_container}>
+          <View style={styles.gov_box}>
             <TouchableOpacity
               style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               activeOpacity={0.7}
@@ -102,9 +104,9 @@ export default function Login() {
               <Fontisto
                 name="world"
                 size={18}
-                color={COLORS.azul_principal}
+                color={theme.primary}
               />
-              <Text style={{ color: COLORS.azul_principal }}>
+              <Text style={{ color: theme.primary }}>
                 Entrar com o gov.br
               </Text>
             </TouchableOpacity>
@@ -115,12 +117,12 @@ export default function Login() {
             onPress={() => router.push("/auth/cadastro")}
             style={{ paddingHorizontal: 50 }}
           >
-            <Text style={Login_Styles.links}>
+            <Text style={styles.links}>
               Primeiro acesso? Cadastre-se aqui
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView >
+    </View>
   );
 }

@@ -79,7 +79,7 @@ export default function Validar() {
 
           <TouchableOpacity
             style={style.voltar}
-            onPress={() => router.push("/recuperarSenha/recuperar")}
+            onPress={() => router.back()}
             activeOpacity={0.7}
           >
             <Text style={style.voltar_text}>Voltar</Text>

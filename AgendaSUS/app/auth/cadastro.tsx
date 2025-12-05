@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { CadastroStyles } from "../../src/styles/cadastro_styles";
-import { COLORS } from "../../src/assets/colors/colors";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
@@ -9,8 +8,11 @@ import { formatCPF } from "../../src/components/format_cpf";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 export default function Cadastro() {
+    const { theme } = useTheme();
+    const styles = CadastroStyles(theme);
     const [username, setUsername] = useState("");
     const [cpf, setCpf] = useState("");
     const [email, setEmail] = useState("");
@@ -68,47 +70,47 @@ export default function Cadastro() {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={CadastroStyles.container}>
-                <Top_Bar />
-                <View style={CadastroStyles.cadastro_box}>
+        <View style={{ flex: 1 }}>
+            <Top_Bar />
+            <SafeAreaView style={styles.container}>
+                <View style={styles.cadastro_box}>
 
                     {/* Usuário */}
                     <PaperInput
                         mode="outlined"
-                        label={<Text style={{ color: COLORS.placeholder_text }}>Usuário</Text>}
+                        label={<Text style={{ color: theme.placeholder }}>Usuário</Text>}
                         value={username}
                         onChangeText={(text) => setUsername(text.replace(/\s/g, ""))}
                         placeholder="Digite seu usuário"
-                        placeholderTextColor={COLORS.placeholder_text}
-                        activeOutlineColor={COLORS.azul_principal}
-                        style={CadastroStyles.inputs}
+                        placeholderTextColor={theme.placeholder}
+                        activeOutlineColor={theme.primary}
+                        style={styles.inputs}
                         theme={{ roundness: 30 }}
                     />
 
                     {/* CPF */}
                     <PaperInput
                         mode="outlined"
-                        label={<Text style={{ color: COLORS.placeholder_text }}>CPF</Text>}
+                        label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
                         value={formatCPF(cpf)}
                         onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
                         placeholder="Digite seu CPF"
-                        placeholderTextColor={COLORS.placeholder_text}
-                        activeOutlineColor={COLORS.azul_principal}
-                        style={CadastroStyles.inputs}
+                        placeholderTextColor={theme.placeholder}
+                        activeOutlineColor={theme.primary}
+                        style={styles.inputs}
                         theme={{ roundness: 30 }}
                     />
 
                     {/* Email */}
                     <PaperInput
                         mode="outlined"
-                        label={<Text style={{ color: COLORS.placeholder_text }}>E-mail</Text>}
+                        label={<Text style={{ color: theme.placeholder }}>E-mail</Text>}
                         value={email}
                         onChangeText={(text) => setEmail(text.replace(/\s/g, ""))}
                         placeholder="Digite seu e-mail"
-                        placeholderTextColor={COLORS.placeholder_text}
-                        activeOutlineColor={COLORS.azul_principal}
-                        style={CadastroStyles.inputs}
+                        placeholderTextColor={theme.placeholder}
+                        activeOutlineColor={theme.primary}
+                        style={styles.inputs}
                         theme={{ roundness: 30 }}
                         keyboardType="email-address"
                     />
@@ -116,13 +118,13 @@ export default function Cadastro() {
                     {/* Senha */}
                     <PaperInput
                         mode="outlined"
-                        label={<Text style={{ color: COLORS.placeholder_text }}>Senha</Text>}
+                        label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
                         value={password}
                         onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
                         placeholder="Digite sua senha"
-                        placeholderTextColor={COLORS.placeholder_text}
-                        activeOutlineColor={COLORS.azul_principal}
-                        style={CadastroStyles.inputs}
+                        placeholderTextColor={theme.placeholder}
+                        activeOutlineColor={theme.primary}
+                        style={styles.inputs}
                         theme={{ roundness: 30 }}
                         secureTextEntry={!passwordVisible}
                         autoCapitalize="none"
@@ -133,13 +135,13 @@ export default function Cadastro() {
                     {/* Confirmar senha */}
                     <PaperInput
                         mode="outlined"
-                        label={<Text style={{ color: COLORS.placeholder_text }}>Confirmação da senha</Text>}
+                        label={<Text style={{ color: theme.placeholder }}>Confirmação da senha</Text>}
                         value={confirmPassword}
                         onChangeText={(text) => setConfirmPassword(text.replace(/\s/g, ""))}
                         placeholder="Digite confirme sua senha"
-                        placeholderTextColor={COLORS.placeholder_text}
-                        activeOutlineColor={COLORS.azul_principal}
-                        style={CadastroStyles.inputs}
+                        placeholderTextColor={theme.placeholder}
+                        activeOutlineColor={theme.primary}
+                        style={styles.inputs}
                         theme={{ roundness: 30 }}
                         secureTextEntry={!confirmPasswordVisible}
                         autoCapitalize="none"
@@ -147,24 +149,24 @@ export default function Cadastro() {
                         right={<PaperInput.Icon icon={confirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
                     />
 
-                    <TouchableOpacity style={CadastroStyles.criar} activeOpacity={0.7} onPress={validarCampos}>
-                        <Text style={CadastroStyles.criar_text}>Criar conta</Text>
+                    <TouchableOpacity style={styles.criar} activeOpacity={0.7} onPress={validarCampos}>
+                        <Text style={styles.criar_text}>Criar conta</Text>
                     </TouchableOpacity>
                 </View>
 
-                <View style={CadastroStyles.gov_box_container}>
-                    <View style={CadastroStyles.gov_box}>
+                <View style={styles.gov_box_container}>
+                    <View style={styles.gov_box}>
                         <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 10 }} activeOpacity={0.7} onPress={() => Alert.alert("Work in progress!")}>
-                            <Fontisto name="world" size={18} color={COLORS.azul_principal} />
-                            <Text style={{ color: COLORS.azul_principal }}>Entrar com o gov.br </Text>
+                            <Fontisto name="world" size={18} color={theme.primary} />
+                            <Text style={{ color: theme.primary }}>Entrar com o gov.br </Text>
                         </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
-                        <Text style={CadastroStyles.links}>Já tem uma conta? Acesse aqui!</Text>
+                        <Text style={styles.links}>Já tem uma conta? Acesse aqui!</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </View>
     );
 }

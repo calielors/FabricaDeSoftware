@@ -1,154 +1,157 @@
 import React, { useContext, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Switch } from "react-native";
 import { Top_Bar } from "../../../src/components/top_bar";
-import { COLORS } from "../../../src/assets/colors/colors";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { Perfil_Styles } from "../../../src/styles/perfil_styles";
 import { AuthContext } from "../../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
+import { useTheme } from "../../../src/contexts/ThemeContext";
+import { COLORS } from "@/src/assets/colors/colors";
+
 
 export default function Perfil() {
+    const { theme } = useTheme();
+    const styles = Perfil_Styles(theme);
     const router = useRouter();
     const { signOut, user } = useContext(AuthContext);
+    const { darkMode, toggleTheme } = useTheme();
     const [notificacoes, setNotificacoes] = useState(true);
-    const [temaEscuro, setTemaEscuro] = useState(false);
-
     async function handleLogout() {
         await signOut();
     }
 
     return (
-        <View style={Perfil_Styles.container}>
+        <View style={styles.container}>
             <Top_Bar />
-            <ScrollView contentContainerStyle={Perfil_Styles.content}>
+            <ScrollView contentContainerStyle={styles.content}>
                 {/* Cabeçalho */}
-                <View style={Perfil_Styles.header}>
-                    <Text style={Perfil_Styles.title}>{user?.nome || "Usuário"}</Text>
+                <View style={styles.header}>
+                    <Text style={styles.title}>{user?.nome || "Usuário"}</Text>
                     {user?.nascimento && (
-                        <Text style={Perfil_Styles.subText}>
+                        <Text style={styles.subText}>
                             Nascimento: {new Date(user.nascimento).toLocaleDateString('pt-BR')}
                         </Text>
                     )}
                     {user?.unidade && (
-                        <Text style={Perfil_Styles.subText}>Unidade: {user.unidade}</Text>
+                        <Text style={styles.subText}>Unidade: {user.unidade}</Text>
                     )}
                 </View>
 
                 {/* Informações Pessoais */}
                 <Card titulo="Informações Pessoais">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/dadosPessoais')}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="user" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Dados Pessoais</Text>
+                    <TouchableOpacity style={styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/dadosPessoais')}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="user" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Dados Pessoais</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/endereco')}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="map-marker-alt" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Endereço</Text>
+                    <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/endereco')}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="map-marker-alt" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Endereço</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity>
 
-                    {/* <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="phone" size={19} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Contato</Text>
+                    {/* <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="phone" size={19} color={theme.primary} />
+                            <Text style={styles.menuText}>Contato</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity> */}
                 </Card>
 
                 {/* Preferências */}
                 <Card titulo="Preferências">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="language" size={19} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Idioma</Text>
+                    <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="language" size={19} color={theme.primary} />
+                            <Text style={styles.menuText}>Idioma</Text>
                         </View>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <Text style={{ color: COLORS.placeholder_text, marginRight: 6 }}>Português</Text>
-                            <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                            <Text style={{ color: theme.placeholder, marginRight: 6 }}>Português</Text>
+                            <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                         </View>
                     </TouchableOpacity>
 
-                    <View style={Perfil_Styles.menuItem}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="bell" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Notificações</Text>
+                    <View style={styles.menuItem}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="bell" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Notificações</Text>
                         </View>
                         <Switch
                             value={notificacoes}
                             onValueChange={setNotificacoes}
-                            trackColor={{ true: COLORS.azul_principal }}
+                            trackColor={{ true: theme.primary }}
                         />
                     </View>
 
-                    <View style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="moon" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Tema Escuro</Text>
+                    <View style={[styles.menuItem, { borderBottomWidth: 0 }]}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="moon" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Tema Escuro</Text>
                         </View>
                         <Switch
-                            value={temaEscuro}
-                            onValueChange={setTemaEscuro}
-                            trackColor={{ true: COLORS.azul_principal }}
+                            value={darkMode}
+                            onValueChange={toggleTheme}
+                            trackColor={{ true: theme.primary }}
                         />
                     </View>
                 </Card>
 
                 {/* Segurança */}
                 <Card titulo="Segurança">
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/recuperarSenha/recuperar')}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="lock" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Alterar Senha</Text>
+                    <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/recuperarSenha/recuperar')}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="lock" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Alterar Senha</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity>
-                        
-                   {/* <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="shield-alt" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Privacidade</Text>
+
+                    {/* <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="shield-alt" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Privacidade</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity> */}
                 </Card>
 
                 {/* Ajuda e Suporte */}
                 <Card titulo="Ajuda e Suporte">
-                    <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/centralAjuda')}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="question-circle" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Central de Ajuda</Text>
+                    <TouchableOpacity style={styles.menuItem} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/centralAjuda')}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="question-circle" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Central de Ajuda</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity>
 
-                 {/*   <TouchableOpacity style={Perfil_Styles.menuItem} activeOpacity={0.7}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="comments" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Fale Conosco</Text>
+                    {/*   <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="comments" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Fale Conosco</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity style={[Perfil_Styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/sobreApp')}>
-                        <View style={Perfil_Styles.menuLeft}>
-                            <FontAwesome5 name="info-circle" size={20} color={COLORS.azul_principal} />
-                            <Text style={Perfil_Styles.menuText}>Sobre o Aplicativo</Text>
+                    <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} activeOpacity={0.7} onPress={() => router.push('/home/(perfil)/sobreApp')}>
+                        <View style={styles.menuLeft}>
+                            <FontAwesome5 name="info-circle" size={20} color={theme.primary} />
+                            <Text style={styles.menuText}>Sobre o Aplicativo</Text>
                         </View>
-                        <FontAwesome5 name="chevron-right" size={16} color={COLORS.placeholder_text} />
+                        <FontAwesome5 name="chevron-right" size={16} color={theme.placeholder} />
                     </TouchableOpacity>
                 </Card>
 
                 {/* Botão Sair */}
-                <TouchableOpacity style={Perfil_Styles.sair} onPress={handleLogout}>
+                <TouchableOpacity style={styles.sair} onPress={handleLogout}>
                     <MaterialCommunityIcons name="logout" size={22} color={COLORS.branco} style={{ marginRight: 8 }} />
-                    <Text style={Perfil_Styles.sairText}>Sair da conta</Text>
+                    <Text style={styles.sairText}>Sair da conta</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>
@@ -156,9 +159,11 @@ export default function Perfil() {
 }
 
 function Card({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+    const { theme } = useTheme();
+    const styles = Perfil_Styles(theme);
     return (
-        <View style={Perfil_Styles.card}>
-            <Text style={Perfil_Styles.cardTitle}>{titulo}</Text>
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>{titulo}</Text>
             {children}
         </View>
     );

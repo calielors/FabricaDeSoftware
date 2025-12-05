@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { COLORS } from "../assets/colors/colors";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface BarraEtapasProps {
   etapaAtual: number; 
@@ -8,28 +9,30 @@ interface BarraEtapasProps {
 }
 
 export default function BarraProgresso({ etapaAtual, totalEtapas }: BarraEtapasProps) {
+  const { theme } = useTheme();
+  const styles = estilos(theme);
   return (
-    <View style={estilos.container}>
+    <View style={styles.container}>
       {[...Array(totalEtapas)].map((_, indice) => {
         const etapa = indice + 1;
         const ativa = etapa <= etapaAtual;
 
         return (
-          <View key={etapa} style={estilos.etapaContainer}>
+          <View key={etapa} style={styles.etapaContainer}>
             <View
               style={[
-                estilos.circulo,
-                { backgroundColor: ativa ? COLORS.azul_principal : COLORS.placeholder_text },
+                styles.circulo,
+                { backgroundColor: ativa ? theme.primary : theme.placeholder },
               ]}
             >
-              <Text style={estilos.textoCirculo}>{etapa}</Text>
+              <Text style={styles.textoCirculo}>{etapa}</Text>
             </View>
 
             {etapa < totalEtapas && (
               <View
                 style={[
-                  estilos.linha,
-                  { backgroundColor: etapa < etapaAtual ? COLORS.azul_principal : COLORS.placeholder_text },
+                  styles.linha,
+                  { backgroundColor: etapa < etapaAtual ? theme.primary : theme.placeholder },
                 ]}
               />
             )}
@@ -40,7 +43,7 @@ export default function BarraProgresso({ etapaAtual, totalEtapas }: BarraEtapasP
   );
 }
 
-const estilos = StyleSheet.create({
+const estilos = (theme: any) => StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
@@ -59,7 +62,7 @@ const estilos = StyleSheet.create({
     justifyContent: "center",
   },
   textoCirculo: {
-    color: COLORS.branco,
+    color: theme.background,
     fontWeight: "bold",
   },
   linha: {

@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { Top_Bar } from '../../src/components/top_bar';
-import { COLORS } from '../../src/assets/colors/colors';
-import { Historico_Styles as styles } from '../../src/styles/historico_styles';
+import { Historico_Styles} from '../../src/styles/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthContext } from '../../src/contexts/AuthContext';
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../src/services/consultas';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '../../src/contexts/ThemeContext';
 
 type Consulta = {
     id: number;
@@ -23,6 +23,8 @@ const formatarData = (dateString: string) => {
 };
 
 export default function Historico() {
+    const { theme } = useTheme();
+    const styles = Historico_Styles(theme);
     const [data, setData] = useState<Consulta[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -107,9 +109,9 @@ export default function Historico() {
 
     const getStatusProps = (status: Consulta['status']) => {
         switch (status) {
-            case 'Realizada': return { icon: 'check-circle', color: COLORS.verde };
-            case 'Faltou': return { icon: 'close-circle', color: COLORS.laranja };
-            case 'Cancelada': return { icon: 'cancel', color: COLORS.vermelho };
+            case 'Realizada': return { icon: 'check-circle', color: theme.success };
+            case 'Faltou': return { icon: 'close-circle', color: theme.warning };
+            case 'Cancelada': return { icon: 'cancel', color: theme.danger };
         }
     };
 
@@ -118,8 +120,8 @@ export default function Historico() {
             <View style={styles.container}>
                 <Top_Bar />
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <ActivityIndicator size="large" color={COLORS.azul_principal} />
-                    <Text style={{ marginTop: 10, color: COLORS.preto, opacity: 0.6 }}>
+                    <ActivityIndicator size="large" color={theme.primary} />
+                    <Text style={{ marginTop: 10, color: theme.text, opacity: 0.6 }}>
                         Carregando histórico...
                     </Text>
                 </View>
@@ -132,7 +134,7 @@ export default function Historico() {
             <View style={styles.container}>
                 <Top_Bar />
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: COLORS.vermelho, fontSize: 16 }}>{error}</Text>
+                    <Text style={{ color: theme.danger, fontSize: 16 }}>{error}</Text>
                 </View>
             </View>
         );

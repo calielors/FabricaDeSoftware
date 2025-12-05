@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "../assets/colors/colors";
 import { Dimensions } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export const Agendamento_Styles = StyleSheet.create({
+export const Agendamento_Styles = (theme: any) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.branco,
+        backgroundColor: theme.background,
         alignItems: 'center',
     },
     calendario: {
@@ -25,7 +26,7 @@ export const Agendamento_Styles = StyleSheet.create({
         gap: 2,
     },
     horarios: {
-        backgroundColor: COLORS.azul_principal,
+        backgroundColor: theme.primary,
         width: '30%',
         flexGrow: 1,
         height: 40,
@@ -33,11 +34,11 @@ export const Agendamento_Styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         margin: 2,
-        borderColor: COLORS.placeholder_text,
+        borderColor: theme.placeholder,
         borderWidth: 0.2,
     },
     horarios_texto: {
-        color: COLORS.preto,
+        color: theme.text,
         fontWeight: 'bold',
     },
 });

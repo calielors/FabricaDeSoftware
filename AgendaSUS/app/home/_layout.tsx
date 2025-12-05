@@ -1,7 +1,9 @@
 import { Tabs } from "expo-router";
 import { Ionicons, MaterialIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 export default function TabsLayout() {
+   const { theme } = useTheme();
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -21,10 +23,10 @@ export default function TabsLayout() {
           return null;
         },
         tabBarActiveTintColor: "#1976d2",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: theme.placeholder,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: theme.background,
           elevation: 20,
           shadowOpacity: 0.2,
           zIndex: 9999,

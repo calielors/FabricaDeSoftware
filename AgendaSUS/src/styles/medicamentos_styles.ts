@@ -1,15 +1,14 @@
 import { StyleSheet } from 'react-native';
-import { COLORS } from '../assets/colors/colors';
 
-export const Medicamentos_Styles = StyleSheet.create({
+export const Medicamentos_Styles = (theme : any) =>StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.branco,
+        backgroundColor: theme.background,
     },
     title: {
         fontSize: 22,
         fontWeight: '700',
-        color: COLORS.preto,
+        color: theme.text,
         textAlign: 'center',
         marginVertical: 5,
     },
@@ -23,31 +22,31 @@ export const Medicamentos_Styles = StyleSheet.create({
         padding: 10,
         borderRadius: 12,
         marginBottom: 10,
-        borderColor: COLORS.placeholder_text,
+        borderColor: theme.placeholder,
         borderWidth: 1,
     },
     itemName: {
         fontSize: 16,
         fontWeight: '700',
-        color: COLORS.preto,
+        color: theme.text,
     },
     itemInfo: {
         fontSize: 14,
-        color: COLORS.placeholder_text,
+        color: theme.placeholder,
         marginTop: 4,
     },
 
     unidadeName: {
         fontSize: 14,
         fontWeight: '700',
-        color: COLORS.preto,
+        color: theme.text,
         maxWidth:'65%', //Ajuste da distância da unidade ao status
         paddingTop: 5
     },
 
     emptyText: {
         textAlign: 'center',
-        color: COLORS.placeholder_text,
+        color: theme.placeholder,
         marginTop: 20,
         fontStyle: 'italic',
     },

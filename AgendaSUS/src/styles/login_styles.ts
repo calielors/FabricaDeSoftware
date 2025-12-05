@@ -1,12 +1,11 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { COLORS } from "../assets/colors/colors";
 
-export const Login_Styles = StyleSheet.create({
+export const Login_Styles = (theme : any)=>StyleSheet.create({
       container: {
             flex: 1,
             alignItems: 'center',
-            backgroundColor: COLORS.branco,
+            backgroundColor: theme.background,
       },
       login_box: {
             width: '90%',
@@ -15,14 +14,15 @@ export const Login_Styles = StyleSheet.create({
             gap: 15,
             justifyContent: 'center',
             borderWidth: 1,
-            borderColor: COLORS.placeholder_text,
-            backgroundColor: COLORS.cinza_claro,
+            borderColor: theme.placeholder,
+            backgroundColor: theme.card,
             borderRadius: 10,
             marginTop: 'auto',
             marginBottom: 'auto',
             transform: [{ translateY: -88 }],
       },
       textos: {
+            color: theme.text,
             alignSelf: 'flex-start',
             marginLeft: '5%',
             fontSize: 16,
@@ -38,7 +38,7 @@ export const Login_Styles = StyleSheet.create({
       acessar: {
             width: '90%',
             height: 50,
-            backgroundColor: COLORS.azul_principal,
+            backgroundColor: theme.primary,
             borderRadius: 30,
             alignItems: 'center',
             justifyContent: 'center',
@@ -61,7 +61,7 @@ export const Login_Styles = StyleSheet.create({
             width: '90%',
             height: 50,
             borderWidth: 1,
-            borderColor: COLORS.azul_principal,
+            borderColor: theme.primary,
             borderRadius: 30,
             justifyContent: 'center',
             alignItems: 'center',
@@ -70,7 +70,7 @@ export const Login_Styles = StyleSheet.create({
 
       },
       links: {
-            color: COLORS.azul_principal,
+            color: theme.primary,
             fontSize: 12,
             fontWeight: 'bold',
       }

@@ -105,7 +105,7 @@ export default function Recuperar() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => router.replace("/auth/login")}
+            onPress={() => router.back()}
             activeOpacity={0.7}
           >
             <Text style={Recuperar_Styles.link}>Voltar</Text>

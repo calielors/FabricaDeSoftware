@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { COLORS } from '../../src/assets/colors/colors';
 import { Top_Bar } from '../../src/components/top_bar';
-import { Medicamentos_Styles as styles } from '../../src/styles/medicamentos_styles';
+import { Medicamentos_Styles} from '../../src/styles/medicamentos_styles';
 import { CampoPesquisa } from '../../src/components/campo_pesquisa';
 import { supabase } from '../../src/services/supabase';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from '../../src/contexts/ThemeContext';
 type Medicamento = {
   id: string;
   name: string;
@@ -15,6 +15,8 @@ type Medicamento = {
 };
 
 export default function Medicamentos() {
+  const { theme } = useTheme();
+  const styles = Medicamentos_Styles(theme);
   const [data, setData] = useState<Medicamento[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -76,7 +78,7 @@ export default function Medicamentos() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color={COLORS.azul_principal} />
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -109,13 +111,13 @@ export default function Medicamentos() {
               <View style={{ paddingVertical: 6, }}>
                 <Text style={styles.itemName}>{item.name} - {item.dose_mg}</Text>
                 <View style={styles.statusContainer}>
-                  <Text style={[styles.statusText, { color: disponivel ? COLORS.verde : COLORS.laranja }]}>
+                  <Text style={[styles.statusText, { color: disponivel ? theme.success : theme.warning }]}>
                     {disponivel ? "Disponível" : "Indisponível"}
                   </Text>
                   <MaterialCommunityIcons
                     name={disponivel ? "check-circle" : "close-circle"}
                     size={20}
-                    color={disponivel ? COLORS.verde : COLORS.laranja}
+                    color={disponivel ? theme.success : theme.warning}
                     style={{ marginLeft: 4 }}
                   />
                 </View>

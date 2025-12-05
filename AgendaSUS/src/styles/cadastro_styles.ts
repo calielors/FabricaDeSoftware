@@ -1,22 +1,23 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { COLORS } from "../assets/colors/colors";
+import { useTheme } from "../contexts/ThemeContext";
 
-export const CadastroStyles = StyleSheet.create({
+
+export const CadastroStyles = (theme: any) => StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: COLORS.branco,
+        backgroundColor: theme.background,
     },
     cadastro_box: {
         width: '90%',
-        height: '55%',
+        height: '60%',
         alignItems: 'center',
         gap: 15,
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: COLORS.placeholder_text,
-        backgroundColor: COLORS.cinza_claro,
+        borderColor: theme.placeholder,
+        backgroundColor: theme.card,
         borderRadius: 10,
         alignSelf: 'center',
         marginTop: 'auto',
@@ -33,7 +34,7 @@ export const CadastroStyles = StyleSheet.create({
     criar: {
         width: '80%',
         height: 50,
-        backgroundColor: COLORS.azul_principal,
+        backgroundColor: theme.primary,
         borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
@@ -56,7 +57,7 @@ export const CadastroStyles = StyleSheet.create({
         width: '90%',
         height: 50,
         borderWidth: 1,
-        borderColor: COLORS.azul_principal,
+        borderColor: theme.primary,
         borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
@@ -65,7 +66,7 @@ export const CadastroStyles = StyleSheet.create({
 
     },
     links: {
-        color: COLORS.azul_principal,
+        color: theme.primary,
         fontSize: 12,
         fontWeight: 'bold',
     }

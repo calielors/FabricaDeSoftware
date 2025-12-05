@@ -3,10 +3,11 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityInd
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "../../../src/services/supabase";
-import { COLORS } from "../../../src/assets/colors/colors";
 import { Top_Bar } from "../../../src/components/top_bar";
+import { useTheme } from "../../../src/contexts/ThemeContext";
 
 export default function Endereco() {
+    const { theme } = useTheme();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -110,49 +111,49 @@ export default function Endereco() {
 
     if (loading) {
         return (
-            <View style={{ flex: 1, backgroundColor: COLORS.branco }}>
+            <View style={{ flex: 1, backgroundColor: theme.background }}>
                 <Top_Bar />
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color={COLORS.azul_principal} />
+                    <ActivityIndicator size="large" color={theme.primary} />
                 </View>
             </View>
         );
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.branco }}>
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
             <Top_Bar />
             <ScrollView style={{ flex: 1, padding: 16 }}>
                 {/* Header com botão voltar */}
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
-                    <TouchableOpacity onPress={() => router.push('/home/(perfil)')} style={{ padding: 8 }}>
-                        <FontAwesome5 name="arrow-left" size={20} color={COLORS.azul_principal} />
+                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 8 }}>
+                        <FontAwesome5 name="arrow-left" size={20} color={theme.primary} />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 24, fontWeight: "700", color: COLORS.preto, marginLeft: 12 }}>
+                    <Text style={{ fontSize: 24, fontWeight: "700", color: theme.text, marginLeft: 12 }}>
                         Endereço
                     </Text>
                 </View>
 
                 {/* Card de Endereço */}
-                <View style={{ backgroundColor: COLORS.branco, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: COLORS.placeholder_text }}>
+                <View style={{ backgroundColor: theme.background, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: theme.placeholder }}>
                     
                     {/* Ícone de localização grande */}
                     <View style={{ alignItems: "center", marginBottom: 20 }}>
                         <View style={{ 
-                            backgroundColor: COLORS.azul_principal + '20', 
+                            backgroundColor: theme.primary + '20', 
                             borderRadius: 50, 
                             width: 80, 
                             height: 80, 
                             justifyContent: "center", 
                             alignItems: "center" 
                         }}>
-                            <FontAwesome5 name="map-marked-alt" size={40} color={COLORS.azul_principal} />
+                            <FontAwesome5 name="map-marked-alt" size={40} color={theme.primary} />
                         </View>
                     </View>
 
                     {/* CEP */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>CEP</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>CEP</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.cep}
@@ -164,66 +165,66 @@ export default function Endereco() {
                                     }
                                     setEditData({ ...editData, cep: cleaned });
                                 }}
-                                style={{ borderWidth: 1, borderColor: COLORS.verde, padding: 12, borderRadius: 8, fontSize: 16 }}
+                                style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16 }}
                                 placeholder="00000-000"
                                 keyboardType="numeric"
                                 maxLength={9}
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{editData.cep || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{editData.cep || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
 
                     {/* Rua */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>RUA/AVENIDA</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>RUA/AVENIDA</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.rua}
                                 onChangeText={(text) => setEditData({ ...editData, rua: text })}
-                                style={{ borderWidth: 1, borderColor: COLORS.verde, padding: 12, borderRadius: 8, fontSize: 16 }}
+                                style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16 }}
                                 placeholder="Digite o nome da rua"
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{editData.rua || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{editData.rua || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
 
                     {/* Número */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>NÚMERO</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>NÚMERO</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.numero}
                                 onChangeText={(text) => setEditData({ ...editData, numero: text })}
-                                style={{ borderWidth: 1, borderColor: COLORS.verde, padding: 12, borderRadius: 8, fontSize: 16 }}
+                                style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16 }}
                                 placeholder="Digite o número"
                                 keyboardType="numeric"
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{editData.numero || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{editData.numero || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
 
                     {/* Bairro */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>BAIRRO</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>BAIRRO</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.bairro}
                                 onChangeText={(text) => setEditData({ ...editData, bairro: text })}
-                                style={{ borderWidth: 1, borderColor: COLORS.verde, padding: 12, borderRadius: 8, fontSize: 16 }}
+                                style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16 }}
                                 placeholder="Digite o bairro"
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{editData.bairro || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{editData.bairro || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
@@ -231,35 +232,35 @@ export default function Endereco() {
                     {/* Cidade e UF */}
                     <View style={{ flexDirection: "row", gap: 12, marginBottom: 16 }}>
                         <View style={{ flex: 2 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>CIDADE</Text>
+                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>CIDADE</Text>
                             {isEditing ? (
                                 <TextInput
                                     value={editData.cidade}
                                     onChangeText={(text) => setEditData({ ...editData, cidade: text })}
-                                    style={{ borderWidth: 1, borderColor: COLORS.verde, padding: 12, borderRadius: 8, fontSize: 16 }}
+                                    style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16 }}
                                     placeholder="Digite a cidade"
                                 />
                             ) : (
-                                <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 16, color: COLORS.preto }}>{editData.cidade || "Não informado"}</Text>
+                                <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                    <Text style={{ fontSize: 16, color: theme.text }}>{editData.cidade || "Não informado"}</Text>
                                 </View>
                             )}
                         </View>
 
                         <View style={{ flex: 1 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>UF</Text>
+                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>UF</Text>
                             {isEditing ? (
                                 <TextInput
                                     value={editData.uf}
                                     onChangeText={(text) => setEditData({ ...editData, uf: text.toUpperCase() })}
-                                    style={{ borderWidth: 1, borderColor: COLORS.verde, padding: 12, borderRadius: 8, fontSize: 16 }}
+                                    style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16 }}
                                     placeholder="UF"
                                     maxLength={2}
                                     autoCapitalize="characters"
                                 />
                             ) : (
-                                <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 16, color: COLORS.preto }}>{editData.uf || "N/A"}</Text>
+                                <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                    <Text style={{ fontSize: 16, color: theme.text }}>{editData.uf || "N/A"}</Text>
                                 </View>
                             )}
                         </View>
@@ -270,27 +271,27 @@ export default function Endereco() {
                 {!isEditing ? (
                     <TouchableOpacity 
                         onPress={() => setIsEditing(true)}
-                        style={{ backgroundColor: COLORS.azul_principal, padding: 16, borderRadius: 10, marginTop: 20, marginBottom: 30, flexDirection: "row", justifyContent: "center", alignItems: "center" }}
+                        style={{ backgroundColor: theme.primary, padding: 16, borderRadius: 10, marginTop: 20, marginBottom: 30, flexDirection: "row", justifyContent: "center", alignItems: "center" }}
                     >
-                        <FontAwesome5 name="edit" size={18} color={COLORS.branco} style={{ marginRight: 8 }} />
-                        <Text style={{ color: COLORS.branco, fontSize: 16, fontWeight: "600" }}>Editar Endereço</Text>
+                        <FontAwesome5 name="edit" size={18} color={theme.background} style={{ marginRight: 8 }} />
+                        <Text style={{ color: theme.background, fontSize: 16, fontWeight: "600" }}>Editar Endereço</Text>
                     </TouchableOpacity>
                 ) : (
                     <View style={{ flexDirection: "row", gap: 12, marginTop: 20, marginBottom: 30 }}>
                         <TouchableOpacity 
                             onPress={handleCancel}
                             disabled={saving}
-                            style={{ flex: 1, borderWidth: 2, borderColor: COLORS.vermelho, padding: 16, borderRadius: 10, alignItems: "center" }}
+                            style={{ flex: 1, borderWidth: 2, borderColor: theme.danger, padding: 16, borderRadius: 10, alignItems: "center" }}
                         >
-                            <Text style={{ color: COLORS.vermelho, fontSize: 16, fontWeight: "600" }}>Cancelar</Text>
+                            <Text style={{ color: theme.danger, fontSize: 16, fontWeight: "600" }}>Cancelar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
                             onPress={handleSave}
                             disabled={saving}
-                            style={{ flex: 1, backgroundColor: COLORS.verde, padding: 16, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", opacity: saving ? 0.6 : 1 }}
+                            style={{ flex: 1, backgroundColor: theme.success, padding: 16, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", opacity: saving ? 0.6 : 1 }}
                         >
-                            <FontAwesome5 name="check" size={18} color={COLORS.branco} style={{ marginRight: 8 }} />
-                            <Text style={{ color: COLORS.branco, fontSize: 16, fontWeight: "600" }}>{saving ? "Salvando..." : "Salvar"}</Text>
+                            <FontAwesome5 name="check" size={18} color={theme.background} style={{ marginRight: 8 }} />
+                            <Text style={{ color: theme.background, fontSize: 16, fontWeight: "600" }}>{saving ? "Salvando..." : "Salvar"}</Text>
                         </TouchableOpacity>
                     </View>
                 )}

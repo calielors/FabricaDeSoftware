@@ -9,6 +9,7 @@ import { formatCPF } from "../../../src/components/format_cpf";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 
 export default function DadosPessoais() {
+    const { theme } = useTheme();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -138,51 +139,51 @@ export default function DadosPessoais() {
 
     if (loading) {
         return (
-            <View style={{ flex: 1, backgroundColor: COLORS.branco }}>
+            <View style={{ flex: 1, backgroundColor: theme.background }}>
                 <Top_Bar />
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <ActivityIndicator size="large" color={COLORS.azul_principal} />
+                    <ActivityIndicator size="large" color={theme.primary} />
                 </View>
             </View>
         );
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: COLORS.branco }}>
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
             <Top_Bar />
             <ScrollView style={{ flex: 1, padding: 16 }}>
                 {/* Header com botão voltar */}
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
-                    <TouchableOpacity onPress={() => router.push('/home/(perfil)')} style={{ padding: 8 }}>
-                        <FontAwesome5 name="arrow-left" size={20} color={COLORS.azul_principal} />
+                    <TouchableOpacity onPress={() => router.back()} style={{ padding: 8 }}>
+                        <FontAwesome5 name="arrow-left" size={20} color={theme.primary} />
                     </TouchableOpacity>
-                    <Text style={{ fontSize: 24, fontWeight: "700", color: COLORS.preto, marginLeft: 12 }}>
+                    <Text style={{ fontSize: 24, fontWeight: "700", color: theme.text, marginLeft: 12 }}>
                         Dados Pessoais
                     </Text>
                 </View>
 
                 {/* Card com os dados */}
-                <View style={{ backgroundColor: COLORS.branco, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: COLORS.placeholder_text }}>
+                <View style={{ backgroundColor: theme.background, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: theme.placeholder }}>
                     
                     {/* CPF - Não editável */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>CPF</Text>
-                        <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                            <Text style={{ fontSize: 16, color: COLORS.placeholder_text }}>{formatCPF(userData.cpf) || "Não informado"}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>CPF</Text>
+                        <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                            <Text style={{ fontSize: 16, color: theme.placeholder }}>{formatCPF(userData.cpf) || "Não informado"}</Text>
                         </View>
                     </View>
 
                     {/* Nome - Não editável */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>NOME COMPLETO</Text>
-                        <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                            <Text style={{ fontSize: 16, color: COLORS.placeholder_text }}>{userData.nome || "Não informado"}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>NOME COMPLETO</Text>
+                        <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                            <Text style={{ fontSize: 16, color: theme.placeholder }}>{userData.nome || "Não informado"}</Text>
                         </View>
                     </View>
 
                     {/* Nome Social */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>NOME SOCIAL</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>NOME SOCIAL</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.nome_social}
@@ -191,15 +192,15 @@ export default function DadosPessoais() {
                                 placeholder="Digite seu nome social (opcional)"
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{userData.nome_social || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{userData.nome_social || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
 
                     {/* Data de Nascimento */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>DATA DE NASCIMENTO</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>DATA DE NASCIMENTO</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.data_nascimento}
@@ -220,8 +221,8 @@ export default function DadosPessoais() {
                                 maxLength={10}
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>
                                     {userData.data_nascimento ? new Date(userData.data_nascimento).toLocaleDateString('pt-BR') : "Não informado"}
                                 </Text>
                             </View>
@@ -230,7 +231,7 @@ export default function DadosPessoais() {
 
                     {/* Gênero */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>GÊNERO</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>GÊNERO</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.genero}
@@ -239,23 +240,23 @@ export default function DadosPessoais() {
                                 placeholder="Digite seu gênero"
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{userData.genero || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{userData.genero || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
 
                     {/* Email - Não editável */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>E-MAIL</Text>
-                        <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                            <Text style={{ fontSize: 16, color: COLORS.placeholder_text }}>{userData.email || "Não informado"}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>E-MAIL</Text>
+                        <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                            <Text style={{ fontSize: 16, color: theme.placeholder }}>{userData.email || "Não informado"}</Text>
                         </View>
                     </View>
 
                     {/* Telefone */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>TELEFONE</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>TELEFONE</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.telefone}
@@ -290,15 +291,15 @@ export default function DadosPessoais() {
                                 maxLength={15}
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{userData.telefone || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{userData.telefone || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
 
                     {/* Cartão SUS */}
                     <View style={{ marginBottom: 16 }}>
-                        <Text style={{ fontSize: 12, fontWeight: "600", color: COLORS.azul_principal, marginBottom: 6 }}>CARTÃO SUS</Text>
+                        <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>CARTÃO SUS</Text>
                         {isEditing ? (
                             <TextInput
                                 value={editData.cartao_sus}
@@ -308,8 +309,8 @@ export default function DadosPessoais() {
                                 keyboardType="numeric"
                             />
                         ) : (
-                            <View style={{ backgroundColor: "#F5F5F5", padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: COLORS.preto }}>{userData.cartao_sus || "Não informado"}</Text>
+                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                                <Text style={{ fontSize: 16, color: theme.text }}>{userData.cartao_sus || "Não informado"}</Text>
                             </View>
                         )}
                     </View>
@@ -319,10 +320,10 @@ export default function DadosPessoais() {
                 {!isEditing ? (
                     <TouchableOpacity 
                         onPress={() => setIsEditing(true)}
-                        style={{ backgroundColor: COLORS.azul_principal, padding: 16, borderRadius: 10, marginTop: 20, marginBottom: 30, flexDirection: "row", justifyContent: "center", alignItems: "center" }}
+                        style={{ backgroundColor: theme.primary, padding: 16, borderRadius: 10, marginTop: 20, marginBottom: 30, flexDirection: "row", justifyContent: "center", alignItems: "center" }}
                     >
-                        <FontAwesome5 name="edit" size={18} color={COLORS.branco} style={{ marginRight: 8 }} />
-                        <Text style={{ color: COLORS.branco, fontSize: 16, fontWeight: "600" }}>Editar Dados</Text>
+                        <FontAwesome5 name="edit" size={18} color={theme.background} style={{ marginRight: 8 }} />
+                        <Text style={{ color: theme.background, fontSize: 16, fontWeight: "600" }}>Editar Dados</Text>
                     </TouchableOpacity>
                 ) : (
                     <View style={{ flexDirection: "row", gap: 12, marginTop: 20, marginBottom: 30 }}>
@@ -338,8 +339,8 @@ export default function DadosPessoais() {
                             disabled={saving}
                             style={{ flex: 1, backgroundColor: COLORS.verde, padding: 16, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", opacity: saving ? 0.6 : 1 }}
                         >
-                            <FontAwesome5 name="check" size={18} color={COLORS.branco} style={{ marginRight: 8 }} />
-                            <Text style={{ color: COLORS.branco, fontSize: 16, fontWeight: "600" }}>{saving ? "Salvando..." : "Salvar"}</Text>
+                            <FontAwesome5 name="check" size={18} color={theme.background} style={{ marginRight: 8 }} />
+                            <Text style={{ color: theme.background, fontSize: 16, fontWeight: "600" }}>{saving ? "Salvando..." : "Salvar"}</Text>
                         </TouchableOpacity>
                     </View>
                 )}

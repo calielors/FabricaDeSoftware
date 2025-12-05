@@ -1,14 +1,16 @@
 import React, { useState, useContext, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Validacao_Styles as style } from "../../src/styles/validacao_styles";
-import { COLORS } from "../../src/assets/colors/colors";
+import { Validacao_Styles } from "../../src/styles/validacao_styles";
 import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
 import { supabase } from "../../src/services/supabase";
 import { useRouter } from "expo-router";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 export default function Validacao() {
+  const { theme } = useTheme();
+  const styles = Validacao_Styles(theme);
   const [codigo, setCodigo] = useState("");
   const { cadastro, clearCadastro } = useContext(CadastroContext);
   const router = useRouter();
@@ -58,15 +60,15 @@ export default function Validacao() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={style.container}>
+      <View style={styles.container}>
         <Top_Bar />
-        <View style={style.box}>
-          <Text style={style.titulo}>Verificação</Text>
-          <Text style={style.subtitulo}>
+        <View style={styles.box}>
+          <Text style={styles.titulo}>Verificação</Text>
+          <Text style={styles.subtitulo}>
             Insira o código de 6 dígitos enviado ao e-mail {email}
           </Text>
 
-          <Text style={style.label}>Código</Text>
+          <Text style={styles.label}>Código</Text>
           <PaperInput
             mode="outlined"
             value={codigo}
@@ -75,31 +77,31 @@ export default function Validacao() {
             }}
             placeholder="Digite o código"
             keyboardType="numeric"
-            activeOutlineColor={COLORS.azul_principal}
-            style={style.input}
+            activeOutlineColor={theme.primary}
+            style={styles.input}
             theme={{ roundness: 30 }}
           />
 
           <TouchableOpacity
-            style={style.botao}
+            style={styles.botao}
             onPress={handleProximo}
             activeOpacity={0.7}
           >
-            <Text style={style.botao_text}>Concluir</Text>
+            <Text style={styles.botao_text}>Concluir</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={style.voltar} activeOpacity={0.7}>
-            <Text style={style.voltar_text}>Reenviar o e-mail</Text>
+          <TouchableOpacity style={styles.voltar} activeOpacity={0.7}>
+            <Text style={styles.voltar_text}>Reenviar o e-mail</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={style.voltar}
+            style={styles.voltar}
             onPress={() => {
               router.back();
             }}
             activeOpacity={0.7}
           >
-            <Text style={style.voltar_text}>Alterar e-mail</Text>
+            <Text style={styles.voltar_text}>Alterar e-mail</Text>
           </TouchableOpacity>
         </View>
       </View>

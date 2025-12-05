@@ -1,15 +1,16 @@
 import { StyleSheet } from 'react-native';
-import { COLORS } from '../assets/colors/colors';
+import { useTheme } from '../../src/contexts/ThemeContext';
 
-export const Historico_Styles = StyleSheet.create({
+
+export const Historico_Styles = (theme: any) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.branco,
+        backgroundColor: theme.background,
     },
     header: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.preto,
+        color: theme.text,
         marginTop: 15,
         textAlign: 'center',
     },
@@ -26,13 +27,13 @@ export const Historico_Styles = StyleSheet.create({
         padding: 15,
         borderRadius: 12,
         marginBottom: 10,
-        borderColor: COLORS.placeholder_text,
+        borderColor: theme.placeholder,
         borderWidth: 1,
     },
     itemMeta: {
         marginTop: 6,
         fontSize: 15,
-        color: COLORS.preto,
+        color: theme.text,
         fontWeight: 'bold',
     },
     statusContainer: {
@@ -41,7 +42,7 @@ export const Historico_Styles = StyleSheet.create({
     },
     emptyText: {
         textAlign: 'center',
-        color: COLORS.placeholder_text,
+        color: theme.placeholder,
         marginTop: 20,
         fontStyle: 'italic',
     },

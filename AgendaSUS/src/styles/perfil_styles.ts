@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 import { COLORS } from "../assets/colors/colors";
 
-export const Perfil_Styles = StyleSheet.create({
+export const Perfil_Styles = (theme: any) => StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.branco
+        backgroundColor: theme.background,
     },
     content: {
         paddingHorizontal: 10,
@@ -15,31 +15,31 @@ export const Perfil_Styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: "700",
-        color: COLORS.preto,
+        color: theme.text,
         marginTop: 10,
         marginBottom: 5,
     },
     subText: {
         fontSize: 16,
-        color: COLORS.placeholder_text,
+        color: theme.placeholder,
         marginTop: 2
     },
     card: {
-        backgroundColor: COLORS.branco,
+        backgroundColor: theme.background,
         borderRadius: 15,
         padding: 15,
         marginBottom: 10,
         borderWidth: 1,
-        borderColor: COLORS.placeholder_text,
+        borderColor: theme.placeholder,
     },
-    cardTitle: { fontSize: 18, fontWeight: "700", marginBottom: 10, color: COLORS.preto },
+    cardTitle: { fontSize: 18, fontWeight: "700", marginBottom: 10, color: theme.text },
     menuItem: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         paddingVertical: 11,
         borderBottomWidth: 1,
-        borderColor: COLORS.verde,
+        borderColor: theme.success,
     },
     menuLeft: {
         flexDirection: "row",
@@ -48,13 +48,13 @@ export const Perfil_Styles = StyleSheet.create({
     },
     menuText: {
         fontSize: 17,
-        color: COLORS.preto
+        color: theme.text
     },
     sair: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: COLORS.vermelho,
+        backgroundColor: theme.danger,
         padding: 11,
         borderRadius: 14,
         marginTop: 10,

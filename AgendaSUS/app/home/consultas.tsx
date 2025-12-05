@@ -1,13 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { Top_Bar } from '../../src/components/top_bar';
-import { COLORS } from '../../src/assets/colors/colors';
-import { Consultas_Styles as styles } from '../../src/styles/consultas_styles';
+import { Consultas_Styles, Consultas_Styles as styles } from '../../src/styles/consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
 import { AuthContext } from '../../src/contexts/AuthContext';
 import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } from '../../src/services/consultas';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '../../src/contexts/ThemeContext';
 
 type Consulta = {
     id: number;
@@ -23,6 +23,8 @@ const formatarData = (dateString: string) => {
 };
 
 export default function Consultas() {
+    const { theme } = useTheme();
+    const styles = Consultas_Styles(theme);
     const [data, setData] = useState<Consulta[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -50,7 +52,7 @@ export default function Consultas() {
             setError(null);
 
             const { data: paciente, error: erroPaciente } = await buscarPacientePorAuthId(user.id);
-            
+
             if (erroPaciente || !paciente) {
                 setError('Não foi possível encontrar seus dados de paciente');
                 setLoading(false);
@@ -66,7 +68,7 @@ export default function Consultas() {
 
             if (consultas) {
                 const agora = new Date();
-                
+
                 const consultasFuturas = consultas
                     .filter(c => {
                         const dataConsulta = new Date(c.data_hora);
@@ -74,10 +76,10 @@ export default function Consultas() {
                     })
                     .map(c => {
                         const [dataParte] = c.data_hora.split('T');
-                        
+
                         const dataHora = new Date(c.data_hora);
                         const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                        
+
                         // Busca o nome da unidade do objeto retornado pelo JOIN
                         let nomeUnidade = 'UBS';
                         if (c.unidade_saude && typeof c.unidade_saude === 'object') {
@@ -85,7 +87,7 @@ export default function Consultas() {
                         } else if (typeof c.unidade_saude === 'string') {
                             nomeUnidade = c.unidade_saude;
                         }
-                        
+
                         return {
                             id: c.id!,
                             unidade: nomeUnidade,
@@ -138,8 +140,8 @@ export default function Consultas() {
 
                 {loading ? (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <ActivityIndicator size="large" color={COLORS.azul_principal} />
-                        <Text style={{ marginTop: 10, color: COLORS.preto, opacity: 0.6 }}>
+                        <ActivityIndicator size="large" color={theme.primary} />
+                        <Text style={{ marginTop: 10, color: theme.text, opacity: 0.6 }}>
                             Carregando consultas...
                         </Text>
                     </View>
@@ -165,10 +167,10 @@ export default function Consultas() {
                                         <MaterialCommunityIcons
                                             name="check-circle"
                                             size={20}
-                                            color={COLORS.verde}
+                                            color={theme.success}
                                             style={{ marginRight: 4 }}
                                         />
-                                        <Text style={[styles.statusText, { color: COLORS.verde }]}>
+                                        <Text style={[styles.statusText, { color: theme.success }]}>
                                             Confirmada
                                         </Text>
                                     </View>
@@ -176,7 +178,7 @@ export default function Consultas() {
                                         style={styles.cancelarButton}
                                         onPress={() => abrirModalCancelar(item)}
                                     >
-                                        <Text style={{ color: COLORS.branco, fontWeight: '600' }}>Cancelar</Text>
+                                        <Text style={{ color: theme.background, fontWeight: '600' }}>Cancelar</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -187,7 +189,7 @@ export default function Consultas() {
                         style={styles.listContainer}
                     />
                 )}
-                
+
                 <Modal isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
                     <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>
@@ -195,21 +197,21 @@ export default function Consultas() {
                         </Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 15 }}>
                             <TouchableOpacity
-                                style={{ backgroundColor: COLORS.vermelho, padding: 10, borderRadius: 5, minWidth: 80, alignItems: 'center' }}
+                                style={{ backgroundColor: theme.danger, padding: 10, borderRadius: 5, minWidth: 80, alignItems: 'center' }}
                                 onPress={() => setIsVisible(false)}
                                 disabled={cancelando}
                             >
-                                <Text style={{ color: COLORS.branco, fontWeight: 'bold' }}>Não</Text>
+                                <Text style={{ color: theme.background, fontWeight: 'bold' }}>Não</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={{ backgroundColor: COLORS.verde, padding: 10, borderRadius: 5, minWidth: 80, alignItems: 'center' }}
+                                style={{ backgroundColor: theme.success, padding: 10, borderRadius: 5, minWidth: 80, alignItems: 'center' }}
                                 onPress={confirmarCancelamento}
                                 disabled={cancelando}
                             >
                                 {cancelando ? (
-                                    <ActivityIndicator size="small" color={COLORS.branco} />
+                                    <ActivityIndicator size="small" color={theme.background} />
                                 ) : (
-                                    <Text style={{ color: COLORS.branco, fontWeight: 'bold' }}>Sim</Text>
+                                    <Text style={{ color: theme.background, fontWeight: 'bold' }}>Sim</Text>
                                 )}
                             </TouchableOpacity>
                         </View>

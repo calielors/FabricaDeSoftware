@@ -1,41 +1,45 @@
 import React from "react";
 import { TextInput as PaperInput } from "react-native-paper";
-import { COLORS } from "../assets/colors/colors";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { StyleSheet } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 type CampoPesquisaProps = {
   label: string;
   query: string;
   setQuery: (value: string) => void;
-  placeholder?: string; // placeholder opcional
+  placeholder?: string;
 };
 
 export const CampoPesquisa: React.FC<CampoPesquisaProps> = ({
   label,
   query,
   setQuery,
-  placeholder = "", // valor padrão vazio
+  placeholder = "",
 }) => {
+
+  const { theme } = useTheme();           // ✅ AGORA ESTÁ CORRETO
+  const styles = getStyles(theme);        // ✅ estilos dinâmicos
+
   return (
     <PaperInput
       mode="outlined"
       label={label}
       value={query}
       onChangeText={setQuery}
-      placeholder={placeholder} 
-      placeholderTextColor={COLORS.placeholder_text}
-      activeOutlineColor={COLORS.azul_principal}
+      placeholder={placeholder}
+      placeholderTextColor={theme.placeholder}
+      activeOutlineColor={theme.primary}
       style={styles.busca}
       theme={{ roundness: 10 }}
-      contentStyle={{ paddingHorizontal: 15 }} 
+      contentStyle={{ paddingHorizontal: 15 }}
       right={
         <PaperInput.Icon
           icon={() => (
             <MaterialCommunityIcons
               name="magnify"
               size={24}
-              color={COLORS.placeholder_text}
+              color={theme.placeholder}
             />
           )}
         />
@@ -43,12 +47,14 @@ export const CampoPesquisa: React.FC<CampoPesquisaProps> = ({
     />
   );
 };
-const styles = StyleSheet.create({
+
+const getStyles = (theme: any) =>
+  StyleSheet.create({
     busca: {
-        borderColor: COLORS.placeholder_text,
-        width: '90%',
-        height: 35,
-        alignSelf: 'center',
-        backgroundColor: COLORS.cinza_claro,
+      borderColor: theme.placeholder,
+      width: "90%",
+      height: 35,
+      alignSelf: "center",
+      backgroundColor: theme.card,
     },
-});
+  });

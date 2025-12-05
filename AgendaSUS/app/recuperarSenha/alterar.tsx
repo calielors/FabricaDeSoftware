@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { TextInput as PaperInput } from "react-native-paper";
 import { useRouter } from "expo-router";
 import BarraProgresso from "../../src/components/barra_progresso";
 import { supabase } from "../../src/services/supabase";
+import { AuthContext } from "../../src/contexts/AuthContext";
 
 export default function Alterar() {
   const router = useRouter();
@@ -73,6 +74,8 @@ export default function Alterar() {
   }, []);
 
   const validarCampos = async () => {
+    const { logged } = useContext(AuthContext);
+    const router = useRouter();
     if (!senha.trim() || !confirmar.trim()) {
       Alert.alert("Atenção", "Preencha todos os campos!");
       return;
@@ -104,7 +107,16 @@ export default function Alterar() {
       }
 
       Alert.alert("Sucesso", "Senha redefinida com sucesso!");
-      router.replace("/auth/login");
+
+      useEffect(() => {//teste para redirecionar apos alterar a senha
+        if (logged) {
+          router.replace("/home/(perfil)"); 
+        } else {
+          router.replace("/auth/login");
+        }
+      }, [logged]);
+      return null;
+
     } catch (err) {
       console.error("[ERROR] Unexpected error during password update:", err);
       Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente.");
@@ -122,6 +134,8 @@ export default function Alterar() {
         <Text style={styles.subtitulo}>Verificando link de recuperação de senha...</Text>
       </View>
     );
+
+
 
   return (
     <KeyboardAvoidingView

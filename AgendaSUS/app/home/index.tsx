@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Home_Styles } from "../../src/styles/home_styles";
-import { COLORS } from "../../src/assets/colors/colors";
 import { Top_Bar } from "../../src/components/top_bar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -9,6 +8,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter, useFocusEffect } from "expo-router";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../src/services/consultas";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 interface Consulta {
     data: string;
@@ -19,6 +19,9 @@ interface Consulta {
 }
 
 export default function Home() {
+    const { theme } = useTheme();
+    const styles = Home_Styles(theme);
+
     const router = useRouter();
     const { user } = useContext(AuthContext);
 
@@ -108,97 +111,96 @@ export default function Home() {
     };
 
     return (
-        <View style={Home_Styles.container}>
+        <View style={styles.container}>
             <Top_Bar />
             <View style={{ flex: 1, paddingHorizontal: 15 }}>
                 {/* Saudação */}
-                <View style={Home_Styles.header_box}>
-                    <Text style={Home_Styles.titulo}>Olá, {user?.nome || "Usuário"}!</Text>
-                    <Text style={Home_Styles.data}>{dataAtual}</Text>
+                <View style={styles.header_box}>
+                    <Text style={styles.titulo}>Olá, {user?.nome || "Usuário"}!</Text>
+                    <Text style={styles.data}>{dataAtual}</Text>
                 </View>
 
                 {/* Próxima consulta */}
                 {loading ? (
-                    <View style={Home_Styles.consulta_box}>
-                        <ActivityIndicator size="large" color={COLORS.azul_principal} />
-                        <Text style={{ textAlign: "center", marginTop: 10, color: COLORS.preto }}>
+                    <View style={styles.consulta_box}>
+                        <ActivityIndicator size="large" color={theme.primary} />
+                        <Text style={{ textAlign: "center", marginTop: 10, color: theme.text }}>
                             Carregando consultas...
                         </Text>
                     </View>
                 ) : consulta ? (
-                    <View style={Home_Styles.consulta_box}>
-                        <View style={Home_Styles.consulta_header}>
-                            <Text style={Home_Styles.consulta_titulo}>Sua próxima consulta</Text>
-                            <Ionicons name="notifications-outline" size={18} color={COLORS.preto} />
+                    <View style={styles.consulta_box}>
+                        <View style={styles.consulta_header}>
+                            <Text style={styles.consulta_titulo}>Sua próxima consulta</Text>
+                            <Ionicons name="notifications-outline" size={18} color={theme.text} />
                         </View>
 
-                        <Text style={Home_Styles.consulta_data}>
+                        <Text style={styles.consulta_data}>
                             {consulta.data} ÀS {consulta.hora}
                         </Text>
-                        <Text style={Home_Styles.consulta_info}>{consulta.especialidade}</Text>
-                        <Text style={Home_Styles.consulta_local}>{consulta.local}</Text>
+                        <Text style={styles.consulta_info}>{consulta.especialidade}</Text>
+                        <Text style={styles.consulta_local}>{consulta.local}</Text>
 
                         <View
                             style={[
-                                Home_Styles.consulta_status,
+                                styles.consulta_status,
                                 {
                                     backgroundColor:
                                         consulta.status === "Confirmada"
-                                            ? COLORS.verde
-                                            : COLORS.placeholder_text,
+                                            ? theme.success
+                                            : theme.placeholder,
                                 },
                             ]}
                         >
-                            <Text style={Home_Styles.consulta_status_text}>{consulta.status}</Text>
+                            <Text style={styles.consulta_status_text}>{consulta.status}</Text>
                         </View>
                     </View>
                 ) : (
-                    <View style={Home_Styles.consulta_box}>
-                        <Text style={Home_Styles.consulta_titulo}>Nenhuma consulta agendada</Text>
-                        <Text style={{ textAlign: "center", marginTop: 10, color: COLORS.placeholder_text }}>
+                    <View style={styles.consulta_box}>
+                        <Text style={styles.consulta_titulo}>Nenhuma consulta agendada</Text>
+                        <Text style={{ textAlign: "center", marginTop: 10, color: theme.placeholder }}>
                             Você não tem consultas futuras. Agende uma nova consulta!
                         </Text>
                     </View>
                 )}
 
                 {/* Serviços */}
-                <Text style={Home_Styles.servicos_titulo}>Serviços</Text>
-
-                <View style={Home_Styles.servicos_container}>
+                <Text style={styles.servicos_titulo}>Serviços</Text>
+                <View style={styles.servicos_container}>
                     <TouchableOpacity
-                        style={Home_Styles.servico_item}
+                        style={styles.servico_item}
                         activeOpacity={0.7}
                         onPress={() => router.push("/home/agendar")}
                     >
-                        <FontAwesome6 name="calendar-plus" size={30} color={COLORS.azul_principal} />
-                        <Text style={Home_Styles.servico_text}>Agendar consulta</Text>
+                        <FontAwesome6 name="calendar-plus" size={30} color={theme.primary} />
+                        <Text style={styles.servico_text}>Agendar consulta</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={Home_Styles.servico_item}
+                        style={styles.servico_item}
                         activeOpacity={0.7}
                         onPress={() => router.push("/home/consultas")}
                     >
-                        <AntDesign name="bars" size={30} color={COLORS.azul_principal} />
-                        <Text style={Home_Styles.servico_text}>Minhas consultas</Text>
+                        <AntDesign name="bars" size={30} color={theme.primary} />
+                        <Text style={styles.servico_text}>Minhas consultas</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={Home_Styles.servico_item}
+                        style={styles.servico_item}
                         activeOpacity={0.7}
                         onPress={() => router.push("/servicos/medicamentos")}
                     >
-                        <FontAwesome5 name="pills" size={30} color={COLORS.azul_principal} />
-                        <Text style={Home_Styles.servico_text}>Medicamentos</Text>
+                        <FontAwesome5 name="pills" size={30} color={theme.primary} />
+                        <Text style={styles.servico_text}>Medicamentos</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={Home_Styles.servico_item}
+                        style={styles.servico_item}
                         activeOpacity={0.7}
                         onPress={() => router.push("/servicos/historico")}
                     >
-                        <FontAwesome5 name="file-medical" size={30} color={COLORS.azul_principal} />
-                        <Text style={Home_Styles.servico_text}>Meu histórico</Text>
+                        <FontAwesome5 name="file-medical" size={30} color={theme.primary} />
+                        <Text style={styles.servico_text}>Meu histórico</Text>
                     </TouchableOpacity>
                 </View>
             </View>
