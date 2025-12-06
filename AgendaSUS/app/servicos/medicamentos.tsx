@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Top_Bar } from '../../src/components/top_bar';
 import { Medicamentos_Styles} from '../../src/styles/medicamentos_styles';
 import { CampoPesquisa } from '../../src/components/campo_pesquisa';
 import { supabase } from '../../src/services/supabase';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/contexts/ThemeContext';
+import { FontAwesome5 } from "@expo/vector-icons";
+
 type Medicamento = {
   id: string;
   name: string;
@@ -17,6 +21,7 @@ type Medicamento = {
 export default function Medicamentos() {
   const { theme } = useTheme();
   const styles = Medicamentos_Styles(theme);
+  const router = useRouter();
   const [data, setData] = useState<Medicamento[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -84,9 +89,20 @@ export default function Medicamentos() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <Top_Bar />
-      <Text style={styles.title}>Medicamentos</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, marginTop: 10 }}>
+        <TouchableOpacity
+          onPress={() => router.push('/home')}
+          style={{
+            marginRight: 10,
+            padding: 5
+          }}
+        >
+          <FontAwesome5 name="arrow-left" size={20} color={theme.primary} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Medicamentos</Text>
+      </View>
 
       <CampoPesquisa
         label="Buscar Medicamento"
@@ -131,6 +147,6 @@ export default function Medicamentos() {
         }
         style={styles.resultsContainer}
       />
-    </View>
+    </SafeAreaView>
   );
 }
