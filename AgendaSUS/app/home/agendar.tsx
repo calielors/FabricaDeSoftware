@@ -2,11 +2,10 @@ import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Fla
 import React, { useState, useContext, useEffect } from "react";
 import { Agendamento_Styles } from "../../src/styles/agendamento_styles";
 import { Top_Bar } from "../../src/components/top_bar";
-import { Calendar, LocaleConfig } from "react-native-calendars";
+import { Calendar } from "react-native-calendars";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, buscarUnidadesSaude, UnidadeSaude } from "../../src/services/consultas";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import Modal from "react-native-modal";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import CustomCalendar from "../../src/components/CustomCalendar";
@@ -26,8 +25,8 @@ export default function Agendamento() {
     const [loadingUnidades, setLoadingUnidades] = useState(false);
 
     const { user } = useContext(AuthContext);
-    const router = useRouter();
-    const params = useLocalSearchParams();
+    const navigation = useNavigation();
+    const route = useRoute();
 
     const todosHorarios = [
         '08:00', '08:30', '09:00', '09:30',
@@ -39,11 +38,13 @@ export default function Agendamento() {
 
     useFocusEffect(
         React.useCallback(() => {
-            const unidadeSelecionada = params?.unidadeSelecionada as UnidadeSaude | undefined;
+            const params = route.params as { unidadeSelecionada?: UnidadeSaude };
 
-            if (unidadeSelecionada) {
+            if (params?.unidadeSelecionada) {
                 // Veio unidade por parâmetro da home
-                setUnidadeSelecionada(unidadeSelecionada);
+                setUnidadeSelecionada(params.unidadeSelecionada);
+                // Limpa os parâmetros para não reutilizar na próxima vez
+                navigation.setParams({ unidadeSelecionada: undefined } as any);
             } else {
                 // Não veio unidade - limpa tudo e abre modal
                 setUnidadeSelecionada(null);
@@ -132,7 +133,7 @@ export default function Agendamento() {
                     },
                     {
                         text: 'Voltar',
-                        onPress: () => router.back(),
+                        onPress: () => navigation.goBack(),
                         style: 'cancel',
                     },
                 ]
@@ -204,7 +205,7 @@ export default function Agendamento() {
                         setDay('');
                         setSelectedTime(null);
                         setUnidadeSelecionada(null);
-                        router.back();
+                        navigation.goBack();
                     }
                 }]
             );
@@ -223,26 +224,12 @@ export default function Agendamento() {
     const handleCancelar = () => {
         setDay('');
         setSelectedTime(null);
-        router.back();
+        navigation.goBack();
     };
 
     return (
         <View style={styles.container}>
             <Top_Bar />
-            <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingTop: 10 }}>
-                <TouchableOpacity
-                    onPress={() => router.push('/home')}
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingRight: 10,
-                        paddingVertical: 5
-                    }}
-                >
-                    <MaterialCommunityIcons name="arrow-left" size={24} color={theme.primary} />
-                </TouchableOpacity>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: theme.text }}>Agendar Consulta</Text>
-            </View>
             <ScrollView
                 style={{ flex: 1, width: '100%' }}
                 contentContainerStyle={{ paddingBottom: 120 }}
