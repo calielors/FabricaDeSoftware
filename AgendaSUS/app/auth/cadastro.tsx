@@ -99,6 +99,7 @@ export default function Cadastro() {
                         activeOutlineColor={theme.primary}
                         style={styles.inputs}
                         theme={{ roundness: 30 }}
+                        keyboardType="numeric"
                     />
 
                     {/* Email */}
@@ -106,13 +107,15 @@ export default function Cadastro() {
                         mode="outlined"
                         label={<Text style={{ color: theme.placeholder }}>E-mail</Text>}
                         value={email}
-                        onChangeText={(text) => setEmail(text.replace(/\s/g, ""))}
+                        onChangeText={(text) => setEmail(text.replace(/\s/g, "").toLowerCase())}
                         placeholder="Digite seu e-mail"
                         placeholderTextColor={theme.placeholder}
                         activeOutlineColor={theme.primary}
                         style={styles.inputs}
                         theme={{ roundness: 30 }}
                         keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrect={false}
                     />
 
                     {/* Senha */}

@@ -1,12 +1,14 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Top_Bar } from '../../src/components/top_bar';
 import { Historico_Styles} from '../../src/styles/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthContext } from '../../src/contexts/AuthContext';
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../src/services/consultas';
 import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/contexts/ThemeContext';
+import { FontAwesome5 } from "@expo/vector-icons";
 
 type Consulta = {
     id: number;
@@ -25,6 +27,7 @@ const formatarData = (dateString: string) => {
 export default function Historico() {
     const { theme } = useTheme();
     const styles = Historico_Styles(theme);
+    const router = useRouter();
     const [data, setData] = useState<Consulta[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -144,7 +147,19 @@ export default function Historico() {
         <View style={styles.container}>
             <Top_Bar />
             <View style={styles.content}>
-                <Text style={styles.header}>Histórico</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
+                    <TouchableOpacity
+                        onPress={() => router.push('/home')}
+                        style={{
+                            marginRight: 10,
+                            padding: 5,
+                            marginTop: 16,
+                        }}
+                    >
+                        <FontAwesome5 name="arrow-left" size={20} color={theme.primary} />
+                    </TouchableOpacity>
+                    <Text style={styles.header}>Histórico</Text>
+                </View>
 
                 <FlatList
                     data={data}
