@@ -8,6 +8,8 @@ import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorario
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import Modal from "react-native-modal";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import CustomCalendar from "../../src/components/CustomCalendar";
+
 
 export default function Agendamento() {
     const { theme } = useTheme();
@@ -285,38 +287,11 @@ export default function Agendamento() {
                     Selecione a data
                 </Text>
 
-                <Calendar
-                    style={styles.calendario}
-                    markedDates={{
-                        [today]: { marked: false, selectedColor: theme.success },
-                        [day]: { selected: true, selectedColor: theme.primary }
-                    }}
-                    headerStyle={{
-                        backgroundColor: 'transparent',
-                        borderBottomColor: theme.placeholder,
-                        borderBottomWidth: 1,
-                    }}
-                    theme={{
-                        textSectionTitleColor: theme.text,
-                        monthTextColor: theme.text,
-                        selectedDayBackgroundColor: theme.success,
-                        todayTextColor: theme.success,
-                        arrowColor: theme.primary,
-                        textDayFontWeight: 'bold',
-                        textMonthFontWeight: 'bold',
-                        textDayHeaderFontWeight: 'bold',
-                        dayTextColor: theme.text,
-                        textDayFontSize: 14,
-                        textMonthFontSize: 18,
-                        textDayHeaderFontSize: 12,
-                        calendarBackground: 'transparent',
-                        textDisabledColor: theme.placeholder,
-                    }}
-                    disableAllTouchEventsForDisabledDays
-                    enableSwipeMonths
-                    onDayPress={(day) => setDay(day.dateString)}
+                <CustomCalendar
+                    selectedDate={day}
                     minDate={today}
-                    hideExtraDays
+                    onSelectDate={(d) => setDay(d)}
+                    theme={theme}
                 />
 
                 <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
