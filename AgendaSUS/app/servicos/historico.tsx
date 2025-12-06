@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Top_Bar } from '../../src/components/top_bar';
 import { Historico_Styles} from '../../src/styles/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -144,7 +145,7 @@ export default function Historico() {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container} edges={['bottom']}>
             <Top_Bar />
             <View style={styles.content}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
@@ -197,6 +198,6 @@ export default function Historico() {
                     style={styles.listContainer}
                 />
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
