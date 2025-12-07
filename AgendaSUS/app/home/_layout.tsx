@@ -14,7 +14,7 @@ export default function TabsLayout() {
           if (route.name === "consultas")
             return <FontAwesome name="bars" size={size} color={color} />;
 
-          if (route.name === "agendar")
+          if (route.name === "(agendar)")
             return <MaterialIcons name="event-available" size={size} color={color} />;
 
           if (route.name === "(perfil)")
@@ -35,7 +35,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ title: "Início" }} />
       <Tabs.Screen name="consultas" options={{ title: "Consultas" }} />
-      <Tabs.Screen name="agendar" options={{ title: "Agendar" }} />
+      <Tabs.Screen name="(agendar)" options={{ title: "Agendar" } } />
       <Tabs.Screen name="(perfil)" options={{ title: "Perfil" }} />
     </Tabs>
   );
