@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
+import { COLORS } from "../assets/colors/colors";
 
 export const Login_Styles = (theme : any)=>StyleSheet.create({
       container: {
@@ -31,7 +32,7 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
       inputs: {
             width: '90%',
             height: 50,
-            backgroundColor: '#ebeaea',
+            backgroundColor: theme.card,
             borderRadius: 30,
             paddingLeft: 20,
       },
@@ -45,7 +46,7 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
             marginTop: 20,
       },
       acessar_text: {
-            color: '#fff',
+            color: COLORS.branco,
             fontSize: 18,
             fontWeight: 'bold',
       },

@@ -55,6 +55,7 @@ export default function Login() {
             onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
             placeholder="Digite seu CPF"
             keyboardType="numeric"
+            textColor={theme.text}
             activeOutlineColor={theme.primary}
             style={styles.inputs}
             theme={{ roundness: 30 }}
@@ -69,6 +70,7 @@ export default function Login() {
             placeholder="Digite sua senha"
             activeOutlineColor={theme.primary}
             style={styles.inputs}
+            textColor={theme.text}
             theme={{ roundness: 30 }}
             secureTextEntry={!passwordVisible}
             right={

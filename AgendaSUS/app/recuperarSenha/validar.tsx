@@ -8,13 +8,16 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { Validar_Styles as style } from "../../src/styles/validar_styles";
+import { Validar_Styles } from "../../src/styles/validar_styles";
 import { Top_Bar } from "../../src/components/top_bar";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import BarraProgresso from "../../src/components/barra_progresso";
 import { supabase } from "../../src/services/supabase";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 export default function Validar() {
+  const { theme } = useTheme();
+  const styles = Validar_Styles(theme);
   const router = useRouter();
   const params = useLocalSearchParams();
   const [loading, setLoading] = useState(false);
@@ -52,37 +55,37 @@ export default function Validar() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
-      <View style={style.container}>
+      <View style={styles.container}>
         <Top_Bar />
         <BarraProgresso etapaAtual={2} totalEtapas={3} />
 
-        <View style={style.box}>
-          <Text style={style.titulo}>Verificação</Text>
-          <Text style={style.subtitulo}>
+        <View style={styles.box}>
+          <Text style={styles.titulo}>Verificação</Text>
+          <Text style={styles.subtitulo}>
             Um e-mail de recuperação de senha foi enviado. Verifique sua caixa de entrada e siga o link para redefinir sua senha.
           </Text>
 
           <TouchableOpacity
-            style={style.botao}
+            style={styles.botao}
             onPress={handleResend}
             activeOpacity={0.7}
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={theme.background} />
             ) : (
-              <Text style={style.botao_text}>
+              <Text style={styles.botao_text}>
                 {emailSent ? "Reenviar novamente" : "Reenviar e-mail"}
               </Text>
             )}
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={style.voltar}
+            style={styles.voltar}
             onPress={() => router.back()}
             activeOpacity={0.7}
           >
-            <Text style={style.voltar_text}>Voltar</Text>
+            <Text style={styles.voltar_text}>Voltar</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -9,15 +9,17 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Recuperar_Styles } from "../../src/styles/recuperar_styles";
-import { COLORS } from "../../src/assets/colors/colors";
 import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useNavigation, useRouter } from "expo-router";
 import BarraProgresso from "../../src/components/barra_progresso";
 import { formatCPF } from "../../src/components/format_cpf";
 import { supabase } from "../../src/services/supabase";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 export default function Recuperar() {
+  const { theme } = useTheme();
+  const styles = Recuperar_Styles(theme);
   const [cpf, setCpf] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -63,44 +65,40 @@ export default function Recuperar() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-    >
-      <View style={Recuperar_Styles.container}>
+      <View style={styles.container}>
         <Top_Bar />
         <BarraProgresso etapaAtual={1} totalEtapas={3} />
 
-        <View style={Recuperar_Styles.box}>
-          <Text style={Recuperar_Styles.titulo}>Recuperação de Senha</Text>
-          <Text style={Recuperar_Styles.subtitulo}>
+        <View style={styles.box}>
+          <Text style={styles.titulo}>Recuperação de Senha</Text>
+          <Text style={styles.subtitulo}>
             Digite seu CPF para receber um código de verificação
           </Text>
 
-          <Text style={Recuperar_Styles.label}>CPF</Text>
+          <Text style={styles.label}>CPF</Text>
           <PaperInput
             mode="outlined"
-            label={<Text style={{ color: COLORS.placeholder_text }}>CPF</Text>}
+            label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
             value={formatCPF(cpf)}
             onChangeText={(text) => setCpf(text.replace(/\D/g, '').slice(0, 11))}
             placeholder="Digite seu CPF"
             keyboardType="numeric"
-            activeOutlineColor={COLORS.azul_principal}
-            style={Recuperar_Styles.input}
-            theme={{ roundness: 30 }}
+            activeOutlineColor={theme.primary}
+            textColor={theme.text}
+            style={styles.input}
+            theme={{ roundness: 30}}
           />
 
           <TouchableOpacity
-            style={Recuperar_Styles.botao}
+            style={styles.botao}
             onPress={handleProximo}
             activeOpacity={0.7}
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={theme.background} />
             ) : (
-              <Text style={Recuperar_Styles.botao_text}>Próximo</Text>
+              <Text style={styles.botao_text}>Próximo</Text>
             )}
           </TouchableOpacity>
 
@@ -108,10 +106,9 @@ export default function Recuperar() {
             onPress={() => router.back()}
             activeOpacity={0.7}
           >
-            <Text style={Recuperar_Styles.link}>Voltar</Text>
+            <Text style={styles.link}>Voltar</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAvoidingView>
   );
 }

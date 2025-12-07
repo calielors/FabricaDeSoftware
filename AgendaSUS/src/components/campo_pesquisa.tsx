@@ -18,8 +18,8 @@ export const CampoPesquisa: React.FC<CampoPesquisaProps> = ({
   placeholder = "",
 }) => {
 
-  const { theme } = useTheme();           // ✅ AGORA ESTÁ CORRETO
-  const styles = getStyles(theme);        // ✅ estilos dinâmicos
+  const { theme } = useTheme();
+  const styles = getStyles(theme);
 
   return (
     <PaperInput
@@ -32,7 +32,7 @@ export const CampoPesquisa: React.FC<CampoPesquisaProps> = ({
       activeOutlineColor={theme.primary}
       style={styles.busca}
       theme={{ roundness: 10 }}
-      contentStyle={{ paddingHorizontal: 15 }}
+      contentStyle={{ paddingHorizontal: 15,color: theme.text }}
       right={
         <PaperInput.Icon
           icon={() => (

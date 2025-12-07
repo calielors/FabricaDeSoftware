@@ -9,18 +9,19 @@ import {
   Platform,
 } from "react-native";
 import * as Linking from "expo-linking";
-import { Alterar_Styles as styles } from "../../src/styles/alterar_styles";
-import { COLORS } from "../../src/assets/colors/colors";
+import { Alterar_Styles } from "../../src/styles/alterar_styles";
 import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useRouter } from "expo-router";
 import BarraProgresso from "../../src/components/barra_progresso";
 import { supabase } from "../../src/services/supabase";
 import { AuthContext } from "../../src/contexts/AuthContext";
+import { useTheme } from "../../src/contexts/ThemeContext";
 
 export default function Alterar() {
+  const { theme } = useTheme();
+  const styles = Alterar_Styles(theme);
   const router = useRouter();
-
   const [senha, setSenha] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -110,7 +111,7 @@ export default function Alterar() {
 
       useEffect(() => {//teste para redirecionar apos alterar a senha
         if (logged) {
-          router.replace("/home/(perfil)"); 
+          router.replace("/home/(perfil)");
         } else {
           router.replace("/auth/login");
         }
@@ -158,9 +159,10 @@ export default function Alterar() {
             onChangeText={setSenha}
             placeholder="Digite sua nova senha"
             secureTextEntry={!mostrarSenha}
-            activeOutlineColor={COLORS.azul_principal}
+            activeOutlineColor={theme.primary}
             style={styles.input}
             theme={{ roundness: 30 }}
+            textColor={theme.text}
             right={
               <PaperInput.Icon
                 icon={mostrarSenha ? "eye" : "eye-off"}
@@ -176,8 +178,9 @@ export default function Alterar() {
             onChangeText={setConfirmar}
             placeholder="Repita sua senha"
             secureTextEntry={!mostrarConfirmar}
-            activeOutlineColor={COLORS.azul_principal}
+            activeOutlineColor={theme.primary}
             style={styles.input}
+            textColor={theme.text}
             theme={{ roundness: 30 }}
             right={
               <PaperInput.Icon

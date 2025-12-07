@@ -22,7 +22,7 @@ export default function TabsLayout() {
 
           return null;
         },
-        tabBarActiveTintColor: "#1976d2",
+        tabBarActiveTintColor: theme.primary,
         tabBarInactiveTintColor: theme.placeholder,
         headerShown: false,
         tabBarStyle: {

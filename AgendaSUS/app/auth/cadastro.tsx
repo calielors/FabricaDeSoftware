@@ -85,6 +85,7 @@ export default function Cadastro() {
                         placeholderTextColor={theme.placeholder}
                         activeOutlineColor={theme.primary}
                         style={styles.inputs}
+                        textColor={theme.text}
                         theme={{ roundness: 30 }}
                     />
 
@@ -99,6 +100,7 @@ export default function Cadastro() {
                         activeOutlineColor={theme.primary}
                         style={styles.inputs}
                         theme={{ roundness: 30 }}
+                        textColor={theme.text}
                         keyboardType="numeric"
                     />
 
@@ -116,6 +118,7 @@ export default function Cadastro() {
                         keyboardType="email-address"
                         autoCapitalize="none"
                         autoCorrect={false}
+                        textColor={theme.text}
                     />
 
                     {/* Senha */}
@@ -133,6 +136,7 @@ export default function Cadastro() {
                         autoCapitalize="none"
                         autoCorrect={false}
                         right={<PaperInput.Icon icon={passwordVisible ? "eye" : "eye-off"} onPress={() => setPasswordVisible(!passwordVisible)} />}
+                        textColor={theme.text}
                     />
 
                     {/* Confirmar senha */}
@@ -150,6 +154,7 @@ export default function Cadastro() {
                         autoCapitalize="none"
                         autoCorrect={false}
                         right={<PaperInput.Icon icon={confirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
+                        textColor={theme.text}
                     />
 
                     <TouchableOpacity style={styles.criar} activeOpacity={0.7} onPress={validarCampos}>

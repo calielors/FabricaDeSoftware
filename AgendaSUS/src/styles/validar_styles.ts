@@ -1,34 +1,33 @@
 import { StyleSheet } from "react-native";
-import { COLORS } from "../assets/colors/colors";
 
-export const Validar_Styles = StyleSheet.create({
+export const Validar_Styles = (theme : any) => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: COLORS.branco,
+    backgroundColor: theme.background,
   },
   box: {
     width: "90%",
     height: "50%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: COLORS.cinza_claro,
+    backgroundColor: theme.card,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: COLORS.placeholder_text,
+    borderColor: theme.placeholder,
     marginTop: "auto",
     marginBottom: "auto",
     gap: 15,
     transform: [{ translateY: -70 }],
   },
   titulo: {
-    color: COLORS.azul_principal,
+    color: theme.primary,
     fontSize: 20,
     fontWeight: "900",
   },
   subtitulo: {
     fontSize: 14,
-    color: COLORS.placeholder_text,
+    color: theme.placeholder,
     textAlign: "center",
     marginHorizontal: 20,
   },
@@ -47,14 +46,14 @@ export const Validar_Styles = StyleSheet.create({
   botao: {
     width: "90%",
     height: 50,
-    backgroundColor: COLORS.azul_principal,
+    backgroundColor: theme.primary,
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
   },
   botao_text: {
-    color: COLORS.branco,
+    color: theme.background,
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -62,7 +61,7 @@ export const Validar_Styles = StyleSheet.create({
     marginTop: 10,
   },
   voltar_text: {
-    color: COLORS.azul_principal,
+    color: theme.primary,
     fontWeight: "bold",
   },
 });

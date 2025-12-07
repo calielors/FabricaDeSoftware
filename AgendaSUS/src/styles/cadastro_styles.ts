@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../assets/colors/colors";
 
 
 export const CadastroStyles = (theme: any) => StyleSheet.create({
@@ -27,7 +28,7 @@ export const CadastroStyles = (theme: any) => StyleSheet.create({
     inputs: {
         width: '90%',
         height: 50,
-        backgroundColor: '#ebeaea',
+        backgroundColor: theme.card,
         borderRadius: 30,
         paddingLeft: 20,
     },
@@ -41,7 +42,7 @@ export const CadastroStyles = (theme: any) => StyleSheet.create({
         marginTop: 10,
     },
     criar_text: {
-        color: '#fff',
+        color: COLORS.branco,
         fontSize: 18,
         fontWeight: 'bold',
     },
