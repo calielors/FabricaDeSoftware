@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
 import { COLORS } from "../assets/colors/colors";
 
 
@@ -12,10 +11,9 @@ export const CadastroStyles = (theme: any) => StyleSheet.create({
     },
     cadastro_box: {
         width: '90%',
-        height: '60%',
+        height: '65%',
         alignItems: 'center',
-        gap: 15,
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
         borderWidth: 1,
         borderColor: theme.placeholder,
         backgroundColor: theme.card,
@@ -27,10 +25,8 @@ export const CadastroStyles = (theme: any) => StyleSheet.create({
     },
     inputs: {
         width: '90%',
-        height: 50,
         backgroundColor: theme.card,
         borderRadius: 30,
-        paddingLeft: 20,
     },
     criar: {
         width: '80%',
@@ -39,7 +35,6 @@ export const CadastroStyles = (theme: any) => StyleSheet.create({
         borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 10,
     },
     criar_text: {
         color: COLORS.branco,

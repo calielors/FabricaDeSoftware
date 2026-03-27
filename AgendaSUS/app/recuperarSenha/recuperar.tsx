@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Platform,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator, } from "react-native";
 import { Recuperar_Styles } from "../../src/styles/recuperar_styles";
 import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
@@ -65,11 +57,12 @@ export default function Recuperar() {
   }
 
   return (
-      <View style={styles.container}>
-        <Top_Bar />
-        <BarraProgresso etapaAtual={1} totalEtapas={3} />
+    <View style={styles.container}>
+      <Top_Bar />
+      <BarraProgresso etapaAtual={1} totalEtapas={3}/>
 
-        <View style={styles.box}>
+      <View style={styles.box}>
+        <View style={styles.conteudo}>
           <Text style={styles.titulo}>Recuperação de Senha</Text>
           <Text style={styles.subtitulo}>
             Digite seu CPF para receber um código de verificação
@@ -86,7 +79,7 @@ export default function Recuperar() {
             activeOutlineColor={theme.primary}
             textColor={theme.text}
             style={styles.input}
-            theme={{ roundness: 30}}
+            theme={{ roundness: 30 }}
           />
 
           <TouchableOpacity
@@ -110,5 +103,6 @@ export default function Recuperar() {
           </TouchableOpacity>
         </View>
       </View>
+    </View>
   );
 }

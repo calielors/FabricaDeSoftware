@@ -47,56 +47,59 @@ export default function Login() {
       <SafeAreaView style={styles.container}>
 
         <View style={styles.login_box}>
-          <Text style={styles.textos}>CPF</Text>
-          <PaperInput
-            mode="outlined"
-            label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
-            value={formatCPF(cpf)}
-            onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
-            placeholder="Digite seu CPF"
-            keyboardType="numeric"
-            textColor={theme.text}
-            activeOutlineColor={theme.primary}
-            style={styles.inputs}
-            theme={{ roundness: 30 }}
-          />
+          <View style={styles.input_box}>
+            <Text style={[, styles.textos, { marginTop: 'auto' }]}>CPF</Text>
+            <PaperInput
+              mode="outlined"
+              label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
+              value={formatCPF(cpf)}
+              onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
+              placeholder="Digite seu CPF"
+              keyboardType="numeric"
+              textColor={theme.text}
+              activeOutlineColor={theme.primary}
+              style={styles.inputs}
+              theme={{ roundness: 30 }}
+            />
+          </View>
+          <View style={styles.input_box}>
+            <Text style={styles.textos}>Senha</Text>
+            <PaperInput
+              mode="outlined"
+              label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
+              value={password}
+              onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
+              placeholder="Digite sua senha"
+              activeOutlineColor={theme.primary}
+              style={styles.inputs}
+              textColor={theme.text}
+              theme={{ roundness: 30 }}
+              secureTextEntry={!passwordVisible}
+              right={
+                <PaperInput.Icon
+                  icon={passwordVisible ? "eye" : "eye-off"}
+                  onPress={() => setPasswordVisible(!passwordVisible)}
+                />
+              }
+            />
+          </View>
+          <View style={styles.input_box}>
+            <TouchableOpacity
+              style={styles.acessar}
+              onPress={handleLogin}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.acessar_text}>Acessar</Text>
+            </TouchableOpacity>
 
-          <Text style={styles.textos}>Senha</Text>
-          <PaperInput
-            mode="outlined"
-            label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
-            value={password}
-            onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
-            placeholder="Digite sua senha"
-            activeOutlineColor={theme.primary}
-            style={styles.inputs}
-            textColor={theme.text}
-            theme={{ roundness: 30 }}
-            secureTextEntry={!passwordVisible}
-            right={
-              <PaperInput.Icon
-                icon={passwordVisible ? "eye" : "eye-off"}
-                onPress={() => setPasswordVisible(!passwordVisible)}
-              />
-            }
-          />
-
-          <TouchableOpacity
-            style={styles.acessar}
-            onPress={handleLogin}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.acessar_text}>Acessar</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => router.push("/recuperarSenha/recuperar")}
-          >
-            <Text style={styles.links}>Esqueci minha senha</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => router.push("/recuperarSenha/recuperar")}
+            >
+              <Text style={styles.links}>Esqueci minha senha</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
         <View style={styles.gov_box_container}>
           <View style={styles.gov_box}>
             <TouchableOpacity

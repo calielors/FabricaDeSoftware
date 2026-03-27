@@ -12,8 +12,7 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
             width: '90%',
             height: '45%',
             alignItems: 'center',
-            gap: 15,
-            justifyContent: 'center',
+            justifyContent: 'space-evenly',
             borderWidth: 1,
             borderColor: theme.placeholder,
             backgroundColor: theme.card,
@@ -25,16 +24,18 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
       textos: {
             color: theme.text,
             alignSelf: 'flex-start',
-            marginLeft: '5%',
+            paddingHorizontal: '2%',
             fontSize: 16,
             fontWeight: 'normal',
       },
-      inputs: {
+      input_box:{
             width: '90%',
-            height: 50,
+            alignItems: 'center'
+      },
+      inputs: {
+            width: '100%',
+            height: 'auto',
             backgroundColor: theme.card,
-            borderRadius: 30,
-            paddingLeft: 20,
       },
       acessar: {
             width: '90%',
@@ -43,7 +44,7 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
             borderRadius: 30,
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 20,
+            marginTop: 'auto',
       },
       acessar_text: {
             color: COLORS.branco,
@@ -66,7 +67,7 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
             borderRadius: 30,
             justifyContent: 'center',
             alignItems: 'center',
-            marginTop: 30,
+            paddingTop: 'auto',
             alignSelf: 'center',
 
       },
@@ -74,5 +75,6 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
             color: theme.primary,
             fontSize: 12,
             fontWeight: 'bold',
+            paddingVertical: "3%"
       }
 });

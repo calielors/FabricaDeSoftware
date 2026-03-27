@@ -20,6 +20,12 @@ export const Recuperar_Styles = (theme: any) => StyleSheet.create({
         gap: 15,
         transform: [{ translateY: -70 }],
     },
+    conteudo: {
+        width: '90%',
+        height: '90%',
+        justifyContent: 'space-evenly',
+        alignItems: 'center'
+    },
     titulo: {
         color: theme.primary,
         fontSize: 20,

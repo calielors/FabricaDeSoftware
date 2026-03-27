@@ -16,15 +16,10 @@ export default function BarraProgresso({ etapaAtual, totalEtapas }: BarraEtapasP
       {[...Array(totalEtapas)].map((_, indice) => {
         const etapa = indice + 1;
         const ativa = etapa <= etapaAtual;
-
         return (
-          <View key={etapa} style={styles.etapaContainer}>
+          <React.Fragment key={etapa}>
             <View
-              style={[
-                styles.circulo,
-                { backgroundColor: ativa ? theme.primary : theme.placeholder },
-              ]}
-            >
+              style={[styles.circulo,{ backgroundColor: ativa ? theme.primary : theme.placeholder }]}>
               <Text style={styles.textoCirculo}>{etapa}</Text>
             </View>
 
@@ -36,7 +31,7 @@ export default function BarraProgresso({ etapaAtual, totalEtapas }: BarraEtapasP
                 ]}
               />
             )}
-          </View>
+          </React.Fragment>
         );
       })}
     </View>
@@ -47,12 +42,10 @@ const estilos = (theme: any) => StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     marginVertical: 20,
-  },
-  etapaContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    width: '90%',
+    alignSelf: 'center'
   },
   circulo: {
     width: 30,
@@ -66,7 +59,7 @@ const estilos = (theme: any) => StyleSheet.create({
     fontWeight: "bold",
   },
   linha: {
-    width: 139,
+    flex: 1,
     height: 3,
   },
 });
