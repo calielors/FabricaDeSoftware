@@ -93,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setLogged(true);
     } catch (err: any) {
-      console.error("[Auth] signIn error:", err);
+      console.log("[Auth] signIn error:", err);
       setLogged(false);
       setUser(null);
       throw new Error(err?.message || "Não foi possível realizar o login.");

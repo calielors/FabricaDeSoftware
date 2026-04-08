@@ -10,12 +10,28 @@ export default function SelecionarUnidade() {
     const { theme } = useTheme();
     const [unidades, setUnidades] = useState<UnidadeSaude[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         (async () => {
-            const { data } = await buscarUnidadesSaude();
-            setUnidades(data || []);
-            setLoading(false);
+            try {
+                const timeout = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error("Timeout")), 8000)
+                );
+
+                const response = await Promise.race([
+                    buscarUnidadesSaude(),
+                    timeout
+                ]);
+
+                const { data } = response as any;
+                setUnidades(data || []);
+            } catch (error) {
+                console.error("Erro ao buscar unidades:", error);
+                setUnidades([]);
+            } finally {
+                setLoading(false);
+            }
         })();
     }, []);
 

@@ -1,0 +1,14 @@
+name: Build (Dev)
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    name: Build app
+    type: build
+    params:
+      platform: all
+      profile: preview
