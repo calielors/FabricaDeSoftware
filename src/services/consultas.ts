@@ -1,4 +1,44 @@
 import { supabase } from './supabase';
+//Timeout
+const timeout = async <T>(promise: PromiseLike<T>, controller: AbortController, ms: number = 30000): Promise<T> => {
+    const timeoutId = setTimeout(() => controller.abort(), ms);
+
+    try {
+        const result = await promise;
+        return result;
+    } catch (error: any) {
+        if (error.name === 'AbortError') {
+            throw new Error('Tempo limite de conexão excedido. Verifique sua internet');
+        }
+        throw error;
+    } finally {
+        clearTimeout(timeoutId);
+    }
+};
+
+// Executa qualquer query
+async function executarQuery<T>(
+    query: any, 
+    ms: number = 15000,
+    mensagemErroPadrao: string = 'Erro ao processar requisição'
+): Promise<{ data: T | null; error: any }> {
+    const controller = new AbortController();
+    try {
+        const response = await timeout(
+            query.abortSignal(controller.signal),
+            controller,
+            ms
+        )as {data: T | null; error: any};
+
+        if (response.error) {
+            return { data: null, error: { message: mensagemErroPadrao, details: response.error } };
+        }
+        
+        return { data: response.data as T, error: null };
+    } catch (err: any) {
+        return { data: null, error: { message: err.message || mensagemErroPadrao } };
+    }
+}
 
 // Tipos
 export type Paciente = {
@@ -36,47 +76,40 @@ export type UnidadeSaude = {
 /**
  * Busca o paciente associado ao usuário autenticado
  */
-export async function buscarPacientePorAuthId(authUserId: string): Promise<{ data: Paciente | null; error: any }> {
-    const { data, error } = await supabase
+export async function buscarPacientePorAuthId(authUserId: string) {
+    const query = supabase
         .from('paciente')
         .select('*')
         .eq('auth_user_id', authUserId)
         .maybeSingle();
 
-    if (error) {
-        return { data: null, error };
+    const resultado = await executarQuery<Paciente>(query, 10000, 'Nenhum paciente vinculado a este usuário.');
+    
+    // Verificação extra para o maybeSingle (se data for null mas não houver erro de rede)
+    if (!resultado.error && !resultado.data) {
+        return { data: null, error: { message: 'Por favor, complete seu cadastro.', code: 'PACIENTE_NAO_ENCONTRADO' } };
     }
-
-    if (!data) {
-        return { 
-            data: null, 
-            error: { 
-                message: 'Nenhum paciente vinculado a este usuário. Por favor, complete seu cadastro.',
-                code: 'PACIENTE_NAO_ENCONTRADO'
-            } 
-        };
-    }
-
-    return { data, error: null };
+    
+    return resultado;
 }
 
 /**
  * Busca todas as unidades de saúde cadastradas
  */
-export async function buscarUnidadesSaude(): Promise<{ data: UnidadeSaude[] | null; error: any }> {
-    const { data, error } = await supabase
+export async function buscarUnidadesSaude() {
+    const query = supabase
         .from('unidade_saude')
         .select('*')
         .order('nome', { ascending: true });
 
-    return { data, error };
+    return executarQuery<UnidadeSaude[]>(query, 10000, 'Erro ao carregar a lista de unidades');
 }
 
 /**
  * Cria um novo agendamento de consulta no banco de dados
  */
-export async function criarConsulta(consulta: Omit<Consulta, 'id'>): Promise<{ data: Consulta | null; error: any }> {
-    const { data, error } = await supabase
+export async function criarConsulta(consulta: Omit<Consulta, 'id'>) {
+    const query = supabase
         .from('consulta')
         .insert({
             paciente_id: consulta.paciente_id,
@@ -84,44 +117,38 @@ export async function criarConsulta(consulta: Omit<Consulta, 'id'>): Promise<{ d
             unidade_saude_id: consulta.unidade_saude_id || null,
             status: consulta.status || 'agendada',
             data_hora: consulta.data_hora,
+            especialidade: consulta.especialidade,
         })
         .select()
         .single();
 
-    return { data, error };
+    return executarQuery<Consulta>(query, 15000, 'Não foi possível salvar seu agendamento. Verifique sua conexão.');
 }
-
 /**
  * Busca todas as consultas de um paciente com dados da unidade de saúde
  */
-export async function buscarConsultasPaciente(pacienteId: number): Promise<{ data: Consulta[] | null; error: any }> {
-    const { data, error } = await supabase
+export async function buscarConsultasPaciente(pacienteId: number) {
+    const query = supabase
         .from('consulta')
-        .select(`
-            *,
-            unidade_saude:unidade_saude_id (
-                id,
-                nome,
-                endereco
-            )
-        `)
+        .select('*, unidade_saude:unidade_saude_id (id, nome, endereco)')
         .eq('paciente_id', pacienteId)
         .order('data_hora', { ascending: true });
-    return { data, error };
 
+    return executarQuery<Consulta[]>(query, 15000, 'Não foi possível carregar seu histórico de consultas');
 }
 
 /**
  * Cancela uma consulta existente
  */
-export async function cancelarConsulta(consultaId: number): Promise<{ data: Consulta | null; error: any }> {
-    const { data, error } = await supabase
+export async function cancelarConsulta(consultaId: number) {
+    const query = supabase
         .from('consulta')
         .update({ status: 'cancelada' })
         .eq('id', consultaId)
         .select()
         .single();
-    return { data, error };
+
+    return executarQuery<Consulta>(query, 10000, 'Falha ao tentar cancelar a consulta');
 }
 
 /**
@@ -136,21 +163,24 @@ export async function buscarHorariosOcupados(data: string, unidadeId?: number): 
         .select('data_hora')
         .gte('data_hora', inicioDia)
         .lte('data_hora', fimDia)
-        .neq('status', 'cancelada');
+        .neq('status', 'cancelada')
+        .eq('unidade_saude_id', unidadeId || 0);
 
-    if (unidadeId) {
-        query.eq('unidade_saude_id', unidadeId);
-    }
+    // Usamos a mestra para garantir o timeout de 10s
+    const resultado = await executarQuery<any[]>(query, 10000, 'Erro ao buscar horários.');
 
-    const { data: consultas, error } = await query;
-
-    if (error || !consultas) {
+    // Se der erro ou não vier nada, retorna lista vazia
+    if (resultado.error || !resultado.data) {
         return [];
     }
 
-    return consultas.map(c => {
+    // Transforma o formato do banco (ISO) para apenas o horário (HH:mm)
+    return resultado.data.map(c => {
         const dataHora = new Date(c.data_hora);
-        return dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        return dataHora.toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
     });
 }
 

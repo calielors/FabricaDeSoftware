@@ -68,8 +68,7 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
             justifyContent: 'center',
             alignItems: 'center',
             paddingTop: 'auto',
-            alignSelf: 'center',
-
+            alignSelf: 'center',            
       },
       links: {
             color: theme.primary,

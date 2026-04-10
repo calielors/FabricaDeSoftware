@@ -10,6 +10,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useQuery } from '@/src/services/useQuery';
 
 type Consulta = {
     id: number;
@@ -29,87 +30,44 @@ export default function Historico() {
     const { theme } = useTheme();
     const styles = Historico_Styles(theme);
     const router = useRouter();
-    const [data, setData] = useState<Consulta[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     const { user } = useContext(AuthContext);
 
+   const { data, loading, error, refresh } = useQuery<Consulta[]>(async () => {
+        if (!user) return { data: [], error: { message: 'Usuário não autenticado' } };
+
+        const { data: paciente } = await buscarPacientePorAuthId(user.id);
+        if (!paciente) return { data: [], error: { message: 'Paciente não encontrado' } };
+
+        const { data: consultas } = await buscarConsultasPaciente(paciente.id);
+        if (!consultas) return { data: [], error: null };
+
+        const agora = new Date();
+        const formatadas = consultas
+            .filter(c => new Date(c.data_hora) < agora || c.status === 'cancelada' || c.status === 'faltou')
+            .map(c => {
+                const [dataParte] = c.data_hora.split('T');
+                const hora = new Date(c.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                return {
+                    id: c.id!,
+                    unidade: typeof c.unidade_saude === 'object' ? c.unidade_saude.nome : 'UBS',
+                    especialista: c.especialidade || 'Consulta Médica',
+                    date: dataParte,
+                    hora: hora,
+                    status: c.status === 'cancelada' ? 'Cancelada' : (c.status === 'faltou' ? 'Faltou' : 'Realizada') as any,
+                };
+            })
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        return { data: formatadas, error: null };
+    }, [user?.id]);
+
+    // NOVO: FocusEffect usando o refresh
     useFocusEffect(
         React.useCallback(() => {
-            carregarHistorico();
-        }, [user])
+            refresh();
+        }, [refresh])
     );
-
-    const carregarHistorico = async () => {
-        if (!user) {
-            setError('Usuário não autenticado');
-            setLoading(false);
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        const { data: paciente, error: erroPaciente } = await buscarPacientePorAuthId(user.id);
-        
-        if (erroPaciente || !paciente) {
-            setError('Não foi possível encontrar seus dados de paciente');
-            setLoading(false);
-            return;
-        }
-
-        const { data: consultas, error: erroConsultas } = await buscarConsultasPaciente(paciente.id);
-        
-        if (erroConsultas) {
-            setError('Erro ao carregar histórico');
-            setLoading(false);
-            return;
-        }
-
-        if (consultas) {
-            const agora = new Date();
-            
-            const consultasHistorico = consultas
-                .filter(c => {
-                    const dataConsulta = new Date(c.data_hora);
-                    return dataConsulta < agora || c.status === 'cancelada';
-                })
-                .map(c => {
-                    const [dataParte] = c.data_hora.split('T');
-                    const dataHora = new Date(c.data_hora);
-                    const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                    
-                    let nomeUnidade = 'UBS';
-                    if (c.unidade_saude && typeof c.unidade_saude === 'object') {
-                        nomeUnidade = c.unidade_saude.nome;
-                    } else if (typeof c.unidade_saude === 'string') {
-                        nomeUnidade = c.unidade_saude;
-                    }
-
-                    let statusUI: 'Realizada' | 'Faltou' | 'Cancelada' = 'Realizada';
-                    if (c.status === 'cancelada') {
-                        statusUI = 'Cancelada';
-                    } else if (c.status === 'faltou') {
-                        statusUI = 'Faltou';
-                    }
-                    
-                    return {
-                        id: c.id!,
-                        unidade: nomeUnidade,
-                        especialista: c.especialidade || 'Consulta Médica',
-                        date: dataParte,
-                        hora: hora,
-                        status: statusUI,
-                    };
-                })
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-            setData(consultasHistorico);
-        }
-        
-        setLoading(false);
-    };
 
     const getStatusProps = (status: Consulta['status']) => {
         switch (status) {
@@ -163,7 +121,7 @@ export default function Historico() {
                 </View>
 
                 <FlatList
-                    data={data}
+                    data={data || []}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => {
                         const statusProps = getStatusProps(item.status);

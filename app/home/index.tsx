@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Home_Styles } from "../../src/styles/home_styles";
 import { Top_Bar } from "../../src/components/top_bar";
@@ -9,6 +9,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../src/services/consultas";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { useQuery } from "../../src/services/useQuery"; // Certifique-se de que o caminho está correto
 
 interface Consulta {
     data: string;
@@ -36,27 +37,17 @@ export default function Home() {
         return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
     })();
 
-    const [consulta, setConsulta] = useState<Consulta | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            carregarProximaConsulta();
-        }, [user])
-    );
-
-    const carregarProximaConsulta = async () => {
+    // Substituindo useState e carregarProximaConsulta pelo useQuery
+    const { data: consulta, loading, refresh } = useQuery<Consulta | null>(async () => {
         if (!user) {
-            setLoading(false);
-            return;
+            return { data: null, error: null };
         }
 
         try {
             const { data: paciente } = await buscarPacientePorAuthId(user.id);
 
             if (!paciente) {
-                setLoading(false);
-                return;
+                return { data: null, error: null };
             }
 
             const { data: consultas } = await buscarConsultasPaciente(paciente.id);
@@ -93,22 +84,33 @@ export default function Home() {
                         nomeUnidade = proximaConsulta.unidade_saude;
                     }
 
-                    setConsulta({
-                        data: dataFormatada,
-                        hora: hora + "H",
-                        especialidade: proximaConsulta.especialidade || "Consulta Médica",
-                        local: nomeUnidade,
-                        status:
-                            proximaConsulta.status === "agendada"
-                                ? "Confirmada"
-                                : proximaConsulta.status || "Agendada",
-                    });
+                    return {
+                        data: {
+                            data: dataFormatada,
+                            hora: hora + "H",
+                            especialidade: proximaConsulta.especialidade || "Consulta Médica",
+                            local: nomeUnidade,
+                            status:
+                                proximaConsulta.status === "agendada"
+                                    ? "Confirmada"
+                                    : proximaConsulta.status || "Agendada",
+                        },
+                        error: null,
+                    };
                 }
             }
-        } finally {
-            setLoading(false);
+            return { data: null, error: null };
+        } catch (error: any) {
+            return { data: null, error };
         }
-    };
+    }, [user]);
+
+    // Mantendo o useFocusEffect original para recarregar ao voltar para a tela
+    useFocusEffect(
+        React.useCallback(() => {
+            refresh();
+        }, [refresh])
+    );
 
     return (
         <View style={styles.container}>
