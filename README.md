@@ -16,27 +16,27 @@ Protótipos Mobile: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMy
 <img width="20%" height="667" alt="AbaMedicamento" src="https://github.com/user-attachments/assets/28dda518-b1f3-4510-869e-8f76699532a0" />
 
 # Pré-requisitos
--Android Studio
--Android SDK
--Um emulador configurado para android
--Visual Studio Code
--Extensão "Expo Tools" para VSCode
--Expo Orbit
+-Android Studio<br>
+-Android SDK<br>
+-Um emulador configurado para android<br>
+-Visual Studio Code<br>
+-Extensão "Expo Tools" para VSCode<br>
+-Expo Orbit<br>
 
-# Rodando uma build online
-Acesse o a build específica (pelo dashboard do expo.dev ou por um link)
-Clique em "Open with Orbit" ou "Abrir com Orbit"
+# Rodando uma build específica (android/web)
+Acesse o a build específica (pelo dashboard do expo.dev ou por um link)<br>
+Clique em "Open with Orbit" ou "Abrir com Orbit"<br>
 
-# Realizando a build do projeto localmente e rodando (android)
-Clone o repositório na branch 'main'
-Abra a pasta raíz com o Visual Studio Code
-Abra o terminal e confirme que ele está na rota terminando em '\FabricaDeSoftware'
-Execute o comando 'npm install'
-Execute o comando 'npx expo prebuild'
-Execute o comando 'npx expo run:android' e selecione a plataforma
-Aguarde o build local terminar. Pode demorar mais de 20 minutos
-Aperte 'a' para abrir no emulador android ou 'w' par abrir na web
+# Realizando a build do projeto localmente e rodando (android/web)
+Clone o repositório na branch 'main'<br>
+Abra a pasta raíz com o Visual Studio Code<br>
+Abra o terminal e confirme que ele está na rota terminando em '\FabricaDeSoftware'<br>
+Execute o comando 'npm install'<br>
+Execute o comando 'npx expo prebuild'<br>
+Execute o comando 'npx expo run:android' e selecione a plataforma<br>
+Aguarde o build local terminar. Pode demorar mais de 20 minutos<br>
+Aperte 'a' para abrir no emulador android ou 'w' par abrir na web<br>
 
-# Rodando sem build
-Execute o comando 'npx expo start'
-Aperte 'a' para abrir no emulador android ou 'w' par abrir na web
+# Rodando sem realizar build
+Execute o comando 'npx expo start'<br>
+Aperte 'a' para abrir no emulador android ou 'w' par abrir na web<br>
