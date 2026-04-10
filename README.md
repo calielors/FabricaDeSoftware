@@ -1,9 +1,10 @@
 # Agendamento SUS Online
+
 [Documento com as especificações do projeto](https://docs.google.com/document/d/17JzTCo7LYkEA5B1WowKCUH6qqCqh-t1_/edit#heading=h.knpinbvkozm4)
 
 [Acesso das HU com os protótipos](https://docs.google.com/spreadsheets/d/1jKtuyUHv7XniL5sgp3FePg4-SvljHVftocVHPyPiOnQ/edit?gid=891834841#gid=891834841)
 
-Protótipos: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMypddq06xTW1v/SUSAGENDAMENTO?node-id=0-1&p=f&t=BVUlqQPTzNu1cjh9-0)
+Protótipos Mobile: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMypddq06xTW1v/SUSAGENDAMENTO?node-id=0-1&p=f&t=BVUlqQPTzNu1cjh9-0)
 <br>
 <img width="20%" height="667" alt="Login" src="https://github.com/user-attachments/assets/023cba3b-eb49-4041-9ea3-accb56c438ec" />
 <img width="20%" height="667" alt="Tela Principal" src="https://github.com/user-attachments/assets/11b27c9a-67f6-4a9a-9c74-aea5ffd97938" />
@@ -13,3 +14,29 @@ Protótipos: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMypddq06x
 <img width="20%" height="667" alt="AbaMinhasConsultas" src="https://github.com/user-attachments/assets/c9789a35-a79e-4e11-9386-5c06a6480c1c" />
 <img width="20%" height="667" alt="AbaUnidadedeSaude" src="https://github.com/user-attachments/assets/02a011da-5f97-41bd-99f3-1dd98bccc677" />
 <img width="20%" height="667" alt="AbaMedicamento" src="https://github.com/user-attachments/assets/28dda518-b1f3-4510-869e-8f76699532a0" />
+
+# Pré-requisitos
+-Android Studio
+-Android SDK
+-Um emulador configurado para android
+-Visual Studio Code
+-Extensão "Expo Tools" para VSCode
+-Expo Orbit
+
+# Rodando uma build online
+Acesse o a build específica (pelo dashboard do expo.dev ou por um link)
+Clique em "Open with Orbit" ou "Abrir com Orbit"
+
+# Realizando a build do projeto localmente e rodando (android)
+Clone o repositório na branch 'main'
+Abra a pasta raíz com o Visual Studio Code
+Abra o terminal e confirme que ele está na rota terminando em '\FabricaDeSoftware'
+Execute o comando 'npm install'
+Execute o comando 'npx expo prebuild'
+Execute o comando 'npx expo run:android' e selecione a plataforma
+Aguarde o build local terminar. Pode demorar mais de 20 minutos
+Aperte 'a' para abrir no emulador android ou 'w' par abrir na web
+
+# Rodando sem build
+Execute o comando 'npx expo start'
+Aperte 'a' para abrir no emulador android ou 'w' par abrir na web
