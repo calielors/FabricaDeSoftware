@@ -18,7 +18,7 @@ Protótipos Mobile: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMy
 # Pré-requisitos
 -Android Studio<br>
 -Android SDK<br>
--Java SDK<br>
+-Java JDK 21<br>
 -Um emulador configurado para android<br>
 -Visual Studio Code<br>
 -Extensão "Expo Tools" para VSCode<br>
