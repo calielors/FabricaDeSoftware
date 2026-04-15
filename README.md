@@ -28,6 +28,7 @@ Acesse o a build específica (pelo dashboard do expo.dev ou por um link)<br>
 Clique em "Open with Orbit" ou "Abrir com Orbit"<br>
 
 # Realizando a build do projeto localmente e rodando (android/web)
+[Realize a build pelo menos uma vez, e sempre realize quando alterar bibliotecas]
 Clone o repositório na branch 'main'<br>
 Abra a pasta raíz com o Visual Studio Code<br>
 Abra o terminal e confirme que ele está na rota terminando em '\FabricaDeSoftware'<br>
@@ -38,5 +39,6 @@ Aguarde o build local terminar. Pode demorar mais de 20 minutos<br>
 Aperte 'a' para abrir no emulador android ou 'w' par abrir na web<br>
 
 # Rodando sem realizar build
+[Você pode rodar sem build após mudanças não relacionadas ao app.json ou a bibliotecas]
 Execute o comando 'npx expo start'<br>
 Aperte 'a' para abrir no emulador android ou 'w' par abrir na web<br>
