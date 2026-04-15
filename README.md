@@ -26,12 +26,14 @@ Protótipos Mobile: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMy
 
 # Realizando a build do projeto localmente e rodando (android/web)
 **Realize a build pelo menos uma vez, e sempre realize quando alterar bibliotecas** <br>
+[Defina a variável de ambiente](https://supertutoriais.com.br/pc/como-criar-variaveis-personalizadas-windows-10/) 'ANDROID_HOME' e reinicie o PC. Normalmente ela se encontra em 'C:\Users\user\AppData\Local\Android\Sdk' ou em um local similar.<br>
 Clone o repositório na branch 'main'<br>
 Abra a pasta raíz com o Visual Studio Code<br>
 Abra o terminal e confirme que ele está na rota terminando em '\FabricaDeSoftware'<br>
+Garanta que o emulador consegue abrir com sucesso<br>
 Execute o comando 'npm install'<br>
 Execute o comando 'npx expo prebuild'<br>
-Execute o comando 'npx expo run:android' e selecione a plataforma<br>
+Execute o comando 'npx expo run:android'. Execute novamente se o erro 'adb.exe: device offline' surgir<br>
 Aguarde o build local terminar. Pode demorar mais de 20 minutos<br>
 Aperte 'a' para abrir no emulador android ou 'w' par abrir na web<br>
 
