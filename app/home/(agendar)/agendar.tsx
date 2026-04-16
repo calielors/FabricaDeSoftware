@@ -4,8 +4,8 @@ import { Agendamento_Styles } from "../../../src/styles/agendamento_styles";
 import { Top_Bar } from "../../../src/components/top_bar";
 import { AuthContext } from "../../../src/contexts/AuthContext";
 import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, UnidadeSaude } from "../../../src/services/consultas";
-// ATUALIZADO: Usando router e useLocalSearchParams
-import { router, useLocalSearchParams } from "expo-router"; 
+import { useQuery } from "@/src/services/useQuery";
+import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import CustomCalendar from "../../../src/components/CustomCalendar";
 import BarraProgresso from "../../../src/components/barra_progresso";
@@ -13,14 +13,13 @@ import BarraProgresso from "../../../src/components/barra_progresso";
 export default function Agendamento() {
     const { theme } = useTheme();
     const styles = Agendamento_Styles(theme);
-    const params = useLocalSearchParams(); 
+    const params = useLocalSearchParams();
 
     const [day, setDay] = useState('');
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [unidadeSelecionada, setUnidadeSelecionada] = useState<UnidadeSaude | null>(null);
-    const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([]);
-    const [loadingHorarios, setLoadingHorarios] = useState(false);
+    const [tipoProfissional, setTipoProfissional] = useState<string | null>(null);
 
     const { user } = useContext(AuthContext);
 
@@ -33,63 +32,39 @@ export default function Agendamento() {
     ];
 
     useEffect(() => {
-        const unidadeString = params.unidadeSelecionada;
-        if (typeof unidadeString === 'string') {
+        if (typeof params.unidadeSelecionada === 'string') {
             try {
-                const unidadeObjeto = JSON.parse(unidadeString) as UnidadeSaude;
-                setUnidadeSelecionada(unidadeObjeto);
-            } catch (error) {
-                console.error("Erro parse UnidadeSaude:", error);
-                Alert.alert("Erro", "Dados da unidade inválidos.");
-                router.back();
-            }
-        } else if (!unidadeSelecionada) {
-            // Se não houver dados, volta imediatamente para evitar tela quebrada
-            router.back();
+                setUnidadeSelecionada(JSON.parse(params.unidadeSelecionada));
+            } catch (e) { router.back(); }
         }
-    }, [params.unidadeSelecionada]);
-
-    useEffect(() => {
-        if (day && unidadeSelecionada) {
-            carregarHorariosDisponiveis();
-        } else {
-            setHorariosDisponiveis([]);
+        if (typeof params.tipo === 'string') {
+            setTipoProfissional(params.tipo);
         }
-    }, [day, unidadeSelecionada]);
+    }, [params.unidadeSelecionada, params.tipo]);
 
-    const carregarHorariosDisponiveis = async () => {
-        if (!day || !unidadeSelecionada) return;
-        setLoadingHorarios(true);
-        
-        try {
-            const horariosOcupados = await buscarHorariosOcupados(day, unidadeSelecionada.id);
-            let disponiveis = todosHorarios.filter(h => !horariosOcupados.includes(h));
 
-            const now = new Date();
-            const currentDateString = now.toISOString().split('T')[0];
-            
-            if (day === currentDateString) {
-                const currentMinutes = now.getHours() * 60 + now.getMinutes();
-                disponiveis = disponiveis.filter(h => {
-                    const [hr, min] = h.split(":").map(Number);
-                    return (hr * 60 + min) > currentMinutes;
-                });
-            }
-            setHorariosDisponiveis(disponiveis);
+    const { data: horariosDisponiveis, loading: loadingHorarios } = useQuery(async () => {
+        if (!day || !unidadeSelecionada) return { data: [], error: null };
 
-            if (selectedTime && horariosOcupados.includes(selectedTime)) {
-                setSelectedTime(null);
-            }
-        } catch (error) {
-            Alert.alert("Erro", "Falha ao carregar horários.");
-        } finally {
-            setLoadingHorarios(false);
+        const ocupados = await buscarHorariosOcupados(day, unidadeSelecionada.id);
+        let disponiveis = todosHorarios.filter(h => !ocupados.includes(h));
+
+        // Filtro de horário retroativo (se for hoje)
+        const now = new Date();
+        if (day === now.toISOString().split('T')[0]) {
+            const currentMin = now.getHours() * 60 + now.getMinutes();
+            disponiveis = disponiveis.filter(h => {
+                const [hr, min] = h.split(":").map(Number);
+                return (hr * 60 + min) > currentMin;
+            });
         }
-    };
+
+        return { data: disponiveis, error: null };
+    }, [day, unidadeSelecionada?.id]);
 
     const handleAgendarConsulta = async () => {
-        // Validações básicas
         if (!user) return Alert.alert("Erro", "Faça login para continuar.");
+        if (!tipoProfissional) return Alert.alert("Erro", "Profissional não selecionado")
         if (!unidadeSelecionada) return Alert.alert("Erro", "Unidade não carregada.");
         if (!day) return Alert.alert("Atenção", "Selecione uma data.");
         if (!selectedTime) return Alert.alert("Atenção", "Selecione um horário.");
@@ -105,29 +80,30 @@ export default function Agendamento() {
             }
 
             const dataHora = combinarDataHora(day, selectedTime);
-            
+
             const { error } = await criarConsulta({
                 paciente_id: paciente.id,
                 unidade_saude_id: unidadeSelecionada.id,
                 data_hora: dataHora,
-                status: "agendada"
+                status: "agendada",
+                especialidade: tipoProfissional
             });
 
             if (error) throw new Error("Falha na criação");
 
             Alert.alert(
                 "Sucesso",
-                `Consulta marcada na ${unidadeSelecionada.nome} em ${formatarData(day)} às ${selectedTime}`,
-                [{ 
-                    text: "OK", 
+                `Consulta com ${tipoProfissional} marcada na ${unidadeSelecionada.nome} em ${formatarData(day)} às ${selectedTime}`,
+                [{
+                    text: "OK",
                     onPress: () => {
                         if (router.canDismiss()) {
                             router.dismissAll();
                         }
-                
-                        router.replace('/home'); 
-                    } 
-                }] 
+
+                        router.replace('/home');
+                    }
+                }]
             );
         } catch (err) {
             Alert.alert("Erro", "Não foi possível realizar o agendamento.");
@@ -151,38 +127,38 @@ export default function Agendamento() {
                 contentContainerStyle={{ paddingBottom: 120 }}
             >
                 <BarraProgresso etapaAtual={3} totalEtapas={3} />
-                
+
                 {/* Renderização condicional da unidade */}
                 {unidadeSelecionada ? (
                     <View style={{
                         backgroundColor: theme.primary,
-                        padding: 10, marginHorizontal: 10, marginTop: 10, marginBottom: 5,
+                        padding: 10, marginHorizontal: 10, marginBottom: 8,
                         borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
                     }}>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ color: theme.background, fontSize: 12 }}>Unidade Selecionada:</Text>
+                            <Text style={{ color: theme.background, fontSize: 12 }}>Dados selecionados:</Text>
                             <Text style={{ color: theme.background, fontSize: 14, fontWeight: "bold", marginTop: 3 }}>
-                                {unidadeSelecionada.nome}
+                                {tipoProfissional}
                             </Text>
                             <Text style={{ color: theme.background, fontSize: 11, marginTop: 2 }}>
-                                {unidadeSelecionada.endereco}
+                                {unidadeSelecionada.nome} / {unidadeSelecionada.endereco}
                             </Text>
                         </View>
                         <TouchableOpacity
-                            onPress={() => router.back()} 
+                            onPress={() => router.back()}
                             style={{ backgroundColor: theme.background, padding: 8, borderRadius: 5 }}
                         >
-                            <Text style={{ color: theme.primary, fontSize: 12, fontWeight: "bold" }}>Trocar</Text>
+                            <Text style={{ color: theme.primary, fontSize: 12, fontWeight: "bold" }}>Alterar</Text>
                         </TouchableOpacity>
                     </View>
                 ) : (
-                    <ActivityIndicator style={{marginTop: 20}} color={theme.primary} />
+                    <ActivityIndicator style={{ marginTop: 20 }} color={theme.primary} />
                 )}
 
                 <Text style={{ color: theme.primary, fontSize: 18, fontWeight: "600", marginTop: 15, paddingLeft: 10 }}>
                     Selecione a data
                 </Text>
-                
+
                 <CustomCalendar
                     selectedDate={day}
                     minDate={today}
@@ -192,30 +168,35 @@ export default function Agendamento() {
 
                 <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
                     <Text style={{ fontSize: 18, color: theme.primary, fontWeight: "600", marginBottom: 10 }}>
-                        Horários disponíveis {day && `(${horariosDisponiveis.length})`}
+                        Horários disponíveis {day && `(${horariosDisponiveis?.length})`}
                     </Text>
 
                     {loadingHorarios ? (
                         <ActivityIndicator size="large" color={theme.primary} />
                     ) : (
                         <View style={styles.horarios_box}>
-                            {horariosDisponiveis.map(hora => (
-                                <TouchableOpacity
-                                    key={hora}
-                                    style={[
-                                        styles.horarios,
-                                        { backgroundColor: selectedTime === hora ? theme.primary : "transparent" }
-                                    ]}
-                                    onPress={() => setSelectedTime(hora)}
-                                >
-                                    <Text style={[styles.horarios_texto, { color: selectedTime === hora ? theme.background : theme.text }]}>
-                                        {hora}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                            {day && horariosDisponiveis.length === 0 && (
-                                <Text style={{color: theme.placeholder, fontStyle: 'italic'}}>
+                            {!loadingHorarios && day && (!horariosDisponiveis || horariosDisponiveis.length === 0) ? (
+                                <Text style={{ color: theme.text, fontStyle: 'italic', padding: 10 }}>
+                                    Nenhum horário disponível para essa data.
                                 </Text>
+                            ) : (
+                                horariosDisponiveis?.map(hora => (
+                                    <TouchableOpacity
+                                        key={hora}
+                                        style={[
+                                            styles.horarios,
+                                            { backgroundColor: selectedTime === hora ? theme.primary : "transparent" }
+                                        ]}
+                                        onPress={() => setSelectedTime(hora)}
+                                    >
+                                        <Text style={[
+                                            styles.horarios_texto,
+                                            { color: selectedTime === hora ? theme.background : theme.text }
+                                        ]}>
+                                            {hora}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))
                             )}
                         </View>
                     )}
@@ -245,8 +226,8 @@ export default function Agendamento() {
 
                 <TouchableOpacity
                     onPress={() => {
-                        if(router.canDismiss()) router.dismissAll();
-                        router.replace('/home'); 
+                        if (router.canDismiss()) router.dismissAll();
+                        router.replace('/home');
                     }}
                     disabled={loading}
                     style={{
