@@ -166,7 +166,7 @@ export default function Cadastro() {
                     <View style={styles.gov_box}>
                         <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 10 }} activeOpacity={0.7} onPress={() => Alert.alert("Work in progress!")}>
                             <Fontisto name="world" size={18} color={theme.primary} />
-                            <Text style={{ color: theme.primary }}>Entrar com o gov.br </Text>
+                            <Text style={{ color: theme.primary }}>Entrar com o gov.br</Text>
                         </TouchableOpacity>
                     </View>
 
