@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { Top_Bar } from '../../src/components/top_bar';
+import { Top_Bar } from '../../src/components/topbar';
 import { Consultas_Styles, Consultas_Styles as styles } from '../../src/styles/consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
@@ -109,7 +109,6 @@ export default function Consultas() {
 
     return (
         <View style={styles.container}>
-            <Top_Bar />
             <View style={styles.content}>
                 <Text style={styles.header}>Consultas — Dois Vizinhos</Text>
 

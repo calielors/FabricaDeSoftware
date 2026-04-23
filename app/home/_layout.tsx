@@ -19,7 +19,6 @@ export default function TabsLayout() {
 
           if (route.name === "(perfil)")
             return <FontAwesome5 name="user-cog" size={18} color={color} />;
-
           return null;
         },
         tabBarActiveTintColor: theme.primary,
@@ -37,6 +36,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="consultas" options={{ title: "Consultas" }} />
       <Tabs.Screen name="(agendar)" options={{ title: "Agendar" } } />
       <Tabs.Screen name="(perfil)" options={{ title: "Perfil" }} />
+      <Tabs.Screen name="(servicos)" options={{ href: null, title: "Serviços" }} />
     </Tabs>
   );
 }

@@ -3,9 +3,7 @@ import React, { useEffect, useState } from "react";
 import { buscarUnidadesSaude, UnidadeSaude } from "../../../src/services/consultas";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router } from "expo-router";
-import { Top_Bar } from "../../../src/components/top_bar";
 import { useQuery } from "@/src/services/useQuery";
-import BarraProgresso from "../../../src/components/barra_progresso";
 
 export default function SelecionarUnidade() {
     const { theme } = useTheme();
@@ -14,7 +12,7 @@ export default function SelecionarUnidade() {
 
     const handleSelecionar = (unidade: UnidadeSaude) => {
         router.push({
-            pathname: "/home/(agendar)/proficional",
+            pathname: "/home/(agendar)/profissionais",
             params: {
                 unidadeSelecionada: JSON.stringify(unidade)
             }
@@ -23,9 +21,7 @@ export default function SelecionarUnidade() {
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
-            <Top_Bar />
             <View style={{ flex: 1, padding: 20 }}>
-                <BarraProgresso etapaAtual={1} totalEtapas={3} />
 
                 <Text
                     style={{

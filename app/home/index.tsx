@@ -1,15 +1,16 @@
 import React, { useContext } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Home_Styles } from "../../src/styles/home_styles";
-import { Top_Bar } from "../../src/components/top_bar";
+import { Top_Bar } from "../../src/components/topbar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useRouter, useFocusEffect } from "expo-router";
+import { useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../src/services/consultas";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useQuery } from "../../src/services/useQuery"; // Certifique-se de que o caminho está correto
+import { TabActions } from "@react-navigation/native";
 
 interface Consulta {
     data: string;
@@ -22,6 +23,7 @@ interface Consulta {
 export default function Home() {
     const { theme } = useTheme();
     const styles = Home_Styles(theme);
+    const navigation = useNavigation();
 
     const router = useRouter();
     const { user } = useContext(AuthContext);
@@ -114,7 +116,6 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            <Top_Bar />
             <View style={{ flex: 1, paddingHorizontal: 15 }}>
                 {/* Saudação */}
                 <View style={styles.header_box}>
@@ -172,40 +173,40 @@ export default function Home() {
                     <TouchableOpacity
                         style={styles.servico_item}
                         activeOpacity={0.7}
-                        onPress={() => router.push("/home/agendar")}
+                        onPress={() => navigation.dispatch(TabActions.jumpTo("(agendar)")as any)}
                     >
-                        <FontAwesome6 name="calendar-plus" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Agendar consulta</Text>
-                    </TouchableOpacity>
+                    <FontAwesome6 name="calendar-plus" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Agendar</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.servico_item}
-                        activeOpacity={0.7}
-                        onPress={() => router.push("/home/consultas")}
-                    >
-                        <AntDesign name="bars" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Minhas consultas</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.servico_item}
+                    activeOpacity={0.7}
+                    onPress={() => router.push("/home/consultas")}
+                >
+                    <AntDesign name="bars" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Consultas</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.servico_item}
-                        activeOpacity={0.7}
-                        onPress={() => router.push("/servicos/medicamentos")}
-                    >
-                        <FontAwesome5 name="pills" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Medicamentos</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.servico_item}
+                    activeOpacity={0.7}
+                    onPress={() => router.push("/home/(servicos)/medicamentos")}
+                >
+                    <FontAwesome5 name="pills" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Medicamentos</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.servico_item}
-                        activeOpacity={0.7}
-                        onPress={() => router.push("/servicos/historico")}
-                    >
-                        <FontAwesome5 name="file-medical" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Meu histórico</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                    style={styles.servico_item}
+                    activeOpacity={0.7}
+                    onPress={() => router.push("/home/(servicos)/historico")}
+                >
+                    <FontAwesome5 name="file-medical" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Histórico</Text>
+                </TouchableOpacity>
             </View>
         </View>
+        </View >
     );
 }

@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Switch } from "react-native";
-import { Top_Bar } from "../../../src/components/top_bar";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { Perfil_Styles } from "../../../src/styles/perfil_styles";
 import { AuthContext } from "../../../src/contexts/AuthContext";
@@ -22,7 +21,6 @@ export default function Perfil() {
 
     return (
         <View style={styles.container}>
-            <Top_Bar />
             <ScrollView contentContainerStyle={styles.content}>
                 {/* Cabeçalho */}
                 <View style={styles.header}>

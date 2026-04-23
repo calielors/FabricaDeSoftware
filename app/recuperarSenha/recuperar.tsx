@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator, } from "react-native";
 import { Recuperar_Styles } from "../../src/styles/recuperar_styles";
-import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useNavigation, useRouter } from "expo-router";
-import BarraProgresso from "../../src/components/barra_progresso";
-import { formatCPF } from "../../src/components/format_cpf";
+import BarraProgresso from "../../src/components/barraProgresso";
+import { formatCPF } from "../../src/components/formatFunctions";
 import { supabase } from "../../src/services/supabase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 
@@ -58,8 +57,6 @@ export default function Recuperar() {
 
   return (
     <View style={styles.container}>
-      <Top_Bar />
-      <BarraProgresso etapaAtual={1} totalEtapas={3}/>
 
       <View style={styles.box}>
         <View style={styles.conteudo}>

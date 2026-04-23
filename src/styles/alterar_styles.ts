@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { COLORS } from "../assets/colors/colors";
 
 export const Alterar_Styles = (theme: any) => StyleSheet.create({
   container: {
@@ -32,6 +33,7 @@ export const Alterar_Styles = (theme: any) => StyleSheet.create({
     marginHorizontal: 20,
   },
   label: {
+    color: theme.text,
     alignSelf: "flex-start",
     marginLeft: "5%",
     fontSize: 16,
@@ -53,7 +55,7 @@ export const Alterar_Styles = (theme: any) => StyleSheet.create({
     marginTop: 10,
   },
   botao_text: {
-    color: theme.background,
+    color: COLORS.branco,
     fontSize: 18,
     fontWeight: "bold",
   },

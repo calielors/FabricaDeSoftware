@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Top_Bar } from "../../../src/components/top_bar";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 
 export default function SobreApp() {
@@ -11,7 +10,6 @@ export default function SobreApp() {
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
-            <Top_Bar />
             <ScrollView style={{ flex: 1, padding: 16 }}>
                 {/* Header com botão voltar */}
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Top_Bar } from '../../src/components/top_bar';
-import { Medicamentos_Styles} from '../../src/styles/medicamentos_styles';
-import { CampoPesquisa } from '../../src/components/campo_pesquisa';
-import { supabase } from '../../src/services/supabase';
+import { Medicamentos_Styles} from '../../../src/styles/medicamentos_styles';
+import { CampoPesquisa } from '../../../src/components/campoPesquisa';
+import { supabase } from '../../../src/services/supabase';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTheme } from '../../src/contexts/ThemeContext';
+import { useTheme } from '../../../src/contexts/ThemeContext';
 import { FontAwesome5 } from "@expo/vector-icons";
 
 type Medicamento = {
@@ -90,7 +89,6 @@ export default function Medicamentos() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <Top_Bar />
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, marginTop: 10 }}>
         <TouchableOpacity
           onPress={() => router.push('/home')}

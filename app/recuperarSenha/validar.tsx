@@ -9,9 +9,8 @@ import {
   Platform,
 } from "react-native";
 import { Validar_Styles } from "../../src/styles/validar_styles";
-import { Top_Bar } from "../../src/components/top_bar";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import BarraProgresso from "../../src/components/barra_progresso";
+import BarraProgresso from "../../src/components/barraProgresso";
 import { supabase } from "../../src/services/supabase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 
@@ -56,8 +55,6 @@ export default function Validar() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <View style={styles.container}>
-        <Top_Bar />
-        <BarraProgresso etapaAtual={2} totalEtapas={3} />
 
         <View style={styles.box}>
           <Text style={styles.titulo}>Verificação</Text>
@@ -67,7 +64,10 @@ export default function Validar() {
 
           <TouchableOpacity
             style={styles.botao}
-            onPress={handleResend}
+            onPress={() => {
+              /*handleResend();*/
+              router.push("/recuperarSenha/alterar");
+            }}
             activeOpacity={0.7}
             disabled={loading}
           >

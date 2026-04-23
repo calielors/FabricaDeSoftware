@@ -2,9 +2,8 @@ import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { CadastroStyles } from "../../src/styles/cadastro_styles";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
-import { formatCPF } from "../../src/components/format_cpf";
+import { formatCPF } from "../../src/components/formatFunctions";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -71,7 +70,6 @@ export default function Cadastro() {
 
     return (
         <View style={{ flex: 1 }}>
-            <Top_Bar />
             <SafeAreaView style={styles.container}>
                 <View style={styles.cadastro_box}>
 

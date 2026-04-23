@@ -1,18 +1,17 @@
-import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Animated } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import { Agendamento_Styles } from "../../../src/styles/agendamento_styles";
-import { Top_Bar } from "../../../src/components/top_bar";
+import { Agendar_Styles } from "../../../src/styles/agendar_styles";
 import { AuthContext } from "../../../src/contexts/AuthContext";
 import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, UnidadeSaude } from "../../../src/services/consultas";
 import { useQuery } from "@/src/services/useQuery";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import CustomCalendar from "../../../src/components/CustomCalendar";
-import BarraProgresso from "../../../src/components/barra_progresso";
+import { Flag } from "lucide-react-native";
 
 export default function Agendamento() {
     const { theme } = useTheme();
-    const styles = Agendamento_Styles(theme);
+    const styles = Agendar_Styles(theme);
     const params = useLocalSearchParams();
 
     const [day, setDay] = useState('');
@@ -22,6 +21,26 @@ export default function Agendamento() {
     const [tipoProfissional, setTipoProfissional] = useState<string | null>(null);
 
     const { user } = useContext(AuthContext);
+
+    const fadeAnim = React.useRef(new Animated.Value(0)).current; // Inicia invisível (0)
+
+    useEffect(() => {
+        if (selectedTime) {
+            // Aparece devagar
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: false,
+            }).start();
+        } else {
+            // Some devagar
+            Animated.timing(fadeAnim, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: false,
+            }).start();
+        }
+    }, [selectedTime]);
 
     const todosHorarios = [
         '08:00', '08:30', '09:00', '09:30',
@@ -121,39 +140,31 @@ export default function Agendamento() {
 
     return (
         <View style={styles.container}>
-            <Top_Bar />
             <ScrollView
-                style={{ flex: 1, width: '100%', paddingHorizontal: 15 }}
-                contentContainerStyle={{ paddingBottom: 120 }}
+                style={{ flex: 1, width: '100%', paddingHorizontal: 15, paddingTop: 15 }}
+                contentContainerStyle={{ paddingBottom: 145 }}
             >
-                <BarraProgresso etapaAtual={3} totalEtapas={3} />
-
                 {/* Renderização condicional da unidade */}
                 {unidadeSelecionada ? (
                     <View style={{
                         backgroundColor: theme.primary,
-                        padding: 10, marginHorizontal: 10, marginBottom: 8,
+                        padding: 10, marginHorizontal: 10, marginBottom: 8, marginTop: 15,
                         borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
                     }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ color: theme.background, fontSize: 12 }}>Dados selecionados:</Text>
-                            <Text style={{ color: theme.background, fontSize: 14, fontWeight: "bold", marginTop: 3 }}>
+                            <Text style={{ color: theme.background, fontSize: 15, fontWeight: "bold", marginTop: 3 }}>
                                 {tipoProfissional}
                             </Text>
-                            <Text style={{ color: theme.background, fontSize: 11, marginTop: 2 }}>
+                            <Text style={{ color: theme.background, fontSize: 12, marginTop: 2 }}>
                                 {unidadeSelecionada.nome} / {unidadeSelecionada.endereco}
                             </Text>
                         </View>
-                        <TouchableOpacity
-                            onPress={() => router.back()}
-                            style={{ backgroundColor: theme.background, padding: 8, borderRadius: 5 }}
-                        >
-                            <Text style={{ color: theme.primary, fontSize: 12, fontWeight: "bold" }}>Alterar</Text>
-                        </TouchableOpacity>
                     </View>
                 ) : (
-                    <ActivityIndicator style={{ marginTop: 20 }} color={theme.primary} />
+                    <ActivityIndicator style={{ marginTop: 10 }} color={theme.primary} />
                 )}
+
 
                 <Text style={{ color: theme.primary, fontSize: 18, fontWeight: "600", marginTop: 15, paddingLeft: 10 }}>
                     Selecione a data
@@ -187,7 +198,7 @@ export default function Agendamento() {
                                             styles.horarios,
                                             { backgroundColor: selectedTime === hora ? theme.primary : "transparent" }
                                         ]}
-                                        onPress={() => setSelectedTime(hora)}
+                                        onPress={() => setSelectedTime(prevTime => prevTime === hora ? null : hora)}
                                     >
                                         <Text style={[
                                             styles.horarios_texto,
@@ -203,39 +214,51 @@ export default function Agendamento() {
                 </View>
             </ScrollView>
 
-            <View style={{
-                position: "absolute", bottom: 0, left: 0, right: 0,
-                backgroundColor: theme.background, padding: 15, borderTopWidth: 1, borderColor: '#eee'
-            }}>
-                <TouchableOpacity
-                    onPress={handleAgendarConsulta}
-                    disabled={!selectedTime || !day || loading || !unidadeSelecionada}
-                    style={{
-                        backgroundColor: (!selectedTime || !day || loading || !unidadeSelecionada) ? theme.placeholder : theme.primary,
-                        height: 50, borderRadius: 8, alignItems: "center", justifyContent: "center", marginBottom: 10
-                    }}
-                >
-                    {loading ? (
-                        <ActivityIndicator color={theme.background} />
-                    ) : (
-                        <Text style={{ color: theme.background, fontWeight: "bold", fontSize: 16 }}>
-                            Confirmar Agendamento
-                        </Text>
-                    )}
-                </TouchableOpacity>
+            <View style={styles.footer}>
+
+                <Animated.View style={{
+                    opacity: fadeAnim,
+                    // Controla a expansão do footer
+                    height: fadeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 60]
+                    }),
+                    overflow: 'hidden',
+                }}>
+                    <TouchableOpacity
+                        onPress={handleAgendarConsulta}
+                        disabled={loading || !unidadeSelecionada}
+                        style={{
+                            backgroundColor: (loading || !unidadeSelecionada) ? theme.placeholder : theme.primary,
+                            height: 50,
+                            borderRadius: 8,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginBottom: 10 // Espaço que será "comido" pela altura 0
+                        }}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color={theme.background} />
+                        ) : (
+                            <Text style={{ color: theme.background, fontWeight: "bold", fontSize: 16 }}>
+                                Confirmar Agendamento
+                            </Text>
+                        )}
+                    </TouchableOpacity>
+                </Animated.View>
 
                 <TouchableOpacity
-                    onPress={() => {
-                        if (router.canDismiss()) router.dismissAll();
-                        router.replace('/home');
-                    }}
-                    disabled={loading}
+                    onPress={() => router.back()}
                     style={{
-                        borderWidth: 1, borderColor: theme.placeholder,
-                        height: 50, borderRadius: 8, alignItems: "center", justifyContent: "center"
+                        backgroundColor: theme.danger,
+                        padding: 12,
+                        borderRadius: 6,
+                        alignItems: "center"
                     }}
                 >
-                    <Text style={{ color: theme.text, fontWeight: "bold" }}>Cancelar</Text>
+                    <Text style={{ color: theme.background, fontWeight: "bold", fontSize: 16 }}>
+                        Voltar
+                    </Text>
                 </TouchableOpacity>
             </View>
         </View>

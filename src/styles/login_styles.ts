@@ -34,7 +34,6 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
       },
       inputs: {
             width: '100%',
-            height: 'auto',
             backgroundColor: theme.card,
       },
       acessar: {
@@ -67,7 +66,6 @@ export const Login_Styles = (theme : any)=>StyleSheet.create({
             borderRadius: 30,
             justifyContent: 'center',
             alignItems: 'center',
-            paddingTop: 'auto',
             alignSelf: 'center',            
       },
       links: {

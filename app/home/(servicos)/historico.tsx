@@ -1,16 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Top_Bar } from '../../src/components/top_bar';
-import { Historico_Styles} from '../../src/styles/historico_styles';
+import { Historico_Styles} from '../../../src/styles/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { AuthContext } from '../../src/contexts/AuthContext';
-import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../src/services/consultas';
+import { AuthContext } from '../../../src/contexts/AuthContext';
+import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../../src/services/consultas';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useTheme } from '../../src/contexts/ThemeContext';
+import { useTheme } from '../../../src/contexts/ThemeContext';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useQuery } from '@/src/services/useQuery';
+import { formatData } from '@/src/components/formatFunctions';
 
 type Consulta = {
     id: number;
@@ -19,11 +19,6 @@ type Consulta = {
     date: string;
     hora: string;
     status: 'Realizada' | 'Faltou' | 'Cancelada';
-};
-
-const formatarData = (dateString: string) => {
-    const [ano, mes, dia] = dateString.split('-');
-    return `${dia}/${mes}/${ano}`;
 };
 
 export default function Historico() {
@@ -80,7 +75,6 @@ export default function Historico() {
     if (loading) {
         return (
             <View style={styles.container}>
-                <Top_Bar />
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <ActivityIndicator size="large" color={theme.primary} />
                     <Text style={{ marginTop: 10, color: theme.text, opacity: 0.6 }}>
@@ -94,7 +88,6 @@ export default function Historico() {
     if (error) {
         return (
             <View style={styles.container}>
-                <Top_Bar />
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ color: theme.danger, fontSize: 16 }}>{error}</Text>
                 </View>
@@ -104,7 +97,6 @@ export default function Historico() {
 
     return (
         <SafeAreaView style={styles.container} edges={['bottom']}>
-            <Top_Bar />
             <View style={styles.content}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
                     <TouchableOpacity
@@ -130,7 +122,7 @@ export default function Historico() {
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.itemMeta}>Unidade: {item.unidade}</Text>
                                     <Text style={styles.itemMeta}>Especialista: {item.especialista}</Text>
-                                    <Text style={styles.itemMeta}>Data: {formatarData(item.date)}</Text>
+                                    <Text style={styles.itemMeta}>Data: {formatData(item.date)}</Text>
                                     <Text style={styles.itemMeta}>Hora: {item.hora}</Text>
                                 </View>
 

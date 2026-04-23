@@ -5,7 +5,7 @@ import { useTheme } from "../contexts/ThemeContext";
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export const Agendamento_Styles = (theme: any) => StyleSheet.create({
+export const Agendar_Styles = (theme: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.background,
@@ -41,4 +41,15 @@ export const Agendamento_Styles = (theme: any) => StyleSheet.create({
         color: theme.text,
         fontWeight: 'bold',
     },
+    footer: {
+        position: "absolute",
+        width: "100%",
+        bottom: 0,
+        padding: 15,
+        paddingBottom: 20,
+        backgroundColor: theme.background,
+        borderTopWidth: 1,
+        borderColor: '#eee',
+        height: "auto",
+    }
 });

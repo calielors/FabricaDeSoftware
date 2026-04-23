@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { COLORS } from "../assets/colors/colors";
 
 export const Recuperar_Styles = (theme: any) => StyleSheet.create({
     container: {
@@ -61,7 +62,7 @@ export const Recuperar_Styles = (theme: any) => StyleSheet.create({
         marginTop: 10,
     },
     botao_text: {
-        color: theme.background,
+        color: COLORS.branco,
         fontSize: 18,
         fontWeight: "bold",
     },
