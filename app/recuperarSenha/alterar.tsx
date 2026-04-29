@@ -10,10 +10,9 @@ import {
 } from "react-native";
 import * as Linking from "expo-linking";
 import { Alterar_Styles } from "../../src/styles/alterar_styles";
-import { Top_Bar } from "../../src/components/top_bar";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useRouter } from "expo-router";
-import BarraProgresso from "../../src/components/barra_progresso";
+import BarraProgresso from "../../src/components/barraProgresso";
 import { supabase } from "../../src/services/supabase";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { useTheme } from "../../src/contexts/ThemeContext";
@@ -26,9 +25,9 @@ export default function Alterar() {
   const [confirmar, setConfirmar] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [ready, setReady] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(true);
+/*  Bloqueado para testar a tela de alteração de senha sem precisar do fluxo completo de recuperação.
   useEffect(() => {
     const initPasswordRecovery = async () => {
       try {
@@ -73,6 +72,7 @@ export default function Alterar() {
 
     void initPasswordRecovery();
   }, []);
+*/
 
   const validarCampos = async () => {
     const { logged } = useContext(AuthContext);
@@ -131,7 +131,6 @@ export default function Alterar() {
   if (!ready)
     return (
       <View style={styles.container}>
-        <Top_Bar />
         <Text style={styles.subtitulo}>Verificando link de recuperação de senha...</Text>
       </View>
     );
@@ -145,8 +144,6 @@ export default function Alterar() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <View style={styles.container}>
-        <Top_Bar />
-        <BarraProgresso etapaAtual={3} totalEtapas={3} />
 
         <View style={styles.box}>
           <Text style={styles.titulo}>Nova Senha</Text>

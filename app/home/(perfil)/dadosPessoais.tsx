@@ -3,9 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityInd
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "../../../src/services/supabase";
-import { COLORS } from "../../../src/assets/colors/colors";
-import { Top_Bar } from "../../../src/components/top_bar";
-import { formatCPF } from "../../../src/components/format_cpf";
+import { formatCPF, formatData, formatDateToISO} from "../../../src/components/formatFunctions";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 
 export default function DadosPessoais() {
@@ -14,22 +12,6 @@ export default function DadosPessoais() {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
-
-    // Converter de YYYY-MM-DD para DD/MM/YYYY
-    const formatDateToBR = (date: string) => {
-        if (!date) return "";
-        // Remove a parte de hora se existir e pega apenas a data
-        const dateOnly = date.split('T')[0];
-        const [year, month, day] = dateOnly.split('-');
-        return `${day}/${month}/${year}`;
-    };
-
-    // Converter de DD/MM/YYYY para YYYY-MM-DD
-    const formatDateToISO = (date: string) => {
-        if (!date) return "";
-        const [day, month, year] = date.split('/');
-        return `${year}-${month}-${day}`;
-    };
 
     const [userData, setUserData] = useState({
         nome: "",
@@ -72,7 +54,7 @@ export default function DadosPessoais() {
             setEditData({
                 nome: data.nome || "",
                 nome_social: data.nome_social || "",
-                data_nascimento: formatDateToBR(data.data_nascimento) || "",
+                data_nascimento: formatData(data.data_nascimento) || "",
                 genero: data.genero || "",
                 telefone: data.telefone || "",
                 cartao_sus: data.cartao_sus || ""
@@ -111,7 +93,7 @@ export default function DadosPessoais() {
                 ...userData,
                 nome: editData.nome,
                 nome_social: editData.nome_social,
-                data_nascimento: formatDateToISO(editData.data_nascimento.trim()),
+                data_nascimento: formatDateToISO(editData.data_nascimento.trim())?? "",
                 genero: editData.genero,
                 telefone: editData.telefone,
                 cartao_sus: editData.cartao_sus
@@ -129,7 +111,7 @@ export default function DadosPessoais() {
         setEditData({
             nome: userData.nome || "",
             nome_social: userData.nome_social || "",
-            data_nascimento: formatDateToBR(userData.data_nascimento) || "",
+            data_nascimento: formatData(userData.data_nascimento) || "",
             genero: userData.genero || "",
             telefone: userData.telefone || "",
             cartao_sus: userData.cartao_sus || ""
@@ -140,7 +122,6 @@ export default function DadosPessoais() {
     if (loading) {
         return (
             <View style={{ flex: 1, backgroundColor: theme.background }}>
-                <Top_Bar />
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <ActivityIndicator size="large" color={theme.primary} />
                 </View>
@@ -150,7 +131,6 @@ export default function DadosPessoais() {
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
-            <Top_Bar />
             <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
                 <ScrollView style={{ flex: 1, padding: 16 }}>
                     {/* Header com botão voltar */}
@@ -208,10 +188,10 @@ export default function DadosPessoais() {
                                     onChangeText={(text) => {
                                         // Máscara DD/MM/YYYY
                                         let cleaned = text.replace(/\D/g, '');
-                                        if (cleaned.length >= 2) {
+                                        if (cleaned.length >= 3) {
                                             cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
                                         }
-                                        if (cleaned.length >= 5) {
+                                        if (cleaned.length >= 6) {
                                             cleaned = cleaned.slice(0, 5) + '/' + cleaned.slice(5, 9);
                                         }
                                         setEditData({ ...editData, data_nascimento: cleaned });

@@ -2,10 +2,9 @@ import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Login_Styles } from "../../src/styles/login_styles";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import { Top_Bar } from "../../src/components/top_bar";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { TextInput as PaperInput } from "react-native-paper";
-import { formatCPF } from "../../src/components/format_cpf";
+import { formatCPF } from "../../src/components/formatFunctions";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useRouter } from "expo-router";
@@ -39,11 +38,12 @@ export default function Login() {
       Alert.alert("Erro ao entrar", error.message || "CPF ou senha incorretos.");
     }
   }
-
+  async function testeUser() {
+    setCpf("12345678900");
+    setPassword("ABC123!@#ab");
+  }
   return (
     <View style={{ flex: 1 }}>
-
-      <Top_Bar />
       <SafeAreaView style={styles.container}>
 
         <View style={styles.login_box}>
@@ -101,21 +101,19 @@ export default function Login() {
           </View>
         </View>
         <View style={styles.gov_box_container}>
-          <View style={styles.gov_box}>
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-              activeOpacity={0.7}
-            >
+          <TouchableOpacity
+            style={styles.gov_box}
+            activeOpacity={0.7}
+            onPress={testeUser}
+          >
+            <Text style={{ color: theme.primary }}>
               <Fontisto
                 name="world"
                 size={18}
                 color={theme.primary}
-              />
-              <Text style={{ color: theme.primary }}>
-                Entrar com o gov.br
-              </Text>
-            </TouchableOpacity>
-          </View>
+              /> Entrar com o gov.br
+            </Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             activeOpacity={0.7}

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { Top_Bar } from '../../src/components/top_bar';
+import { Top_Bar } from '../../src/components/topbar';
 import { Consultas_Styles, Consultas_Styles as styles } from '../../src/styles/consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
@@ -8,6 +8,7 @@ import { AuthContext } from '../../src/contexts/AuthContext';
 import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } from '../../src/services/consultas';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../../src/contexts/ThemeContext';
+import { useQuery } from '@/src/services/useQuery';
 
 type Consulta = {
     id: number;
@@ -25,85 +26,59 @@ const formatarData = (dateString: string) => {
 export default function Consultas() {
     const { theme } = useTheme();
     const styles = Consultas_Styles(theme);
-    const [data, setData] = useState<Consulta[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [isVisible, setIsVisible] = useState(false);
     const [consultaSelecionada, setConsultaSelecionada] = useState<Consulta | null>(null);
     const [cancelando, setCancelando] = useState(false);
 
     const { user } = useContext(AuthContext);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            carregarConsultas();
-        }, [user])
-    );
-
-    const carregarConsultas = async () => {
-        if (!user) {
-            setError('Usuário não autenticado');
-            setLoading(false);
-            return;
-        }
+    const { data, loading, error, refresh } = useQuery<Consulta[]>(async () => {
+        if (!user) return { data: [], error: 'Usuário não autenticado' };
 
         try {
-            setLoading(true);
-            setError(null);
+            const { data: paciente } = await buscarPacientePorAuthId(user.id);
+            if (!paciente) return { data: [], error: 'Dados de paciente não encontrados' };
 
-            const { data: paciente, error: erroPaciente } = await buscarPacientePorAuthId(user.id);
+            const { data: consultas } = await buscarConsultasPaciente(paciente.id);
+            if (!consultas) return { data: [], error: null };
 
-            if (erroPaciente || !paciente) {
-                setError('Não foi possível encontrar seus dados de paciente');
-                setLoading(false);
-                return;
-            }
+            const agora = new Date();
+            const filtradas = consultas
+                .filter(c => {
+                    const dataConsulta = new Date(c.data_hora);
+                    return dataConsulta >= agora && c.status !== 'cancelada';
+                })
+                .map(c => {
+                    const [dataParte] = c.data_hora.split('T');
+                    const dataHora = new Date(c.data_hora);
+                    const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-            const { data: consultas, error: erroConsultas } = await buscarConsultasPaciente(paciente.id);
-            if (erroConsultas) {
-                setError('Erro ao carregar consultas');
-                setLoading(false);
-                return;
-            }
+                    let nomeUnidade = 'UBS';
+                    if (c.unidade_saude && typeof c.unidade_saude === 'object') {
+                        nomeUnidade = (c.unidade_saude as any).nome;
+                    }
 
-            if (consultas) {
-                const agora = new Date();
+                    return {
+                        id: c.id!,
+                        unidade: nomeUnidade,
+                        especialista: c.especialidade || 'Consulta Médica',
+                        date: dataParte,
+                        hora: hora,
+                    };
+                })
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-                const consultasFuturas = consultas
-                    .filter(c => {
-                        const dataConsulta = new Date(c.data_hora);
-                        return dataConsulta >= agora && c.status !== 'cancelada';
-                    })
-                    .map(c => {
-                        const [dataParte] = c.data_hora.split('T');
-
-                        const dataHora = new Date(c.data_hora);
-                        const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-                        // Busca o nome da unidade do objeto retornado pelo JOIN
-                        let nomeUnidade = 'UBS';
-                        if (c.unidade_saude && typeof c.unidade_saude === 'object') {
-                            nomeUnidade = c.unidade_saude.nome;
-                        } else if (typeof c.unidade_saude === 'string') {
-                            nomeUnidade = c.unidade_saude;
-                        }
-
-                        return {
-                            id: c.id!,
-                            unidade: nomeUnidade,
-                            especialista: c.especialidade || 'Consulta Médica',
-                            date: dataParte,
-                            hora: hora,
-                        };
-                    })
-                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-                setData(consultasFuturas);
-            }
-        } finally {
-            setLoading(false);
+            return { data: filtradas, error: null };
+        } catch (err: any) {
+            return { data: [], error: 'Erro ao carregar consultas' };
         }
-    };
+    }, [user]);
+
+     useFocusEffect(
+        React.useCallback(() => {
+            refresh(); // Atualiza a lista sempre que o usuário abrir a tela
+        }, [refresh])
+    );
 
     const abrirModalCancelar = (consulta: Consulta) => {
         setConsultaSelecionada(consulta);
@@ -123,7 +98,7 @@ export default function Consultas() {
             } else {
                 Alert.alert('Sucesso', 'Consulta cancelada com sucesso!');
                 setIsVisible(false);
-                carregarConsultas();
+                refresh();
             }
         } catch (err) {
             Alert.alert('Erro', 'Ocorreu um erro ao cancelar a consulta.');
@@ -134,7 +109,6 @@ export default function Consultas() {
 
     return (
         <View style={styles.container}>
-            <Top_Bar />
             <View style={styles.content}>
                 <Text style={styles.header}>Consultas — Dois Vizinhos</Text>
 
@@ -151,7 +125,7 @@ export default function Consultas() {
                     </View>
                 ) : (
                     <FlatList
-                        data={data}
+                        data={data || []}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (
                             <View style={styles.item}>

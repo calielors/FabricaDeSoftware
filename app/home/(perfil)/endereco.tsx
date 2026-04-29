@@ -3,7 +3,6 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityInd
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "../../../src/services/supabase";
-import { Top_Bar } from "../../../src/components/top_bar";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { COLORS } from "@/src/assets/colors/colors";
 import { KeyboardAvoidingView } from "react-native";
@@ -114,7 +113,6 @@ export default function Endereco() {
     if (loading) {
         return (
             <View style={{ flex: 1, backgroundColor: theme.background }}>
-                <Top_Bar />
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <ActivityIndicator size="large" color={theme.primary} />
                 </View>
@@ -124,7 +122,6 @@ export default function Endereco() {
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
-            <Top_Bar />
             <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
                 <ScrollView style={{ flex: 1, padding: 16 }}>
                     {/* Header com botão voltar */}

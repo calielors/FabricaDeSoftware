@@ -3,41 +3,16 @@ import React, { useEffect, useState } from "react";
 import { buscarUnidadesSaude, UnidadeSaude } from "../../../src/services/consultas";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router } from "expo-router";
-import { Top_Bar } from "../../../src/components/top_bar";
-import BarraProgresso from "../../../src/components/barra_progresso";
+import { useQuery } from "@/src/services/useQuery";
 
 export default function SelecionarUnidade() {
     const { theme } = useTheme();
-    const [unidades, setUnidades] = useState<UnidadeSaude[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const timeout = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("Timeout")), 8000)
-                );
-
-                const response = await Promise.race([
-                    buscarUnidadesSaude(),
-                    timeout
-                ]);
-
-                const { data } = response as any;
-                setUnidades(data || []);
-            } catch (error) {
-                console.error("Erro ao buscar unidades:", error);
-                setUnidades([]);
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, []);
+    const { data: unidades, loading, error, refresh } = useQuery(buscarUnidadesSaude);
 
     const handleSelecionar = (unidade: UnidadeSaude) => {
         router.push({
-            pathname: "/home/(agendar)/proficional",
+            pathname: "/home/(agendar)/profissionais",
             params: {
                 unidadeSelecionada: JSON.stringify(unidade)
             }
@@ -46,9 +21,7 @@ export default function SelecionarUnidade() {
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
-            <Top_Bar />
             <View style={{ flex: 1, padding: 20 }}>
-                <BarraProgresso etapaAtual={1} totalEtapas={3} />
 
                 <Text
                     style={{

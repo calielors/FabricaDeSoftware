@@ -2,8 +2,6 @@ import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import React, { useState } from "react";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router, useLocalSearchParams } from "expo-router";
-import { Top_Bar } from "../../../src/components/top_bar";
-import BarraProgresso from "../../../src/components/barra_progresso";
 
 const tiposProfissionais = [
     { id: 1, nome: "Clínico Geral" },
@@ -21,14 +19,12 @@ export default function SelecionarTipo() {
     const params = useLocalSearchParams();
 
     // O valor recebido é a STRING JSON da unidade
-    const unidadeSelecionada = params.unidadeSelecionada; 
+    const unidadeSelecionada = params.unidadeSelecionada;
 
-    // O estado armazena o nome do profissional selecionado (string)
-    const [selecionado, setSelecionado] = useState<string | null>(null);
 
-    const handleNext = () => {
+    const handleNext = (profissional: string) => {
         // Validação: precisa ter um profissional e a unidade (que é a string JSON)
-        if (!selecionado) {
+        if (!profissional) {
             alert("Por favor, selecione um tipo de profissional.");
             return;
         }
@@ -41,19 +37,16 @@ export default function SelecionarTipo() {
         router.push({
             pathname: "/home/agendar",
             params: {
-                tipo: selecionado,
+                tipo: profissional,
                 // Repassando a STRING JSON da unidade para a próxima tela
-                unidadeSelecionada: unidadeSelecionada 
+                unidadeSelecionada: unidadeSelecionada
             }
         });
     };
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
-            <Top_Bar />
             <View style={{ flex: 1, padding: 20 }}>
-                <BarraProgresso etapaAtual={2} totalEtapas={3} />
-
                 <Text
                     style={{
                         fontSize: 22,
@@ -70,25 +63,18 @@ export default function SelecionarTipo() {
                     data={tiposProfissionais}
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ item }) => {
-                        const ativo = selecionado === item.nome;
-
                         return (
                             <TouchableOpacity
-                                onPress={() => setSelecionado(item.nome)}
+                                onPress={() => handleNext(item.nome)}
                                 style={{
                                     padding: 15,
-                                    borderRadius: 8,
-                                    marginBottom: 10,
-                                    borderWidth: ativo ? 2 : 1,
-                                    borderColor: ativo ? theme.primary : theme.placeholder,
-                                    backgroundColor: ativo ? theme.primary + "20" : theme.card
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: theme.placeholder
                                 }}
                             >
                                 <Text
                                     style={{
-                                        fontSize: 16,
-                                        fontWeight: "600",
-                                        color: theme.text
+                                        fontSize: 18, color: theme.text, fontWeight: "600", paddingVertical: 6,
                                     }}
                                 >
                                     {item.nome}
@@ -97,28 +83,6 @@ export default function SelecionarTipo() {
                         );
                     }}
                 />
-
-                <TouchableOpacity
-                    onPress={handleNext}
-                    disabled={!selecionado}
-                    style={{
-                        backgroundColor: selecionado ? theme.primary : theme.placeholder,
-                        padding: 14,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        marginTop: 15
-                    }}
-                >
-                    <Text
-                        style={{
-                            color: theme.background,
-                            fontSize: 16,
-                            fontWeight: "bold"
-                        }}
-                    >
-                        Próximo
-                    </Text>
-                </TouchableOpacity>
 
                 <TouchableOpacity
                     onPress={() => router.back()}

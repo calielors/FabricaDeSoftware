@@ -1,14 +1,16 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Home_Styles } from "../../src/styles/home_styles";
-import { Top_Bar } from "../../src/components/top_bar";
+import { Top_Bar } from "../../src/components/topbar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useRouter, useFocusEffect } from "expo-router";
+import { useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../src/services/consultas";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { useQuery } from "../../src/services/useQuery"; // Certifique-se de que o caminho está correto
+import { TabActions } from "@react-navigation/native";
 
 interface Consulta {
     data: string;
@@ -21,6 +23,7 @@ interface Consulta {
 export default function Home() {
     const { theme } = useTheme();
     const styles = Home_Styles(theme);
+    const navigation = useNavigation();
 
     const router = useRouter();
     const { user } = useContext(AuthContext);
@@ -36,27 +39,17 @@ export default function Home() {
         return dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
     })();
 
-    const [consulta, setConsulta] = useState<Consulta | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            carregarProximaConsulta();
-        }, [user])
-    );
-
-    const carregarProximaConsulta = async () => {
+    // Substituindo useState e carregarProximaConsulta pelo useQuery
+    const { data: consulta, loading, refresh } = useQuery<Consulta | null>(async () => {
         if (!user) {
-            setLoading(false);
-            return;
+            return { data: null, error: null };
         }
 
         try {
             const { data: paciente } = await buscarPacientePorAuthId(user.id);
 
             if (!paciente) {
-                setLoading(false);
-                return;
+                return { data: null, error: null };
             }
 
             const { data: consultas } = await buscarConsultasPaciente(paciente.id);
@@ -93,26 +86,36 @@ export default function Home() {
                         nomeUnidade = proximaConsulta.unidade_saude;
                     }
 
-                    setConsulta({
-                        data: dataFormatada,
-                        hora: hora + "H",
-                        especialidade: proximaConsulta.especialidade || "Consulta Médica",
-                        local: nomeUnidade,
-                        status:
-                            proximaConsulta.status === "agendada"
-                                ? "Confirmada"
-                                : proximaConsulta.status || "Agendada",
-                    });
+                    return {
+                        data: {
+                            data: dataFormatada,
+                            hora: hora + "H",
+                            especialidade: proximaConsulta.especialidade || "Consulta Médica",
+                            local: nomeUnidade,
+                            status:
+                                proximaConsulta.status === "agendada"
+                                    ? "Confirmada"
+                                    : proximaConsulta.status || "Agendada",
+                        },
+                        error: null,
+                    };
                 }
             }
-        } finally {
-            setLoading(false);
+            return { data: null, error: null };
+        } catch (error: any) {
+            return { data: null, error };
         }
-    };
+    }, [user]);
+
+    // Mantendo o useFocusEffect original para recarregar ao voltar para a tela
+    useFocusEffect(
+        React.useCallback(() => {
+            refresh();
+        }, [refresh])
+    );
 
     return (
         <View style={styles.container}>
-            <Top_Bar />
             <View style={{ flex: 1, paddingHorizontal: 15 }}>
                 {/* Saudação */}
                 <View style={styles.header_box}>
@@ -170,40 +173,40 @@ export default function Home() {
                     <TouchableOpacity
                         style={styles.servico_item}
                         activeOpacity={0.7}
-                        onPress={() => router.push("/home/agendar")}
+                        onPress={() => navigation.dispatch(TabActions.jumpTo("(agendar)")as any)}
                     >
-                        <FontAwesome6 name="calendar-plus" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Agendar consulta</Text>
-                    </TouchableOpacity>
+                    <FontAwesome6 name="calendar-plus" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Agendar</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.servico_item}
-                        activeOpacity={0.7}
-                        onPress={() => router.push("/home/consultas")}
-                    >
-                        <AntDesign name="bars" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Minhas consultas</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.servico_item}
+                    activeOpacity={0.7}
+                    onPress={() => router.push("/home/consultas")}
+                >
+                    <AntDesign name="bars" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Consultas</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.servico_item}
-                        activeOpacity={0.7}
-                        onPress={() => router.push("/servicos/medicamentos")}
-                    >
-                        <FontAwesome5 name="pills" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Medicamentos</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.servico_item}
+                    activeOpacity={0.7}
+                    onPress={() => router.push("/home/(servicos)/medicamentos")}
+                >
+                    <FontAwesome5 name="pills" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Medicamentos</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={styles.servico_item}
-                        activeOpacity={0.7}
-                        onPress={() => router.push("/servicos/historico")}
-                    >
-                        <FontAwesome5 name="file-medical" size={30} color={theme.primary} />
-                        <Text style={styles.servico_text}>Meu histórico</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                    style={styles.servico_item}
+                    activeOpacity={0.7}
+                    onPress={() => router.push("/home/(servicos)/historico")}
+                >
+                    <FontAwesome5 name="file-medical" size={30} color={theme.primary} />
+                    <Text style={styles.servico_text}>Histórico</Text>
+                </TouchableOpacity>
             </View>
         </View>
+        </View >
     );
 }
