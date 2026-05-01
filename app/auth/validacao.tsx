@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Validacao_Styles } from "../../src/styles/validacao_styles";
+import { Validacao_Styles } from "../../src/styles/auth/validacao_styles";
 import { TextInput as PaperInput } from "react-native-paper";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
 import { supabase } from "../../src/services/supabase";

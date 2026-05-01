@@ -2,7 +2,7 @@ import { Slot, usePathname } from "expo-router";
 import { useEffect } from "react";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { ThemeProvider, useTheme } from "../src/contexts/ThemeContext";
-import { Top_Bar } from "@/src/components/topbar";
+import { Top_Bar } from "@/src/assets/components/topbar";
 
 function GerenciadorDeProgresso() {
   const { atualizarBarra, configBarra } = useTheme();

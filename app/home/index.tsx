@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Home_Styles } from "../../src/styles/home_styles";
-import { Top_Bar } from "../../src/components/topbar";
+import { Home_Styles } from "../../src/styles/home/home_styles";
+import { Top_Bar } from "@/src/assets/components/topbar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -9,7 +9,7 @@ import { useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../src/services/consultas";
 import { useTheme } from "../../src/contexts/ThemeContext";
-import { useQuery } from "../../src/services/useQuery"; // Certifique-se de que o caminho está correto
+import { useQuery } from "../../src/services/useQuery";
 import { TabActions } from "@react-navigation/native";
 
 interface Consulta {
@@ -106,13 +106,6 @@ export default function Home() {
             return { data: null, error };
         }
     }, [user]);
-
-    // Mantendo o useFocusEffect original para recarregar ao voltar para a tela
-    useFocusEffect(
-        React.useCallback(() => {
-            refresh();
-        }, [refresh])
-    );
 
     return (
         <View style={styles.container}>

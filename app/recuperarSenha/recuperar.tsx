@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator, } from "react-native";
-import { Recuperar_Styles } from "../../src/styles/recuperar_styles";
+import { Recuperar_Styles } from "../../src/styles/recuperarSenha/recuperar_styles";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useNavigation, useRouter } from "expo-router";
-import BarraProgresso from "../../src/components/barraProgresso";
-import { formatCPF } from "../../src/components/formatFunctions";
+import { formatCPF } from "../../src/utils/formatFunctions";
 import { supabase } from "../../src/services/supabase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 

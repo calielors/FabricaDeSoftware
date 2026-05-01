@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Historico_Styles} from '../../../src/styles/historico_styles';
+import { Historico_Styles} from '../../../src/styles/home/servicos/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthContext } from '../../../src/contexts/AuthContext';
 import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../../src/services/consultas';
@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '../../../src/contexts/ThemeContext';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useQuery } from '@/src/services/useQuery';
-import { formatData } from '@/src/components/formatFunctions';
+import { formatData } from '@/src/utils/formatFunctions';
 
 type Consulta = {
     id: number;
@@ -33,7 +33,7 @@ export default function Historico() {
 
         const { data: paciente } = await buscarPacientePorAuthId(user.id);
         if (!paciente) return { data: [], error: { message: 'Paciente não encontrado' } };
-
+    
         const { data: consultas } = await buscarConsultasPaciente(paciente.id);
         if (!consultas) return { data: [], error: null };
 
@@ -57,11 +57,11 @@ export default function Historico() {
         return { data: formatadas, error: null };
     }, [user?.id]);
 
-    // NOVO: FocusEffect usando o refresh
+
     useFocusEffect(
         React.useCallback(() => {
             refresh();
-        }, [refresh])
+        }, [])
     );
 
     const getStatusProps = (status: Consulta['status']) => {

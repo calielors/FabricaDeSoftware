@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Switch } from "react-native";
 import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
-import { Perfil_Styles } from "../../../src/styles/perfil_styles";
+import { Perfil_Styles } from "../../../src/styles/home/perfil/perfil_styles";
 import { AuthContext } from "../../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { COLORS } from "@/src/assets/colors/colors";
+import { cacheManager } from "@/src/services/cache"; // Importa a função de limpeza de cache
 
 
 export default function Perfil() {
@@ -17,6 +18,7 @@ export default function Perfil() {
     const [notificacoes, setNotificacoes] = useState(true);
     async function handleLogout() {
         await signOut();
+        cacheManager.clearAllCache(); // Limpa cache ao sair
     }
 
     return (

@@ -1,14 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { Top_Bar } from '../../src/components/topbar';
-import { Consultas_Styles, Consultas_Styles as styles } from '../../src/styles/consultas_styles';
+import { Consultas_Styles} from '../../src/styles/home/consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
 import { AuthContext } from '../../src/contexts/AuthContext';
 import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } from '../../src/services/consultas';
-import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { useQuery } from '@/src/services/useQuery';
+import { formatData } from '@/src/utils/formatFunctions';
 
 type Consulta = {
     id: number;
@@ -16,11 +15,6 @@ type Consulta = {
     especialista: string;
     date: string;
     hora: string;
-};
-
-const formatarData = (dateString: string) => {
-    const [ano, mes, dia] = dateString.split('-');
-    return `${dia}/${mes}/${ano}`;
 };
 
 export default function Consultas() {
@@ -72,13 +66,8 @@ export default function Consultas() {
         } catch (err: any) {
             return { data: [], error: 'Erro ao carregar consultas' };
         }
-    }, [user]);
+    }, [user],"consultas-paciente");
 
-     useFocusEffect(
-        React.useCallback(() => {
-            refresh(); // Atualiza a lista sempre que o usuário abrir a tela
-        }, [refresh])
-    );
 
     const abrirModalCancelar = (consulta: Consulta) => {
         setConsultaSelecionada(consulta);
@@ -132,7 +121,7 @@ export default function Consultas() {
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.itemMeta}>Unidade: {item.unidade}</Text>
                                     <Text style={styles.itemMeta}>Especialista: {item.especialista}</Text>
-                                    <Text style={styles.itemMeta}>Data: {formatarData(item.date)}</Text>
+                                    <Text style={styles.itemMeta}>Data: {formatData(item.date)}</Text>
                                     <Text style={styles.itemMeta}>Hora: {item.hora}</Text>
                                 </View>
 
@@ -167,7 +156,7 @@ export default function Consultas() {
                 <Modal isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
                     <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>
-                            Tem certeza que deseja cancelar a consulta com {consultaSelecionada?.especialista} em {consultaSelecionada ? formatarData(consultaSelecionada.date) : ''}?
+                            Tem certeza que deseja cancelar a consulta com {consultaSelecionada?.especialista} em {consultaSelecionada ? formatData(consultaSelecionada.date) : ''}?
                         </Text>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 15 }}>
                             <TouchableOpacity

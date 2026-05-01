@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { View, Text, Platform, StatusBar, StyleSheet, Animated } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Svg, { Path } from "react-native-svg";
-import { COLORS } from "../assets/colors/colors";
-import { useTheme } from "../contexts/ThemeContext";
+import { COLORS } from "../../assets/colors/colors";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface TopBarProps {
   etapaAtual?: number;

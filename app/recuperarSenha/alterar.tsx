@@ -1,18 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-  Platform,
-} from "react-native";
-import * as Linking from "expo-linking";
-import { Alterar_Styles } from "../../src/styles/alterar_styles";
+import {View,Text,KeyboardAvoidingView,TouchableOpacity,Alert,ActivityIndicator,Platform,} from "react-native";
+import { Alterar_Styles } from "../../src/styles/recuperarSenha/alterar_styles";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useRouter } from "expo-router";
-import BarraProgresso from "../../src/components/barraProgresso";
 import { supabase } from "../../src/services/supabase";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { useTheme } from "../../src/contexts/ThemeContext";

@@ -2,7 +2,7 @@ import React from "react";
 import { TextInput as PaperInput } from "react-native-paper";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 type CampoPesquisaProps = {
   label: string;

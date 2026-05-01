@@ -3,15 +3,19 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityInd
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "../../../src/services/supabase";
-import { formatCPF, formatData, formatDateToISO} from "../../../src/components/formatFunctions";
+import { formatCPF, formatData, formatDateToISO, formatTelefone} from "../../../src/utils/formatFunctions";
 import { useTheme } from "../../../src/contexts/ThemeContext";
+import { Dados_Styles } from "../../../src/styles/home/perfil/dados_styles";
 
 export default function DadosPessoais() {
     const { theme } = useTheme();
+    const styles = Dados_Styles(theme);
+
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
+
 
     const [userData, setUserData] = useState({
         nome: "",
@@ -148,62 +152,55 @@ export default function DadosPessoais() {
 
                         {/* CPF - Não editável */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>CPF</Text>
-                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                            <Text style={styles.Text}>CPF</Text>
+                            <View style={styles.Dados}>
                                 <Text style={{ fontSize: 16, color: theme.placeholder }}>{formatCPF(userData.cpf) || "Não informado"}</Text>
                             </View>
                         </View>
 
                         {/* Nome - Não editável */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>NOME COMPLETO</Text>
-                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
+                            <Text style={styles.Text}>NOME COMPLETO</Text>
+                            <View style={styles.Dados}>
                                 <Text style={{ fontSize: 16, color: theme.placeholder }}>{userData.nome || "Não informado"}</Text>
                             </View>
                         </View>
 
                         {/* Nome Social */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>NOME SOCIAL</Text>
+                            <Text style={styles.Text}>NOME SOCIAL</Text>
                             {isEditing ? (
                                 <TextInput
                                     value={editData.nome_social}
                                     onChangeText={(text) => setEditData({ ...editData, nome_social: text })}
-                                    style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16, color: theme.text }}
+                                    style={styles.Input}
                                     placeholder="Digite seu nome social (opcional)"
                                 />
                             ) : (
-                                <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 16, color: theme.text }}>{userData.nome_social || "Não informado"}</Text>
+                                <View style={styles.Dados}>
+                                    <Text style={styles.DadosText}>{userData.nome_social || "Não informado"}</Text>
                                 </View>
                             )}
                         </View>
 
                         {/* Data de Nascimento */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>DATA DE NASCIMENTO</Text>
+                            <Text style={styles.Text}>DATA DE NASCIMENTO</Text>
                             {isEditing ? (
                                 <TextInput
                                     value={editData.data_nascimento}
                                     onChangeText={(text) => {
-                                        // Máscara DD/MM/YYYY
-                                        let cleaned = text.replace(/\D/g, '');
-                                        if (cleaned.length >= 3) {
-                                            cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
-                                        }
-                                        if (cleaned.length >= 6) {
-                                            cleaned = cleaned.slice(0, 5) + '/' + cleaned.slice(5, 9);
-                                        }
-                                        setEditData({ ...editData, data_nascimento: cleaned });
+                                        // Máscara DD/MM/AAAA
+                                        setEditData({ ...editData, data_nascimento: formatData(text)});
                                     }}
-                                    style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16, color: theme.text }}
+                                    style={styles.Input}
                                     placeholder="DD/MM/AAAA"
                                     keyboardType="numeric"
                                     maxLength={10}
                                 />
                             ) : (
-                                <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 16, color: theme.text }}>
+                                <View style={styles.Dados}>
+                                    <Text style={styles.DadosText}>
                                         {userData.data_nascimento ? new Date(userData.data_nascimento).toLocaleDateString('pt-BR') : "Não informado"}
                                     </Text>
                                 </View>
@@ -212,86 +209,65 @@ export default function DadosPessoais() {
 
                         {/* Gênero */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>GÊNERO</Text>
+                            <Text style={styles.Text}>GÊNERO</Text>
                             {isEditing ? (
                                 <TextInput
                                     value={editData.genero}
                                     onChangeText={(text) => setEditData({ ...editData, genero: text })}
-                                    style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16, color: theme.text }}
+                                    style={styles.Input}
                                     placeholder="Digite seu gênero"
                                 />
                             ) : (
-                                <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 16, color: theme.text }}>{userData.genero || "Não informado"}</Text>
+                                <View style={styles.Dados}>
+                                    <Text style={styles.DadosText}>{userData.genero || "Não informado"}</Text>
                                 </View>
                             )}
                         </View>
 
                         {/* Email - Não editável */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>E-MAIL</Text>
-                            <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
-                                <Text style={{ fontSize: 16, color: theme.placeholder }}>{userData.email || "Não informado"}</Text>
+                            <Text style={styles.Text}>E-MAIL</Text>
+                            <View style={styles.Dados}>
+                                <Text style={styles.DadosText}>{userData.email || "Não informado"}</Text>
                             </View>
                         </View>
 
                         {/* Telefone */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>TELEFONE</Text>
+                            <Text style={styles.Text}>TELEFONE</Text>
                             {isEditing ? (
                                 <TextInput
                                     value={editData.telefone}
                                     onChangeText={(text) => {
                                         // Máscara (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
-                                        let cleaned = text.replace(/\D/g, '');
-                                        let formatted = '';
-                                        if (cleaned.length > 0) {
-                                            formatted = '(' + cleaned.substring(0, 2);
-                                            if (cleaned.length >= 2) {
-                                                formatted += ') ';
-                                            }
-                                            if (cleaned.length > 2) {
-                                                if (cleaned.length <= 10) {
-                                                    formatted += cleaned.substring(2, 6);
-                                                    if (cleaned.length > 6) {
-                                                        formatted += '-' + cleaned.substring(6, 10);
-                                                    }
-                                                } else {
-                                                    formatted += cleaned.substring(2, 7);
-                                                    if (cleaned.length > 7) {
-                                                        formatted += '-' + cleaned.substring(7, 11);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        setEditData({ ...editData, telefone: formatted });
+                                        setEditData({ ...editData, telefone: formatTelefone(text) });
                                     }}
-                                    style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16, color: theme.text }}
+                                    style={styles.Input}
                                     placeholder="(XX) XXXXX-XXXX"
                                     keyboardType="phone-pad"
                                     maxLength={15}
                                 />
                             ) : (
-                                <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 16, color: theme.text }}>{userData.telefone || "Não informado"}</Text>
+                                <View style={styles.Dados}>
+                                    <Text style={styles.DadosText}>{userData.telefone || "Não informado"}</Text>
                                 </View>
                             )}
                         </View>
 
                         {/* Cartão SUS */}
                         <View style={{ marginBottom: 16 }}>
-                            <Text style={{ fontSize: 12, fontWeight: "600", color: theme.primary, marginBottom: 6 }}>CARTÃO SUS</Text>
+                            <Text style={styles.Text}>CARTÃO SUS</Text>
                             {isEditing ? (
                                 <TextInput
                                     value={editData.cartao_sus}
                                     onChangeText={(text) => setEditData({ ...editData, cartao_sus: text })}
-                                    style={{ borderWidth: 1, borderColor: theme.success, padding: 12, borderRadius: 8, fontSize: 16, color: theme.text }}
+                                    style={styles.Input}
                                     placeholder="Digite o número do cartão SUS"
                                     keyboardType="numeric"
                                 />
                             ) : (
-                                <View style={{ backgroundColor: theme.card, padding: 12, borderRadius: 8 }}>
-                                    <Text style={{ fontSize: 16, color: theme.text }}>{userData.cartao_sus || "Não informado"}</Text>
+                                <View style={styles.Dados}>
+                                    <Text style={styles.DadosText}>{userData.cartao_sus || "Não informado"}</Text>
                                 </View>
                             )}
                         </View>
@@ -301,7 +277,7 @@ export default function DadosPessoais() {
                     {!isEditing ? (
                         <TouchableOpacity
                             onPress={() => setIsEditing(true)}
-                            style={{ backgroundColor: theme.primary, padding: 16, borderRadius: 10, marginTop: 20, marginBottom: 30, flexDirection: "row", justifyContent: "center", alignItems: "center" }}
+                            style={styles.Editar}
                         >
                             <FontAwesome5 name="edit" size={18} color={theme.background} style={{ marginRight: 8 }} />
                             <Text style={{ color: theme.background, fontSize: 16, fontWeight: "600" }}>Editar Dados</Text>
@@ -311,14 +287,14 @@ export default function DadosPessoais() {
                             <TouchableOpacity
                                 onPress={handleCancel}
                                 disabled={saving}
-                                style={{ flex: 1, borderWidth: 2, borderColor: theme.danger, padding: 16, borderRadius: 10, alignItems: "center" }}
+                                style={styles.Cancelar}
                             >
                                 <Text style={{ color: theme.danger, fontSize: 16, fontWeight: "600" }}>Cancelar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={handleSave}
                                 disabled={saving}
-                                style={{ flex: 1, backgroundColor: theme.success, padding: 16, borderRadius: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", opacity: saving ? 0.6 : 1 }}
+                                style={[styles.Salvar,{opacity: saving ? 0.6 : 1 }]}
                             >
                                 <FontAwesome5 name="check" size={18} color={theme.background} style={{ marginRight: 8 }} />
                                 <Text style={{ color: theme.background, fontSize: 16, fontWeight: "600" }}>{saving ? "Salvando..." : "Salvar"}</Text>

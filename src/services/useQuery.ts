@@ -1,36 +1,59 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Alert } from 'react-native';
+import { cacheManager } from './cache'; // Importa o novo gestor
 
-// Adicionamos o parâmetro 'deps' que é um array de qualquer coisa (ID do usuário, data, etc)
 export function useQuery<T>(
     queryFunction: () => Promise<{ data: T | null; error: any }>,
-    deps: any[] = [] // Valor padrão é um array vazio
+    deps: any[] = [],
+    cacheKey?: string,
+    ttl: number = 5 * 60 * 1000 //Padrão: 5 minutos
 ) {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const queryFnRef = useRef(queryFunction);
 
-    const carregar = useCallback(async () => {
+    useEffect(() => {
+        queryFnRef.current = queryFunction;
+    }, [queryFunction]);
+
+    const carregar = useCallback(async (forceRefresh: boolean = false) => {
+        // Tenta pegar do cache manager
+        if (!forceRefresh && cacheKey) {
+            const cachedData = cacheManager.get<T>(cacheKey);
+            if (cachedData) {
+                setData(cachedData);
+                setLoading(false);
+                return;
+            }
+        }
+
         setLoading(true);
         setError(null);
+
         try {
-            const result = await queryFunction();
-            
+            const result = await queryFnRef.current();
+
             if (result.error) {
                 setError(result.error.message);
             } else {
                 setData(result.data);
+                // Salva no cache manager
+                if (cacheKey && result.data !== null) {
+                    cacheManager.set(cacheKey, result.data, ttl);
+                }
             }
         } catch (err: any) {
             setError(err.message || "Erro inesperado");
+            Alert.alert("Erro", err.message || "Erro inesperado");
         } finally {
             setLoading(false);
         }
-    }, deps); // O useCallback agora "escuta" as dependências
+    }, [cacheKey, ttl, ...deps]);
 
     useEffect(() => {
         carregar();
-        // O array de dependências garante que se o ID mudar, a busca recomeça
     }, [carregar]);
 
-    return { data, loading, error, refresh: carregar };
+    return { data, loading, error, refresh: () => carregar(true) };
 }

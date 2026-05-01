@@ -1,6 +1,5 @@
-import React from "react";
 import { StyleSheet } from "react-native";
-import { COLORS } from "../assets/colors/colors";
+import { COLORS } from "../../assets/colors/colors";
 
 export const Login_Styles = (theme : any)=>StyleSheet.create({
       container: {

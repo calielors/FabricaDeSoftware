@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Medicamentos_Styles} from '../../../src/styles/medicamentos_styles';
-import { CampoPesquisa } from '../../../src/components/campoPesquisa';
+import { Medicamentos_Styles } from '../../../src/styles/home/servicos/medicamentos_styles';
+import { CampoPesquisa } from '../../../src/assets/components/campoPesquisa';
 import { supabase } from '../../../src/services/supabase';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -35,16 +35,9 @@ export default function Medicamentos() {
         .select(`
             id_medicamento,
             unidades_disponiveis,
-            medicamento (
-            id,
-            nome,
-            dose_mg
-            ),
-            unidade_saude (
-            id,
-            nome
-            )
-        `)
+            medicamento (id, nome, dose_mg),
+            unidade_saude (id, nome)
+          `)
         .order('id_medicamento');
 
       if (error) {
@@ -58,17 +51,13 @@ export default function Medicamentos() {
           quantidade: item.unidades_disponiveis,
           hospital: item.unidade_saude?.nome || 'Desconhecido',
         }));
-
         setData(mappedData);
       }
-
       setLoading(false);
     };
-
     fetchDisponibilidade();
   }, []);
 
-  // Filter results based on search query
   useEffect(() => {
     if (!query) {
       setResults([]);

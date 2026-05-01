@@ -1,13 +1,13 @@
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Animated } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import { Agendar_Styles } from "../../../src/styles/agendar_styles";
+import { Agendar_Styles } from "../../../src/styles/home/agendar/agendar_styles";
 import { AuthContext } from "../../../src/contexts/AuthContext";
 import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, UnidadeSaude } from "../../../src/services/consultas";
-import { useQuery } from "@/src/services/useQuery";
+import {  useQuery } from "@/src/services/useQuery";
+import { cacheManager } from "@/src/services/cache";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
-import CustomCalendar from "../../../src/components/CustomCalendar";
-import { Flag } from "lucide-react-native";
+import CustomCalendar from "../../../src/assets/components/CustomCalendar";
 
 export default function Agendamento() {
     const { theme } = useTheme();
@@ -79,7 +79,7 @@ export default function Agendamento() {
         }
 
         return { data: disponiveis, error: null };
-    }, [day, unidadeSelecionada?.id]);
+    }, [day, unidadeSelecionada?.id], `horarios-${unidadeSelecionada?.id}-${day}`);
 
     const handleAgendarConsulta = async () => {
         if (!user) return Alert.alert("Erro", "Faça login para continuar.");
@@ -124,6 +124,8 @@ export default function Agendamento() {
                     }
                 }]
             );
+            cacheManager.deleteCache("proxima-consulta"); // Limpa cache para forçar recálculo da próxima consulta
+            cacheManager.deleteCache("consultas-paciente"); // Limpa cache da lista de consultas para atualizar o histórico
         } catch (err) {
             Alert.alert("Erro", "Não foi possível realizar o agendamento.");
         } finally {

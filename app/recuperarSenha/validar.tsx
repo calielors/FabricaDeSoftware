@@ -8,9 +8,8 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { Validar_Styles } from "../../src/styles/validar_styles";
+import { Validar_Styles } from "../../src/styles/recuperarSenha/validar_styles";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import BarraProgresso from "../../src/components/barraProgresso";
 import { supabase } from "../../src/services/supabase";
 import { useTheme } from "../../src/contexts/ThemeContext";
 

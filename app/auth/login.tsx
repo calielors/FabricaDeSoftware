@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Login_Styles } from "../../src/styles/login_styles";
+import { Login_Styles } from "../../src/styles/auth/login_styles";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { TextInput as PaperInput } from "react-native-paper";
-import { formatCPF } from "../../src/components/formatFunctions";
+import { formatCPF , cleanCpf} from "../../src/utils/formatFunctions";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useRouter } from "expo-router";
@@ -25,19 +25,17 @@ export default function Login() {
       return;
     }
 
-    const cleanCpf = cpf.replace(/\D/g, "");
-    if (cleanCpf.length !== 11) {
-      Alert.alert("Atenção", "CPF inválido! Deve conter 11 dígitos.");
-      return;
-    }
+    const cleanCpfValue = cleanCpf(cpf);
+    if (!cleanCpfValue) return;  
 
     try {
-      await signIn(cleanCpf, password);
+      await signIn(cleanCpfValue, password);
       router.replace("/home");
     } catch (error: any) {
       Alert.alert("Erro ao entrar", error.message || "CPF ou senha incorretos.");
     }
   }
+
   async function testeUser() {
     setCpf("12345678900");
     setPassword("ABC123!@#ab");

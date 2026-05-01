@@ -186,7 +186,7 @@ export async function buscarHorariosOcupados(data: string, unidadeId?: number): 
 
 /**
  * Função auxiliar para combinar data e horário em formato ISO
- */
+    */
 export function combinarDataHora(data: string, horario: string): string {
     return `${data}T${horario}:00`;
 }

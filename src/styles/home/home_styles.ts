@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
 
 export const Home_Styles = (theme: any) => StyleSheet.create({
         container: {

@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { CadastroStyles } from "../../src/styles/cadastro_styles";
+import { CadastroStyles } from "../../src/styles/auth/cadastro_styles";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { TextInput as PaperInput } from "react-native-paper";
-import { formatCPF } from "../../src/components/formatFunctions";
+import { formatCPF, cleanCpf } from "../../src/utils/formatFunctions";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -33,10 +33,8 @@ export default function Cadastro() {
                 return Alert.alert("Atenção", "O usuário deve ter no mínimo 5 caracteres!");
             }
 
-            const regexCPF = /^\d{11}$/;
-            if (!regexCPF.test(cpf)) {
-                return Alert.alert("Atenção", "O CPF deve conter exatamente 11 dígitos numéricos!");
-            }
+            const cleanCpfValue = cleanCpf(cpf);
+            if (!cleanCpfValue) return;
 
             const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regexEmail.test(email)) {
