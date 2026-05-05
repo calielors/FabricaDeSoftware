@@ -8,6 +8,8 @@ import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } fr
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { useQuery } from '@/src/services/useQuery';
 import { formatData } from '@/src/utils/formatFunctions';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 type Consulta = {
     id: number;
@@ -16,6 +18,7 @@ type Consulta = {
     date: string;
     hora: string;
 };
+
 
 export default function Consultas() {
     const { theme } = useTheme();
@@ -66,8 +69,14 @@ export default function Consultas() {
         } catch (err: any) {
             return { data: [], error: 'Erro ao carregar consultas' };
         }
-    }, [user],"consultas-paciente");
-
+    }, [user?.id],"consultas-paciente-${user?.id}");
+    useFocusEffect(
+    useCallback(() => {
+        if (user?.id) {
+            refresh();
+        }
+    }, [user?.id])
+);
 
     const abrirModalCancelar = (consulta: Consulta) => {
         setConsultaSelecionada(consulta);
