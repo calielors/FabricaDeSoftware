@@ -9,10 +9,10 @@ const storage: { [key: string]: CacheItem<any> } = {};
 
 export const cacheManager = {
     // Salva um item
-    set: <T>(key: string, data: T, ttl: number) => {
+    set: <T>(key: string, data: T, ttl: number | undefined) => {
         storage[key] = {
             data,
-            expiresAt: Date.now() + ttl,
+            expiresAt: Date.now() + (ttl || 60 * 5), // 5 minutos padrão
         };
     },
 
@@ -27,14 +27,13 @@ export const cacheManager = {
         }
         return item.data;
     },
-
     // Deleta um item
-    deleteCache: (key: string) => {
+    delete: (key: string) => {
         delete storage[key];
     },
 
     // Limpa tudo (útil para o Logout)
-    clearAllCache: () => {
+    clearAll: () => {
         Object.keys(storage).forEach(key => delete storage[key]);
     }
 };

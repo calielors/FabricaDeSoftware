@@ -18,7 +18,7 @@ export default function Perfil() {
     const [notificacoes, setNotificacoes] = useState(true);
     async function handleLogout() {
         await signOut();
-        cacheManager.clearAllCache(); // Limpa cache ao sair
+        cacheManager.clearAll(); // Limpa cache ao sair
     }
 
     return (

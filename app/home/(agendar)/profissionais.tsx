@@ -1,96 +1,109 @@
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import React, { useState } from "react";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from "react-native";
+import React from "react";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router, useLocalSearchParams } from "expo-router";
-
-const tiposProfissionais = [
-    { id: 1, nome: "Clínico Geral" },
-    { id: 2, nome: "Dentista" },
-    { id: 3, nome: "Psicólogo" },
-    { id: 4, nome: "Pediatra" },
-    { id: 5, nome: "Ortopedista" },
-    { id: 6, nome: "Ginecologista" },
-    { id: 7, nome: "Cardiologista" },
-    { id: 8, nome: "Nutricionista" },
-];
+import { buscarProfissionaisPorUnidade } from "../../../src/services/consultas";
+import { useQuery } from "@/src/services/useQuery";
 
 export default function SelecionarTipo() {
     const { theme } = useTheme();
     const params = useLocalSearchParams();
 
-    // O valor recebido é a STRING JSON da unidade
-    const unidadeSelecionada = params.unidadeSelecionada;
+    const unidadeOriginal = params.unidadeSelecionada as string;
+    const unidadeObj = unidadeOriginal ? JSON.parse(unidadeOriginal) : null;
 
+    const { data: profissionais, loading, refresh } = useQuery(
+        () => buscarProfissionaisPorUnidade(unidadeObj?.id),
+        [unidadeObj?.id]
+    );
 
-    const handleNext = (profissional: string) => {
-        // Validação: precisa ter um profissional e a unidade (que é a string JSON)
-        if (!profissional) {
-            alert("Por favor, selecione um tipo de profissional.");
-            return;
-        }
-        // Se a unidadeSelecionada não for uma string (ou for null/undefined), algo deu errado na tela anterior
-        if (typeof unidadeSelecionada !== 'string') {
+    const handleNext = (profissional: any) => {
+        if (!unidadeOriginal) {
             alert("Erro: Dados da unidade de saúde não encontrados.");
-            router.back(); // Volta para a tela anterior
+            router.back();
             return;
         }
+
         router.push({
             pathname: "/home/agendar",
             params: {
-                tipo: profissional,
-                // Repassando a STRING JSON da unidade para a próxima tela
-                unidadeSelecionada: unidadeSelecionada
+                tipo: profissional.especialidade || "Consulta",
+                profissionalID: profissional.id,
+                unidadeSelecionada: unidadeOriginal
             }
         });
     };
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
-            <View style={{ flex: 1, padding: 20 }}>
-                <Text
-                    style={{
-                        fontSize: 22,
-                        fontWeight: "bold",
-                        color: theme.primary,
-                        marginBottom: 20,
-                        marginTop: 10
-                    }}
-                >
-                    Selecione o Tipo de Profissional
-                </Text>
+            <FlatList
+                data={profissionais || []}
+                keyExtractor={item => item.id.toString()}
+                contentContainerStyle={{ flexGrow: 1, padding: 20 }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={loading}
+                        onRefresh={refresh}
+                        colors={[theme.primary]}
+                        tintColor={theme.primary}
+                        progressBackgroundColor={theme.background}
+                    />
+                }
 
-                <FlatList
-                    data={tiposProfissionais}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({ item }) => {
-                        return (
-                            <TouchableOpacity
-                                onPress={() => handleNext(item.nome)}
-                                style={{
-                                    padding: 15,
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: theme.placeholder
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: 18, color: theme.text, fontWeight: "600", paddingVertical: 6,
-                                    }}
-                                >
-                                    {item.nome}
-                                </Text>
-                            </TouchableOpacity>
-                        );
-                    }}
-                />
+                ListHeaderComponent={
+                    <Text
+                        style={{
+                            fontSize: 22,
+                            fontWeight: "bold",
+                            color: theme.primary,
+                            marginBottom: 20,
+                            marginTop: 10
+                        }}
+                    >
+                        Selecione o Profissional
+                    </Text>
+                }
 
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        onPress={() => handleNext(item)}
+                        style={{
+                            padding: 15,
+                            borderBottomWidth: 1,
+                            borderBottomColor: theme.placeholder
+                        }}
+                    >
+                        <Text style={{ fontSize: 18, color: theme.text, fontWeight: "600" }}>
+                            {item.nome}
+                        </Text>
+                        <Text style={{ fontSize: 14, color: theme.primary, marginTop: 2 }}>
+                            {item.especialidade || "Médico"}
+                        </Text>
+                    </TouchableOpacity>
+                )}
+
+                ListEmptyComponent={() => (
+                    loading && !profissionais ? (
+                        <View style={{ marginTop: 50, alignItems: 'center' }}>
+                            <ActivityIndicator size="large" color={theme.primary} />
+                            <Text style={{ color: theme.text, marginTop: 10 }}>Buscando profissionais...</Text>
+                        </View>
+                    ) : (
+                        <Text style={{ textAlign: 'center', color: theme.placeholder, marginTop: 30 }}>
+                            Nenhum profissional disponível nesta unidade.
+                        </Text>
+                    )
+                )}
+            />
+
+            {/* Botão Voltar fixo no rodapé para facilidade de navegação */}
+            <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: theme.placeholder }}>
                 <TouchableOpacity
                     onPress={() => router.back()}
                     style={{
                         backgroundColor: theme.danger,
                         padding: 12,
                         borderRadius: 6,
-                        marginTop: 20,
                         alignItems: "center"
                     }}
                 >

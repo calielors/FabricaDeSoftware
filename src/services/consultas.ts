@@ -1,3 +1,4 @@
+import { cacheManager } from './cache';
 import { supabase } from './supabase';
 //Timeout
 const timeout = async <T>(promise: PromiseLike<T>, controller: AbortController, ms: number = 30000): Promise<T> => {
@@ -97,12 +98,42 @@ export async function buscarPacientePorAuthId(authUserId: string) {
  * Busca todas as unidades de saúde cadastradas
  */
 export async function buscarUnidadesSaude() {
+    const casheKey = 'unidades_saude';
+    const cacheData = cacheManager.get<UnidadeSaude[]>(casheKey);
+    if (cacheData) {
+        return { data: cacheData, error: null };
+    }
     const query = supabase
         .from('unidade_saude')
         .select('*')
         .order('nome', { ascending: true });
 
-    return executarQuery<UnidadeSaude[]>(query, 10000, 'Erro ao carregar a lista de unidades');
+    const results = await executarQuery<UnidadeSaude[]>(query, 10000, 'Erro ao carregar a lista de unidades');
+     
+    if (results.data && !results.error) {
+        cacheManager.set(casheKey, results.data,undefined);
+    }
+    return results;
+}
+
+export async function buscarProfissionaisPorUnidade(unidadeId: number) {
+    const casheKey = `profissionais_unidade${unidadeId}`;
+    const cacheData = cacheManager.get<any[]>(casheKey);
+    if (cacheData) {
+        return { data: cacheData, error: null };
+    }
+    const query = supabase
+        .from('profissional')
+        .select('*')
+        .eq('unidade_id', unidadeId)
+        .order('nome', { ascending: true });
+
+    const results = await executarQuery<any[]>(query, 10000, 'Erro ao carregar profissionais da unidade');
+     
+    if (results.data && !results.error) {
+        cacheManager.set(casheKey, results.data,undefined);
+    }
+    return results;
 }
 
 /**

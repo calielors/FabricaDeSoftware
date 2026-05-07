@@ -36,7 +36,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const theme = darkMode ? DARK_THEME : LIGHT_THEME;
 
   const atualizarBarra = (etapa?: number, total?: number) => {
-    // Agora o TS não reclama mais desta atribuição
     setConfigBarra({ etapa, total });
     
     const destino = (etapa !== undefined && total !== undefined) 

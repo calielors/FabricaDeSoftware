@@ -124,8 +124,8 @@ export default function Agendamento() {
                     }
                 }]
             );
-            cacheManager.deleteCache("proxima-consulta"); // Limpa cache para forçar recálculo da próxima consulta
-            cacheManager.deleteCache("consultas-paciente"); // Limpa cache da lista de consultas para atualizar o histórico
+            cacheManager.delete("proxima-consulta"); // Limpa cache para forçar recálculo da próxima consulta
+            cacheManager.delete("consultas-paciente"); // Limpa cache da lista de consultas para atualizar o histórico
         } catch (err) {
             Alert.alert("Erro", "Não foi possível realizar o agendamento.");
         } finally {
