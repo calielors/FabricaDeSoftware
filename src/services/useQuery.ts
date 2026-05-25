@@ -30,6 +30,7 @@ export function useQuery<T>(
 
         setLoading(true);
         setError(null);
+        setData(null);
 
         try {
             const result = await queryFnRef.current();

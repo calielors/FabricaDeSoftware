@@ -80,7 +80,7 @@ export default function Medicamentos() {
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, marginTop: 10 }}>
         <TouchableOpacity
-          onPress={() => router.push('/home')}
+          onPress={() => router.back()}
           style={{
             marginRight: 10,
             padding: 5

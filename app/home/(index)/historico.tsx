@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Historico_Styles} from '../../../src/styles/home/servicos/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -26,37 +26,47 @@ export default function Historico() {
     const styles = Historico_Styles(theme);
     const router = useRouter();
 
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const { user } = useContext(AuthContext);
 
    const { data, loading, error, refresh } = useQuery<Consulta[]>(async () => {
-        if (!user) return { data: [], error: { message: 'Usuário não autenticado' } };
+        if (!user) return { data: [], error: 'Usuário não autenticado' };
 
-        const { data: paciente } = await buscarPacientePorAuthId(user.id);
-        if (!paciente) return { data: [], error: { message: 'Paciente não encontrado' } };
-    
-        const { data: consultas } = await buscarConsultasPaciente(paciente.id);
-        if (!consultas) return { data: [], error: null };
+        try {
+            const { data: paciente } = await buscarPacientePorAuthId(user.id);
+            if (!paciente) return { data: [], error: 'Paciente não encontrado' };
+        
+            const { data: consultas } = await buscarConsultasPaciente(paciente.id);
+            if (!consultas) return { data: [], error: null };
 
-        const agora = new Date();
-        const formatadas = consultas
-            .filter(c => new Date(c.data_hora) < agora || c.status === 'cancelada' || c.status === 'faltou')
-            .map(c => {
-                const [dataParte] = c.data_hora.split('T');
-                const hora = new Date(c.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                return {
-                    id: c.id!,
-                    unidade: typeof c.unidade_saude === 'object' ? c.unidade_saude.nome : 'UBS',
-                    especialista: c.especialidade || 'Consulta Médica',
-                    date: dataParte,
-                    hora: hora,
-                    status: c.status === 'cancelada' ? 'Cancelada' : (c.status === 'faltou' ? 'Faltou' : 'Realizada') as any,
-                };
-            })
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            const agora = new Date();
+            const formatadas = consultas
+                .filter(c => new Date(c.data_hora) < agora || c.status === 'cancelada' || c.status === 'faltou')
+                .map(c => {
+                    const [dataParte] = c.data_hora.split('T');
+                    const hora = new Date(c.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    return {
+                        id: c.id!,
+                        unidade: typeof c.unidade_saude === 'object' ? c.unidade_saude.nome : 'UBS',
+                        especialista: c.especialidade || 'Consulta Médica',
+                        date: dataParte,
+                        hora: hora,
+                        status: c.status === 'cancelada' ? 'Cancelada' : (c.status === 'faltou' ? 'Faltou' : 'Realizada') as any,
+                    };
+                })
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-        return { data: formatadas, error: null };
-    }, [user?.id]);
+            return { data: formatadas, error: null };
+        } catch (err: any) {
+            return { data: [], error: 'Erro ao carregar histórico' };
+        }
+    }, [user?.id], 'historico_consultas', undefined);
 
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await refresh();
+        setIsRefreshing(false);
+    };
 
     useFocusEffect(
         React.useCallback(() => {
@@ -72,52 +82,57 @@ export default function Historico() {
         }
     };
 
-    if (loading) {
-        return (
-            <View style={styles.container}>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <ActivityIndicator size="large" color={theme.primary} />
-                    <Text style={{ marginTop: 10, color: theme.text, opacity: 0.6 }}>
-                        Carregando histórico...
-                    </Text>
-                </View>
-            </View>
-        );
-    }
-
-    if (error) {
-        return (
-            <View style={styles.container}>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: theme.danger, fontSize: 16 }}>{error}</Text>
-                </View>
-            </View>
-        );
-    }
-
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']}>
-            <View style={styles.content}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
-                    <TouchableOpacity
-                        onPress={() => router.push('/home')}
-                        style={{
-                            marginRight: 10,
-                            padding: 5,
-                            marginTop: 16,
-                        }}
-                    >
-                        <FontAwesome5 name="arrow-left" size={20} color={theme.primary} />
-                    </TouchableOpacity>
-                    <Text style={styles.header}>Histórico</Text>
-                </View>
+        <SafeAreaView style={[styles.container, { flex: 1 }]} edges={['bottom']}>
+            <FlatList
+                data={data || []}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={{ flexGrow: 1 }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={handleRefresh}
+                        colors={[theme.primary, theme.success]}
+                        progressBackgroundColor={theme.background}
+                        tintColor={theme.primary}
+                    />
+                }
+                ListHeaderComponent={
+                    <View style={styles.content}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 15 }}>
+                            <TouchableOpacity
+                                onPress={() => router.back()}
+                                style={{
+                                    marginRight: 10,
+                                    padding: 5,
+                                    marginTop: 16,
+                                }}
+                            >
+                                <FontAwesome5 name="arrow-left" size={20} color={theme.primary} />
+                            </TouchableOpacity>
+                            <Text style={styles.header}>Histórico</Text>
+                        </View>
 
-                <FlatList
-                    data={data || []}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => {
-                        const statusProps = getStatusProps(item.status);
-                        return (
+                        {loading && !isRefreshing && (
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+                                <ActivityIndicator size="large" color={theme.primary} />
+                                <Text style={{ marginTop: 10, color: theme.text, opacity: 0.6 }}>
+                                    Carregando histórico...
+                                </Text>
+                            </View>
+                        )}
+
+                        {error && !loading && (
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+                                <Text style={{ color: theme.danger, fontSize: 16 }}>{error}</Text>
+                            </View>
+                        )}
+                    </View>
+                }
+                renderItem={({ item }) => {
+                    const statusProps = getStatusProps(item.status);
+                    return (
+                        <View style={styles.content}>
                             <View style={styles.item}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.itemMeta}>Unidade: {item.unidade}</Text>
@@ -140,14 +155,13 @@ export default function Historico() {
                                     </View>
                                 </View>
                             </View>
-                        );
-                    }}
-                    ListEmptyComponent={
-                        <Text style={styles.emptyText}>Nenhuma consulta no histórico</Text>
-                    }
-                    style={styles.listContainer}
-                />
-            </View>
+                        </View>
+                    );
+                }}
+                ListEmptyComponent={
+                    (!loading && !error) ? <Text style={styles.emptyText}>Nenhuma consulta no histórico</Text> : null
+                }
+            />
         </SafeAreaView>
     );
 }

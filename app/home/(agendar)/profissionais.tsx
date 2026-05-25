@@ -16,6 +16,11 @@ export default function SelecionarTipo() {
         () => buscarProfissionaisPorUnidade(unidadeObj?.id),
         [unidadeObj?.id]
     );
+    const especialidadesUnicas = profissionais 
+        ? profissionais.filter((prof, index, self) => 
+            index === self.findIndex((t) => t.especialidade === prof.especialidade)
+          )
+        : [];
 
     const handleNext = (profissional: any) => {
         if (!unidadeOriginal) {
@@ -37,7 +42,7 @@ export default function SelecionarTipo() {
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
             <FlatList
-                data={profissionais || []}
+                data={especialidadesUnicas}
                 keyExtractor={item => item.id.toString()}
                 contentContainerStyle={{ flexGrow: 1, padding: 20 }}
                 refreshControl={
@@ -74,10 +79,7 @@ export default function SelecionarTipo() {
                         }}
                     >
                         <Text style={{ fontSize: 18, color: theme.text, fontWeight: "600" }}>
-                            {item.nome}
-                        </Text>
-                        <Text style={{ fontSize: 14, color: theme.primary, marginTop: 2 }}>
-                            {item.especialidade || "Médico"}
+                            {item.especialidade}
                         </Text>
                     </TouchableOpacity>
                 )}

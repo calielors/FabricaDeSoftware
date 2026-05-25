@@ -15,6 +15,7 @@ export const Historico_Styles = (theme: any) => StyleSheet.create({
     },
     content: {
         flex: 1,
+        marginHorizontal: 10,
     },
     listContainer: {
         marginTop: 12,
