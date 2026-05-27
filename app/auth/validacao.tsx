@@ -1,11 +1,13 @@
-import React, { useState, useContext, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Validacao_Styles } from "../../src/styles/auth/validacao_styles";
 import { TextInput as PaperInput } from "react-native-paper";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
 import { supabase } from "../../src/services/supabase";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { Feather } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Validacao() {
   const { theme } = useTheme();
@@ -16,8 +18,8 @@ export default function Validacao() {
 
   if (!cadastro) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Carregando...</Text>
+      <View style={{ flex: 1, backgroundColor: theme.background, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: theme.text }}>Carregando...</Text>
       </View>
     );
   }
@@ -26,11 +28,10 @@ export default function Validacao() {
 
   function showError(message: string) {
     console.error("[Validacao] showError:", message);
-    Alert.alert("Erro", message);
+    Alert.alert("Atenção", message);
   }
 
   async function handleProximo() {
-
     if (codigo.length !== 6) return showError("O código deve ter 6 dígitos.");
     if (codigo !== "123456") return showError("O código informado está incorreto. Use 123456 para teste.");
 
@@ -52,57 +53,98 @@ export default function Validacao() {
       ]);
     } catch (err: any) {
       console.error("[Validacao] handleProximo catch error:", err);
-      if (err?.message?.includes("fetch")) return showError("Falha de conexão. Verifique sua internet e tente novamente.");
+      if (err?.message?.includes("fetch")) return showError("Falha de conexão. Verifique sua internet.");
       return showError("Ocorreu um erro inesperado. Tente novamente.");
     }
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <View style={styles.box}>
-          <Text style={styles.titulo}>Verificação</Text>
-          <Text style={styles.subtitulo}>
-            Insira o código de 6 dígitos enviado ao e-mail {email}
-          </Text>
+    <View style={styles.container}>
+      {/* Sistema de Glows Ambientes Identidade do App */}
+      <View style={styles.glowPrimary} />
+      <View style={styles.glowSecondary} />
+      <View style={styles.glowAccent} />
 
-          <Text style={styles.label}>Código</Text>
-          <PaperInput
-            mode="outlined"
-            value={codigo}
-            onChangeText={(text) => {
-              setCodigo(text.replace(/\D/g, "").slice(0, 6));
-            }}
-            placeholder="Digite o código"
-            keyboardType="numeric"
-            activeOutlineColor={theme.primary}
-            style={styles.input}
-            theme={{ roundness: 30 }}
-          />
-
-          <TouchableOpacity
-            style={styles.botao}
-            onPress={handleProximo}
-            activeOpacity={0.7}
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
           >
-            <Text style={styles.botao_text}>Concluir</Text>
-          </TouchableOpacity>
+            {/* Barra Superior: Botão Voltar clássico */}
+            <View style={styles.topBar}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.back()}
+                style={styles.backButton}
+              >
+                <Feather name="chevron-left" size={28} color={theme.text} />
+              </TouchableOpacity>
+            </View>
 
-          <TouchableOpacity style={styles.voltar} activeOpacity={0.7}>
-            <Text style={styles.voltar_text}>Reenviar o e-mail</Text>
-          </TouchableOpacity>
+            {/* Conteúdo Central/Inferior */}
+            <View style={styles.centerContainer}>
+              <View style={styles.header_box}>
+                <Text style={styles.titulo}>Verificação</Text>
+                <Text style={styles.sub_data}>
+                  Insira o código de 6 dígitos enviado para o e-mail:{"\n"}
+                  <Text style={{ fontWeight: "700", color: theme.text }}>{email}</Text>
+                </Text>
+              </View>
 
-          <TouchableOpacity
-            style={styles.voltar}
-            onPress={() => {
-              router.back();
-            }}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.voltar_text}>Alterar e-mail</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+              <View style={styles.formContainer}>
+                {/* Input de Código Padronizado (Material Design Limpo) */}
+                <PaperInput
+                  mode="outlined"
+                  label={<Text style={{ color: theme.placeholder }}>Código de Verificação</Text>}
+                  value={codigo}
+                  onChangeText={(text) => setCodigo(text.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="000000"
+                  keyboardType="numeric"
+                  textColor={theme.text}
+                  activeOutlineColor={theme.primary}
+                  outlineColor={theme.placeholder + "40"}
+                  style={styles.input}
+                  theme={{ roundness: 10 }}
+                />
+
+                {/* Botão Concluir Sólido */}
+                <TouchableOpacity
+                  style={styles.botao}
+                  onPress={handleProximo}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.botao_text}>Concluir</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Links de Ações Secundárias na base do Layout */}
+            <View style={styles.footerContainer}>
+              <TouchableOpacity 
+                style={styles.linkButton} 
+                activeOpacity={0.7}
+                onPress={() => Alert.alert("E-mail reenviado", "Um novo código foi enviado para " + email)}
+              >
+                <Text style={styles.linkText}>Reenviar o e-mail</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.linkButton} 
+                activeOpacity={0.7}
+                onPress={() => router.back()}
+              >
+                <Text style={styles.linkText}>Alterar e-mail</Text>
+              </TouchableOpacity>
+            </View>
+
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }

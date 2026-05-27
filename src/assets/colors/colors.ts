@@ -2,7 +2,7 @@
 export const COLORS = {
     //Principais cores do app
     placeholder_text: '#b4b4b4',
-    cinza_claro: '#f4f4f4',
+    cinza_claro: '#F5F5F7',
     azul_principal: '#368dc4',
     branco: '#FFFFFF',
     preto: '#000000',
@@ -35,7 +35,7 @@ export const LIGHT_THEME = {
 
 export const DARK_THEME = {
     background: COLORS.dark_background,
-    text: COLORS.branco,
+    text: COLORS.dark_text,
     card: COLORS.dark_card,
     placeholder: COLORS.dark_placeholder,
     primary: COLORS.dark_primary,

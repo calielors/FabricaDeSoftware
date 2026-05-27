@@ -8,6 +8,7 @@ import { cacheManager } from "@/src/services/cache";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import CustomCalendar from "../../../src/assets/components/CustomCalendar";
+import { COLORS } from "@/src/assets/colors/colors";
 
 export default function Agendamento() {
     const { theme } = useTheme();
@@ -258,7 +259,7 @@ export default function Agendamento() {
                         alignItems: "center"
                     }}
                 >
-                    <Text style={{ color: theme.background, fontWeight: "bold", fontSize: 16 }}>
+                    <Text style={{ color: COLORS.branco, fontWeight: "bold", fontSize: 16 }}>
                         Voltar
                     </Text>
                 </TouchableOpacity>

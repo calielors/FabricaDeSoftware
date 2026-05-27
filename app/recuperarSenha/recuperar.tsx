@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, } from "react-native";
+import { View, Text, KeyboardAvoidingView, TouchableOpacity, Alert, ActivityIndicator, Platform, ScrollView } from "react-native";
 import { Recuperar_Styles } from "../../src/styles/recuperarSenha/recuperar_styles";
 import { TextInput as PaperInput } from "react-native-paper";
-import { useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { formatCPF } from "../../src/utils/formatFunctions";
 import { supabase } from "../../src/services/supabase";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { Feather } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Recuperar() {
   const { theme } = useTheme();
@@ -56,49 +58,75 @@ export default function Recuperar() {
 
   return (
     <View style={styles.container}>
+      {/* Sistema de Glows Ambientes */}
+      <View style={styles.glowPrimary} />
+      <View style={styles.glowSecondary} />
+      <View style={styles.glowAccent} />
 
-      <View style={styles.box}>
-        <View style={styles.conteudo}>
-          <Text style={styles.titulo}>Recuperação de Senha</Text>
-          <Text style={styles.subtitulo}>
-            Digite seu CPF para receber um código de verificação
-          </Text>
-
-          <Text style={styles.label}>CPF</Text>
-          <PaperInput
-            mode="outlined"
-            label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
-            value={formatCPF(cpf)}
-            onChangeText={(text) => setCpf(text.replace(/\D/g, '').slice(0, 11))}
-            placeholder="Digite seu CPF"
-            keyboardType="numeric"
-            activeOutlineColor={theme.primary}
-            textColor={theme.text}
-            style={styles.input}
-            theme={{ roundness: 30 }}
-          />
-
-          <TouchableOpacity
-            style={styles.botao}
-            onPress={handleProximo}
-            activeOpacity={0.7}
-            disabled={loading}
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
           >
-            {loading ? (
-              <ActivityIndicator color={theme.background} />
-            ) : (
-              <Text style={styles.botao_text}>Próximo</Text>
-            )}
-          </TouchableOpacity>
+            {/* Barra Superior: Botão Voltar */}
+            <View style={styles.topBar}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.back()}
+                style={styles.backButton}
+              >
+                <Feather name="chevron-left" size={28} color={theme.text} />
+              </TouchableOpacity>
+            </View>
 
-          <TouchableOpacity
-            onPress={() => router.back()}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.link}>Voltar</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            {/* Conteúdo Central/Inferior */}
+            <View style={styles.centerContainer}>
+              <View style={styles.header_box}>
+                <Text style={styles.titulo}>Recuperação{"\n"}de Senha</Text>
+                <Text style={styles.sub_data}>
+                  Digite seu CPF abaixo. Enviaremos um código de verificação para o e-mail cadastrado.
+                </Text>
+              </View>
+
+              <View style={styles.formContainer}>
+                {/* Input de CPF */}
+                <PaperInput
+                  mode="outlined"
+                  label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
+                  value={formatCPF(cpf)}
+                  onChangeText={(text) => setCpf(text.replace(/\D/g, '').slice(0, 11))}
+                  placeholder="000.000.000-00"
+                  keyboardType="numeric"
+                  activeOutlineColor={theme.success}
+                  outlineColor={theme.placeholder + "40"}
+                  textColor={theme.text}
+                  style={styles.input}
+                  theme={{ roundness: 10 }}
+                />
+
+                {/* Botão Próximo Sólido */}
+                <TouchableOpacity
+                  style={styles.botao}
+                  onPress={handleProximo}
+                  activeOpacity={0.7}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.botao_text}>Próximo</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }

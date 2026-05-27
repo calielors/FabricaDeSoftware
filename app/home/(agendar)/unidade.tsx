@@ -4,6 +4,7 @@ import { buscarUnidadesSaude, UnidadeSaude } from "../../../src/services/consult
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router } from "expo-router";
 import { useQuery } from "@/src/services/useQuery";
+import { COLORS } from "@/src/assets/colors/colors";
 
 export default function SelecionarUnidade() {
   const { theme } = useTheme();
@@ -83,7 +84,6 @@ export default function SelecionarUnidade() {
         ListFooterComponent={<View style={{ height: 80 }} />}
       />
 
-      {/* Botão Voltar fixo embaixo para não sumir no scroll */}
       <View style={{ padding: 20, backgroundColor: theme.background }}>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -94,7 +94,7 @@ export default function SelecionarUnidade() {
             alignItems: "center"
           }}
         >
-          <Text style={{ color: theme.background, fontWeight: "bold", fontSize: 16 }}>
+          <Text style={{ color: COLORS.branco, fontWeight: "bold", fontSize: 16 }}>
             Voltar
           </Text>
         </TouchableOpacity>

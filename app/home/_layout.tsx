@@ -5,6 +5,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { Ionicons, MaterialIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GerenciadorDeProgresso } from '@/src/assets/components/topbar';
 
 const { Navigator } = createMaterialTopTabNavigator();
 export const MaterialTopTabs = withLayoutContext(Navigator);
@@ -14,82 +15,83 @@ export default function TabsLayout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <MaterialTopTabs
-      tabBarPosition="bottom"
-      tabBar={({ state, descriptors, navigation }) => {
-        return (
-          <View style={[styles.tabContainer, {
-            backgroundColor: theme.background,
-            paddingBottom: insets.bottom + 5,
-            height: 65 + insets.bottom
-          }]}>
-            {state.routes.map((route, index) => {
-              // 1. O Navigator agora só verá as abas principais (index, consultas, agendar, perfil)
-              // Se houver alguma rota interna que não deva ser botão, filtramos aqui:
-              if (route.name === '_sitemap' || route.name === '+not-found') return null;
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      
+      <GerenciadorDeProgresso />
 
-              const { options } = descriptors[route.key];
-              const label = options.title !== undefined ? options.title : route.name;
-              const isFocused = state.index === index;
+      <MaterialTopTabs
+        tabBarPosition="bottom"
+        tabBar={({ state, descriptors, navigation }) => {
+          return (
+            <View style={[styles.tabContainer, {
+              backgroundColor: theme.background,
+              paddingBottom: insets.bottom + 5,
+              height: 65 + insets.bottom
+            }]}>
+              {state.routes.map((route, index) => {
+                const { options } = descriptors[route.key];
+                const label = options.title !== undefined ? options.title : route.name;
+                const isFocused = state.index === index;
 
-              const onPress = () => {
-                const event = navigation.emit({
-                  type: 'tabPress',
-                  target: route.key,
-                  canPreventDefault: true,
-                });
+                const onPress = () => {
+                  const event = navigation.emit({
+                    type: 'tabPress',
+                    target: route.key,
+                    canPreventDefault: true,
+                  });
 
-                if (!isFocused && !event.defaultPrevented) {
-                  navigation.navigate(route.name);
-                }
-              };
+                  if (!isFocused && !event.defaultPrevented) {
+                    navigation.navigate(route.name);
+                  }
+                };
 
-              const renderIcon = (color: string) => {
-                const size = 24;
-                switch (route.name) {
-                  case "(index)": return <Ionicons name="home" size={size} color={color} />;
-                  case "(consultas)": return <FontAwesome name="bars" size={size} color={color} />;
-                  case "(agendar)": return <MaterialIcons name="event-available" size={size} color={color} />;
-                  case "(perfil)": return <FontAwesome5 name="user-cog" size={18} color={color} />;
-                  default: return null;
-                }
-              };
+                const renderIcon = (color: string) => {
+                  const size = 24;
+                  switch (route.name) {
+                    case "(index)": return <Ionicons name="home" size={size} color={color} />;
+                    case "(consultas)": return <FontAwesome name="bars" size={size} color={color} />;
+                    case "(agendar)": return <MaterialIcons name="event-available" size={size} color={color} />;
+                    case "(perfil)": return <FontAwesome5 name="user-cog" size={18} color={color} />;
+                    default: return null;
+                  }
+                };
 
-              return (
-                <TouchableOpacity
-                  key={route.key}
-                  onPress={onPress}
-                  style={styles.tabItem}
-                >
-                  <View style={[styles.indicator, {
-                    backgroundColor: isFocused ? theme.primary : 'transparent'
-                  }]} />
+                return (
+                  <TouchableOpacity
+                    key={route.key}
+                    onPress={onPress}
+                    style={styles.tabItem}
+                  >
+                    <View style={[styles.indicator, {
+                      backgroundColor: isFocused ? theme.primary : 'transparent'
+                    }]} />
 
-                  {renderIcon(isFocused ? theme.primary : theme.placeholder)}
+                    {renderIcon(isFocused ? theme.primary : theme.placeholder)}
 
-                  <Text style={{
-                    color: isFocused ? theme.primary : theme.placeholder,
-                    fontSize: 10,
-                    marginTop: 4
-                  }}>
-                    {label === 'index' ? 'Início' : label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        );
-      }}
-      screenOptions={{
-        swipeEnabled: true,      // Agora o Swipe funciona entre as abas principais
-        animationEnabled: true,  // Animação suave entre as abas
-      }}
-    >
-      <MaterialTopTabs.Screen name="(index)" options={{ title: "Início" }} />
-      <MaterialTopTabs.Screen name="(consultas)" options={{ title: "Consultas" }} />
-      <MaterialTopTabs.Screen name="(agendar)" options={{ title: "Agendar" }} />
-      <MaterialTopTabs.Screen name="(perfil)" options={{ title: "Perfil" }} />
-    </MaterialTopTabs>
+                    <Text style={{
+                      color: isFocused ? theme.primary : theme.placeholder,
+                      fontSize: 10,
+                      marginTop: 4
+                    }}>
+                      {label === 'index' ? 'Início' : label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          );
+        }}
+        screenOptions={{
+          swipeEnabled: true,      
+          animationEnabled: true,  
+        }}
+      >
+        <MaterialTopTabs.Screen name="(index)" options={{ title: "Início" }} />
+        <MaterialTopTabs.Screen name="(consultas)" options={{ title: "Consultas" }} />
+        <MaterialTopTabs.Screen name="(agendar)" options={{ title: "Agendar" }} />
+        <MaterialTopTabs.Screen name="(perfil)" options={{ title: "Perfil" }} />
+      </MaterialTopTabs>
+    </View>
   );
 }
 

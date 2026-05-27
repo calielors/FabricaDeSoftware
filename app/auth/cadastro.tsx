@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { CadastroStyles } from "../../src/styles/auth/cadastro_styles";
-import Fontisto from "@expo/vector-icons/Fontisto";
+import { Feather } from "@expo/vector-icons";
 import { TextInput as PaperInput } from "react-native-paper";
 import { formatCPF, cleanCpf } from "../../src/utils/formatFunctions";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
@@ -58,7 +58,6 @@ export default function Cadastro() {
             }
 
             setCadastro({ username, cpf, email, password });
-
             router.push("/auth/validacao");
         } catch (err) {
             console.error("Erro inesperado no cadastro:", err);
@@ -67,109 +66,151 @@ export default function Cadastro() {
     };
 
     return (
-        <View style={{ flex: 1 }}>
-            <SafeAreaView style={styles.container}>
-                <View style={styles.cadastro_box}>
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            {/* Sistema de Glows Ambientes Baseados nas suas Cores Reais */}
+            <View style={styles.glowPrimary} />
+            <View style={styles.glowSecondary} />
+            <View style={styles.glowAccent} />
 
-                    {/* Usuário */}
-                    <PaperInput
-                        mode="outlined"
-                        label={<Text style={{ color: theme.placeholder }}>Usuário</Text>}
-                        value={username}
-                        onChangeText={(text) => setUsername(text.replace(/\s/g, ""))}
-                        placeholder="Digite seu usuário"
-                        placeholderTextColor={theme.placeholder}
-                        activeOutlineColor={theme.primary}
-                        style={styles.inputs}
-                        textColor={theme.text}
-                        theme={{ roundness: 30 }}
-                    />
+            <SafeAreaView style={styles.safeArea}>
+                <KeyboardAvoidingView 
+                    behavior={Platform.OS === "ios" ? "padding" : "height"} 
+                    style={{ flex: 1 }}
+                >
+                    <ScrollView 
+                        contentContainerStyle={styles.scrollContainer}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {/* 1. Barra Superior: Botão Voltar */}
+                        <View style={styles.topBar}>
+                            <TouchableOpacity 
+                                activeOpacity={0.7} 
+                                onPress={() => router.back()}
+                                style={styles.backButton}
+                            >
+                                <Feather name="chevron-left" size={28} color={theme.text} />
+                            </TouchableOpacity>
+                        </View>
 
-                    {/* CPF */}
-                    <PaperInput
-                        mode="outlined"
-                        label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
-                        value={formatCPF(cpf)}
-                        onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
-                        placeholder="Digite seu CPF"
-                        placeholderTextColor={theme.placeholder}
-                        activeOutlineColor={theme.primary}
-                        style={styles.inputs}
-                        theme={{ roundness: 30 }}
-                        textColor={theme.text}
-                        keyboardType="numeric"
-                    />
+                        {/* 2. Bloco Central: Cabeçalho + Todos os Inputs */}
+                        <View style={styles.centerContainer}>
+                            <View style={styles.header}>
+                                <Text style={styles.title}>Crie sua conta</Text>
+                                <Text style={styles.subtitle}>Preencha os dados abaixo</Text>
+                            </View>
 
-                    {/* Email */}
-                    <PaperInput
-                        mode="outlined"
-                        label={<Text style={{ color: theme.placeholder }}>E-mail</Text>}
-                        value={email}
-                        onChangeText={(text) => setEmail(text.replace(/\s/g, "").toLowerCase())}
-                        placeholder="Digite seu e-mail"
-                        placeholderTextColor={theme.placeholder}
-                        activeOutlineColor={theme.primary}
-                        style={styles.inputs}
-                        theme={{ roundness: 30 }}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        textColor={theme.text}
-                    />
+                            <View style={styles.formContainer}>
+                                {/* Usuário */}
+                                <PaperInput
+                                    mode="outlined"
+                                    label={<Text style={{ color: theme.placeholder }}>Usuário</Text>}
+                                    value={username}
+                                    onChangeText={(text) => setUsername(text.replace(/\s/g, ""))}
+                                    placeholder="Escolha um nome de usuário"
+                                    activeOutlineColor={theme.primary}
+                                    outlineColor={theme.placeholder + "40"}
+                                    style={styles.inputs}
+                                    textColor={theme.text}
+                                    theme={{ roundness: 16 }}
+                                />
 
-                    {/* Senha */}
-                    <PaperInput
-                        mode="outlined"
-                        label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
-                        value={password}
-                        onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
-                        placeholder="Digite sua senha"
-                        placeholderTextColor={theme.placeholder}
-                        activeOutlineColor={theme.primary}
-                        style={styles.inputs}
-                        theme={{ roundness: 30 }}
-                        secureTextEntry={!passwordVisible}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        right={<PaperInput.Icon icon={passwordVisible ? "eye" : "eye-off"} onPress={() => setPasswordVisible(!passwordVisible)} />}
-                        textColor={theme.text}
-                    />
+                                {/* CPF */}
+                                <PaperInput
+                                    mode="outlined"
+                                    label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
+                                    value={formatCPF(cpf)}
+                                    onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
+                                    placeholder="000.000.000-00"
+                                    activeOutlineColor={theme.primary}
+                                    outlineColor={theme.placeholder + "40"}
+                                    style={styles.inputs}
+                                    theme={{ roundness: 16 }}
+                                    textColor={theme.text}
+                                    keyboardType="numeric"
+                                />
 
-                    {/* Confirmar senha */}
-                    <PaperInput
-                        mode="outlined"
-                        label={<Text style={{ color: theme.placeholder }}>Confirmação da senha</Text>}
-                        value={confirmPassword}
-                        onChangeText={(text) => setConfirmPassword(text.replace(/\s/g, ""))}
-                        placeholder="Digite confirme sua senha"
-                        placeholderTextColor={theme.placeholder}
-                        activeOutlineColor={theme.primary}
-                        style={styles.inputs}
-                        theme={{ roundness: 30 }}
-                        secureTextEntry={!confirmPasswordVisible}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        right={<PaperInput.Icon icon={confirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
-                        textColor={theme.text}
-                    />
+                                {/* Email */}
+                                <PaperInput
+                                    mode="outlined"
+                                    label={<Text style={{ color: theme.placeholder }}>E-mail</Text>}
+                                    value={email}
+                                    onChangeText={(text) => setEmail(text.replace(/\s/g, "").toLowerCase())}
+                                    placeholder="seu@email.com"
+                                    activeOutlineColor={theme.primary}
+                                    outlineColor={theme.placeholder + "40"}
+                                    style={styles.inputs}
+                                    theme={{ roundness: 16 }}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    textColor={theme.text}
+                                />
 
-                    <TouchableOpacity style={styles.criar} activeOpacity={0.7} onPress={validarCampos}>
-                        <Text style={styles.criar_text}>Criar conta</Text>
-                    </TouchableOpacity>
-                </View>
+                                {/* Senha */}
+                                <PaperInput
+                                    mode="outlined"
+                                    label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
+                                    value={password}
+                                    onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
+                                    placeholder="Crie uma senha forte"
+                                    activeOutlineColor={theme.primary}
+                                    outlineColor={theme.placeholder + "40"}
+                                    style={styles.inputs}
+                                    theme={{ roundness: 16 }}
+                                    secureTextEntry={!passwordVisible}
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    right={
+                                        <PaperInput.Icon 
+                                            icon={passwordVisible ? "eye" : "eye-off"} 
+                                            onPress={() => setPasswordVisible(!passwordVisible)} 
+                                            color={theme.placeholder}
+                                        />
+                                    }
+                                    textColor={theme.text}
+                                />
 
-                <View style={styles.gov_box_container}>
-                    <View style={styles.gov_box}>
-                        <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 10 }} activeOpacity={0.7} onPress={() => Alert.alert("Work in progress!")}>
-                            <Fontisto name="world" size={18} color={theme.primary} />
-                            <Text style={{ color: theme.primary }}>Entrar com o gov.br</Text>
-                        </TouchableOpacity>
-                    </View>
+                                {/* Confirmar senha */}
+                                <PaperInput
+                                    mode="outlined"
+                                    label={<Text style={{ color: theme.placeholder }}>Confirmação da senha</Text>}
+                                    value={confirmPassword}
+                                    onChangeText={(text) => setConfirmPassword(text.replace(/\s/g, ""))}
+                                    placeholder="Repita a senha criada"
+                                    activeOutlineColor={theme.primary}
+                                    outlineColor={theme.placeholder + "40"}
+                                    style={styles.inputs}
+                                    theme={{ roundness: 16 }}
+                                    secureTextEntry={!confirmPasswordVisible}
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    right={
+                                        <PaperInput.Icon 
+                                            icon={confirmPasswordVisible ? "eye" : "eye-off"} 
+                                            onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} 
+                                            color={theme.placeholder}
+                                        />
+                                    }
+                                    textColor={theme.text}
+                                />
 
-                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.back()}>
-                        <Text style={styles.links}>Já tem uma conta? Acesse aqui!</Text>
-                    </TouchableOpacity>
-                </View>
+                                {/* Botão Principal integrado logo abaixo dos inputs */}
+                                <TouchableOpacity style={styles.criar} activeOpacity={0.8} onPress={validarCampos}>
+                                    <Text style={styles.criar_text}>Criar conta</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {/* 3. Rodapé: Link para retornar ao Login */}
+                        <View style={styles.footer}>
+                            <TouchableOpacity activeOpacity={0.7} onPress={() => router.replace('/auth/login')}>
+                                <Text style={styles.footerText}>Já tem uma conta? <Text style={styles.footerLink}>Acesse aqui</Text></Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </ScrollView>
+                </KeyboardAvoidingView>
             </SafeAreaView>
         </View>
     );

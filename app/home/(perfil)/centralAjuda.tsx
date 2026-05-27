@@ -227,7 +227,7 @@ export default function CentralAjuda() {
                         Nossa equipe está pronta para ajudar você. Clique no botão abaixo para entrar em contato conosco.
                     </Text>
                     <TouchableOpacity 
-                        onPress={() => router.push('/home/(perfil)')}
+                        onPress={() => router.back()}
                         style={{ 
                             backgroundColor: theme.primary, 
                             padding: 12, 
@@ -237,8 +237,8 @@ export default function CentralAjuda() {
                             alignItems: "center" 
                         }}
                     >
-                        <FontAwesome5 name="comments" size={16} color={theme.background} style={{ marginRight: 8 }} />
-                        <Text style={{ color: theme.background, fontSize: 15, fontWeight: "600" }}>Fale Conosco</Text>
+                        <FontAwesome5 name="comments" size={16} color={theme.text} style={{ marginRight: 8 }} />
+                        <Text style={{ color: theme.text, fontSize: 15, fontWeight: "600" }}>Fale Conosco</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

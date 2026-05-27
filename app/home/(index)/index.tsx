@@ -180,7 +180,7 @@ export default function Home() {
                             activeOpacity={0.7}
                             onPress={() => navigation.dispatch(TabActions.jumpTo("(agendar)") as any)}
                         >
-                            <FontAwesome6 name="calendar-plus" size={30} color={theme.primary} />
+                            <FontAwesome6 name="calendar-check" size={30} color={theme.primary} />
                             <Text style={styles.servico_text}>Agendar</Text>
                         </TouchableOpacity>
 
@@ -189,7 +189,7 @@ export default function Home() {
                             activeOpacity={0.7}
                             onPress={() => router.push("/home/consultas")}
                         >
-                            <AntDesign name="bars" size={30} color={theme.primary} />
+                            <FontAwesome5 name="bars" size={30} color={theme.primary} />
                             <Text style={styles.servico_text}>Consultas</Text>
                         </TouchableOpacity>
 

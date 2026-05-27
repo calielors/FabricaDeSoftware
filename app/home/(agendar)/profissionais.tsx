@@ -4,6 +4,7 @@ import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router, useLocalSearchParams } from "expo-router";
 import { buscarProfissionaisPorUnidade } from "../../../src/services/consultas";
 import { useQuery } from "@/src/services/useQuery";
+import { COLORS } from "@/src/assets/colors/colors";
 
 export default function SelecionarTipo() {
     const { theme } = useTheme();
@@ -109,7 +110,7 @@ export default function SelecionarTipo() {
                         alignItems: "center"
                     }}
                 >
-                    <Text style={{ color: theme.background, fontWeight: "bold", fontSize: 16 }}>
+                    <Text style={{ color: COLORS.branco, fontWeight: "bold", fontSize: 16 }}>
                         Voltar
                     </Text>
                 </TouchableOpacity>

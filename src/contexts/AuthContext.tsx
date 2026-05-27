@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await Auth.clearSession();
     setLogged(false);
     setUser(null);
-    router.replace("/auth/login");
+    router.replace("/auth/welcome");
   }
 
   return (

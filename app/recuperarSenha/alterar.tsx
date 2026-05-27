@@ -1,72 +1,76 @@
-import React, { useState, useEffect, useContext } from "react";
-import {View,Text,KeyboardAvoidingView,TouchableOpacity,Alert,ActivityIndicator,Platform,} from "react-native";
+import React, { useState, useContext, useEffect } from "react";
+import { View, Text, KeyboardAvoidingView, TouchableOpacity, Alert, ActivityIndicator, Platform, ScrollView } from "react-native";
 import { Alterar_Styles } from "../../src/styles/recuperarSenha/alterar_styles";
 import { TextInput as PaperInput } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { supabase } from "../../src/services/supabase";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import { Feather } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as Linking from "expo-linking";
 
 export default function Alterar() {
   const { theme } = useTheme();
   const styles = Alterar_Styles(theme);
   const router = useRouter();
+  const { logged } = useContext(AuthContext);
+  
   const [senha, setSenha] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(true);
-/*  Bloqueado para testar a tela de alteração de senha sem precisar do fluxo completo de recuperação.
-  useEffect(() => {
-    const initPasswordRecovery = async () => {
-      try {
-        const initialUrl = await Linking.getInitialURL();
 
-        if (!initialUrl) {
-          Alert.alert("Erro", "Link de recuperação inválido ou expirado.");
-          router.replace("/auth/login");
-          return;
-        }
-        const url = initialUrl.includes("#") ? initialUrl.replace("#", "?") : initialUrl;
-        const parsed = Linking.parse(url);
+  /* Bloqueado para testar a tela de alteração de senha sem precisar do fluxo completo de recuperação. 
+   useEffect(() => { 
+     const initPasswordRecovery = async () => { 
+       try { 
+         const initialUrl = await Linking.getInitialURL(); 
 
-        const access_token = parsed.queryParams?.access_token as string;
-        const refresh_token = parsed.queryParams?.refresh_token as string;
+         if (!initialUrl) { 
+           Alert.alert("Erro", "Link de recuperação inválido ou expirado."); 
+           router.replace("/auth/login"); 
+           return; 
+         } 
+         const url = initialUrl.includes("#") ? initialUrl.replace("#", "?") : initialUrl; 
+         const parsed = Linking.parse(url); 
 
-        if (!access_token || !refresh_token) {
-          console.error("[ERROR] Tokens missing in link", parsed.queryParams);
-          Alert.alert("Erro", "Link de recuperação inválido ou expirado.");
-          router.replace("/auth/login");
-          return;
-        }
+         const access_token = parsed.queryParams?.access_token as string; 
+         const refresh_token = parsed.queryParams?.refresh_token as string; 
 
-        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+         if (!access_token || !refresh_token) { 
+           console.error("[ERROR] Tokens missing in link", parsed.queryParams); 
+           Alert.alert("Erro", "Link de recuperação inválido ou expirado."); 
+           router.replace("/auth/login"); 
+           return; 
+         } 
 
-        if (error) {
-          console.error("[ERROR] Failed to set session:", error);
-          Alert.alert("Erro", "Não foi possível validar o link de recuperação.");
-          router.replace("/auth/login");
-          return;
-        }
+         const { error } = await supabase.auth.setSession({ access_token, refresh_token }); 
 
-        setReady(true);
-      } catch (err) {
-        console.error("[ERROR] initPasswordRecovery failed:", err);
-        Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente.");
-        router.replace("/auth/login");
-      } finally {
-        setLoading(false);
-      }
-    };
+         if (error) { 
+           console.error("[ERROR] Failed to set session:", error); 
+           Alert.alert("Erro", "Não foi possível validar o link de recuperação."); 
+           router.replace("/auth/login"); 
+           return; 
+         } 
 
-    void initPasswordRecovery();
-  }, []);
-*/
+         setReady(true); 
+       } catch (err) { 
+         console.error("[ERROR] initPasswordRecovery failed:", err); 
+         Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente."); 
+         router.replace("/auth/login"); 
+       } finally { 
+         setLoading(false); 
+       } 
+     }; 
+
+     void initPasswordRecovery(); 
+   }, []); 
+ */
 
   const validarCampos = async () => {
-    const { logged } = useContext(AuthContext);
-    const router = useRouter();
     if (!senha.trim() || !confirmar.trim()) {
       Alert.alert("Atenção", "Preencha todos os campos!");
       return;
@@ -97,17 +101,18 @@ export default function Alterar() {
         return;
       }
 
-      Alert.alert("Sucesso", "Senha redefinida com sucesso!");
-
-      useEffect(() => {//teste para redirecionar apos alterar a senha
-        if (logged) {
-          router.replace("/home/(perfil)");
-        } else {
-          router.replace("/auth/login");
+      Alert.alert("Sucesso", "Senha redefinida com sucesso!", [
+        {
+          text: "OK",
+          onPress: () => {
+            if (logged) {
+              router.replace("/home/(perfil)");
+            } else {
+              router.replace("/auth/login");
+            }
+          }
         }
-      }, [logged]);
-      return null;
-
+      ]);
     } catch (err) {
       console.error("[ERROR] Unexpected error during password update:", err);
       Alert.alert("Erro", "Ocorreu um erro inesperado. Tente novamente.");
@@ -116,76 +121,112 @@ export default function Alterar() {
     }
   };
 
-  if (loading) return <ActivityIndicator style={{ flex: 1 }} size="large" />;
-
-  if (!ready)
+  if (!ready) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.subtitulo}>Verificando link de recuperação de senha...</Text>
+      <View style={[styles.container, { justifyContent: "center" }]}>
+        <Text style={styles.sub_data}>Verificando link de recuperação de senha...</Text>
       </View>
     );
-
-
+  }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-    >
-      <View style={styles.container}>
+    <View style={styles.container}>
+      {/* Sistema de Glows Ambientes Identidade do App */}
+      <View style={styles.glowPrimary} />
+      <View style={styles.glowSecondary} />
+      <View style={styles.glowAccent} />
 
-        <View style={styles.box}>
-          <Text style={styles.titulo}>Nova Senha</Text>
-          <Text style={styles.subtitulo}>Crie uma nova senha segura para sua conta</Text>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Barra Superior: Botão Voltar */}
+            <View style={styles.topBar}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.back()}
+                style={styles.backButton}
+              >
+                <Feather name="chevron-left" size={28} color={theme.text} />
+              </TouchableOpacity>
+            </View>
 
-          <Text style={styles.label}>Senha</Text>
-          <PaperInput
-            mode="outlined"
-            value={senha}
-            onChangeText={setSenha}
-            placeholder="Digite sua nova senha"
-            secureTextEntry={!mostrarSenha}
-            activeOutlineColor={theme.primary}
-            style={styles.input}
-            theme={{ roundness: 30 }}
-            textColor={theme.text}
-            right={
-              <PaperInput.Icon
-                icon={mostrarSenha ? "eye" : "eye-off"}
-                onPress={() => setMostrarSenha(!mostrarSenha)}
-              />
-            }
-          />
+            {/* Conteúdo Central/Inferior */}
+            <View style={styles.centerContainer}>
+              <View style={styles.header_box}>
+                <Text style={styles.titulo}>Nova Senha</Text>
+                <Text style={styles.sub_data}>
+                  Crie uma nova senha segura para proteger o seu acesso à plataforma.
+                </Text>
+              </View>
 
-          <Text style={styles.label}>Confirmar senha</Text>
-          <PaperInput
-            mode="outlined"
-            value={confirmar}
-            onChangeText={setConfirmar}
-            placeholder="Repita sua senha"
-            secureTextEntry={!mostrarConfirmar}
-            activeOutlineColor={theme.primary}
-            style={styles.input}
-            textColor={theme.text}
-            theme={{ roundness: 30 }}
-            right={
-              <PaperInput.Icon
-                icon={mostrarConfirmar ? "eye" : "eye-off"}
-                onPress={() => setMostrarConfirmar(!mostrarConfirmar)}
-              />
-            }
-          />
+              <View style={styles.formContainer}>
+                {/* Input de Senha */}
+                <PaperInput
+                  mode="outlined"
+                  label={<Text style={{ color: theme.placeholder }}>Nova senha</Text>}
+                  value={senha}
+                  onChangeText={setSenha}
+                  secureTextEntry={!mostrarSenha}
+                  activeOutlineColor={theme.success}
+                  outlineColor={theme.placeholder + "40"}
+                  textColor={theme.text}
+                  style={styles.input}
+                  theme={{ roundness: 10 }}
+                  right={
+                    <PaperInput.Icon
+                      icon={mostrarSenha ? "eye" : "eye-off"}
+                      onPress={() => setMostrarSenha(!mostrarSenha)}
+                      color={theme.placeholder}
+                    />
+                  }
+                />
 
-          <TouchableOpacity style={styles.botao} onPress={validarCampos}>
-            <Text style={styles.botao_text}>Finalizar</Text>
-          </TouchableOpacity>
+                {/* Input de Confirmação */}
+                <PaperInput
+                  mode="outlined"
+                  label={<Text style={{ color: theme.placeholder }}>Confirmar senha</Text>}
+                  value={confirmar}
+                  onChangeText={setConfirmar}
+                  secureTextEntry={!mostrarConfirmar}
+                  activeOutlineColor={theme.success}
+                  outlineColor={theme.placeholder + "40"}
+                  textColor={theme.text}
+                  style={styles.input}
+                  theme={{ roundness: 10 }}
+                  right={
+                    <PaperInput.Icon
+                      icon={mostrarConfirmar ? "eye" : "eye-off"}
+                      onPress={() => setMostrarConfirmar(!mostrarConfirmar)}
+                      color={theme.placeholder}
+                    />
+                  }
+                />
 
-          <TouchableOpacity style={styles.voltar} onPress={() => router.back()}>
-            <Text style={styles.voltar_text}>Voltar</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+                {/* Botão Finalizar Sólido */}
+                <TouchableOpacity
+                  style={styles.botao}
+                  onPress={validarCampos}
+                  activeOpacity={0.7}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <Text style={styles.botao_text}>Finalizar</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }

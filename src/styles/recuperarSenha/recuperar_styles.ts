@@ -1,75 +1,106 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 import { COLORS } from "../../assets/colors/colors";
 
+const { width, height } = Dimensions.get("window");
+
 export const Recuperar_Styles = (theme: any) => StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        backgroundColor: theme.background,
-    },
-    box: {
-        width: "90%",
-        height: "50%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: theme.card,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: theme.placeholder,
-        marginTop: "auto",
-        marginBottom: "auto",
-        gap: 15,
-        transform: [{ translateY: -70 }],
-    },
-    conteudo: {
-        width: '90%',
-        height: '90%',
-        justifyContent: 'space-evenly',
-        alignItems: 'center'
-    },
-    titulo: {
-        color: theme.primary,
-        fontSize: 20,
-        fontWeight: "900",
-        textAlign: "center",
-    },
-    subtitulo: {
-        fontSize: 14,
-        color: theme.placeholder,
-        textAlign: "center",
-        marginHorizontal: 20,
-    },
-    label: {
-        color: theme.text,
-        alignSelf: "flex-start",
-        marginLeft: "5%",
-        fontSize: 16,
-    },
-    input: {
-        width: '90%',
-        height: 50,
-        backgroundColor: theme.card,
-        borderRadius: 30,
-        paddingLeft: 20,
-    },
-    botao: {
-        width: "90%",
-        height: 50,
-        backgroundColor: theme.primary,
-        borderRadius: 30,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 10,
-    },
-    botao_text: {
-        color: COLORS.branco,
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    link: {
-        color: theme.primary,
-        fontSize: 12,
-        fontWeight: "bold",
-        marginTop: 15,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: theme.background,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingHorizontal: 15,
+  },
+
+  /* GLOWS AMBIENTES */
+  glowPrimary: {
+    position: "absolute",
+    top: -height * 0.1,
+    right: -width * 0.2,
+    width: width * 0.85,
+    height: width * 0.85,
+    borderRadius: (width * 0.85) / 2,
+    backgroundColor: theme.primary,
+    opacity: theme.background === COLORS.branco ? 0.07 : 0.12,
+  },
+  glowSecondary: {
+    position: "absolute",
+    top: height * 0.25,
+    left: -width * 0.3,
+    width: width * 0.75,
+    height: width * 0.75,
+    borderRadius: (width * 0.75) / 2,
+    backgroundColor: theme.success,
+    opacity: theme.background === COLORS.branco ? 0.04 : 0.06,
+  },
+  glowAccent: {
+    position: "absolute",
+    bottom: -height * 0.15,
+    right: -width * 0.1,
+    width: width * 0.9,
+    height: width * 0.9,
+    borderRadius: (width * 0.9) / 2,
+    backgroundColor: theme.primary,
+    opacity: theme.background === COLORS.branco ? 0.05 : 0.09,
+  },
+
+  // Barra Superior (Voltar)
+  topBar: {
+    marginTop: Platform.OS === 'ios' ? 10 : 20,
+    flexDirection: 'row',
+  },
+  backButton: {
+    padding: 4,
+    marginLeft: -4,
+  },
+
+  // Container Centralizado e empurrado suavemente para cima do teclado
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    paddingBottom: height * 0.1, 
+  },
+  header_box: {
+    marginBottom: 30,
+  },
+  titulo: {
+    fontSize: 36,
+    fontWeight: "800",
+    color: theme.text,
+    letterSpacing: -1,
+  },
+  sub_data: {
+    fontSize: 15,
+    color: theme.placeholder,
+    marginTop: 8,
+    fontWeight: "500",
+    lineHeight: 22,
+  },
+
+  // Formulário
+  formContainer: {
+    width: "100%",
+    gap: 14,
+  },
+  input: {
+    width: "100%",
+    backgroundColor: theme.card,
+    height: 56,
+    fontSize: 16,
+  },
+  botao: {
+    width: "100%",
+    height: 54,
+    backgroundColor: theme.primary,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  botao_text: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
