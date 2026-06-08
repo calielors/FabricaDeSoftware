@@ -8,6 +8,8 @@ import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } fr
 import { useTheme } from '../../../src/contexts/ThemeContext';
 import { useQuery } from '@/src/services/useQuery';
 import { formatData } from '@/src/utils/formatFunctions';
+import { useFocusEffect } from '@react-navigation/native';
+import { cacheManager } from '@/src/services/cache';
 
 type Consulta = {
     id: number;
@@ -92,6 +94,8 @@ export default function Consultas() {
             } else {
                 Alert.alert('Sucesso', 'Consulta cancelada com sucesso!');
                 setIsVisible(false);
+                cacheManager.delete("historico-consultas"); // Limpa o cache do histórico para forçar atualização
+                cacheManager.delete("proxima-consulta"); // Limpa o cache da próxima consulta para forçar atualização
                 refresh();
             }
         } catch (err) {
@@ -100,6 +104,15 @@ export default function Consultas() {
             setCancelando(false);
         }
     };
+
+    useFocusEffect(
+            React.useCallback(() => {
+                const temCache = cacheManager.get('consultas-paciente');
+                if (!temCache) {
+                    refresh();
+                }
+            }, [])
+        );
 
     return (
         <View style={styles.container}>

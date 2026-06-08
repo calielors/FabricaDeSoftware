@@ -95,27 +95,40 @@ export async function buscarPacientePorAuthId(authUserId: string) {
 }
 
 /**
- * Busca todas as unidades de saúde cadastradas
+ * Busca apenas as unidades de saúde que possuem profissionais cadastrados
  */
 export async function buscarUnidadesSaude() {
-    const casheKey = 'unidades_saude';
+    // Chave de cache atualizada para refletir o novo filtro
+    const casheKey = 'unidades_saude_com_profissionais'; 
     const cacheData = cacheManager.get<UnidadeSaude[]>(casheKey);
     if (cacheData) {
         return { data: cacheData, error: null };
     }
+
+    // O '!inner(id)' força o banco a fazer um INNER JOIN, trazendo só quem tem profissional
     const query = supabase
         .from('unidade_saude')
-        .select('*')
+        .select(`
+            *,
+            profissional!inner(id)
+        `)
         .order('nome', { ascending: true });
 
-    const results = await executarQuery<UnidadeSaude[]>(query, 10000, 'Erro ao carregar a lista de unidades');
+    // Tipo temporário para o TypeScript aceitar a propriedade virtual que o Supabase joga no select
+    type RespostaBanco = UnidadeSaude & { profissional: { id: number }[] };
+
+    const results = await executarQuery<RespostaBanco[]>(query, 10000, 'Erro ao carregar a lista de unidades');
      
     if (results.data && !results.error) {
-        cacheManager.set(casheKey, results.data,undefined);
+        // Removemos a propriedade 'profissional' para o cache e o retorno ficarem idênticos à sua interface UnidadeSaude[]
+        const unidadesFiltradas: UnidadeSaude[] = results.data.map(({ profissional, ...rest }) => rest);
+        
+        cacheManager.set(casheKey, unidadesFiltradas, undefined);
+        return { data: unidadesFiltradas, error: null };
     }
+    
     return results;
 }
-
 export async function buscarProfissionaisPorUnidade(unidadeId: number) {
     const casheKey = `profissionais_unidade${unidadeId}`;
     const cacheData = cacheManager.get<any[]>(casheKey);

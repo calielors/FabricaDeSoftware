@@ -11,6 +11,7 @@ import { useTheme } from '../../../src/contexts/ThemeContext';
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useQuery } from '@/src/services/useQuery';
 import { formatData } from '@/src/utils/formatFunctions';
+import { cacheManager } from '@/src/services/cache';
 
 type Consulta = {
     id: number;
@@ -60,7 +61,7 @@ export default function Historico() {
         } catch (err: any) {
             return { data: [], error: 'Erro ao carregar histórico' };
         }
-    }, [user?.id], 'historico_consultas', undefined);
+    }, [user?.id], 'historico-consultas', undefined);
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
@@ -69,10 +70,14 @@ export default function Historico() {
     };
 
     useFocusEffect(
-        React.useCallback(() => {
-            refresh();
-        }, [])
-    );
+                React.useCallback(() => {
+                    const temCache = cacheManager.get('historico-consultas');
+                    if (!temCache) {
+                        refresh();
+                    }
+                }, [])
+            );
+    
 
     const getStatusProps = (status: Consulta['status']) => {
         switch (status) {

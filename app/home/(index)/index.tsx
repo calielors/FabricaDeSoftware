@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl} from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from "react-native";
 import { Home_Styles } from "../../../src/styles/home/home_styles";
 import { Top_Bar } from "@/src/assets/components/topbar";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
@@ -11,6 +11,7 @@ import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../../src/s
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useQuery } from "../../../src/services/useQuery";
 import { TabActions } from "@react-navigation/native";
+import { cacheManager } from "@/src/services/cache";
 
 interface Consulta {
     data: string;
@@ -105,7 +106,16 @@ export default function Home() {
         } catch (error: any) {
             return { data: null, error };
         }
-    }, [user]);
+    }, [user], 'proxima-consulta');
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const temCache = cacheManager.get('proxima-consulta');
+            if (!temCache) {
+                refresh();
+            }
+        }, [])
+    );
 
     return (
         <View style={styles.container}>

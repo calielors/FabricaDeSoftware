@@ -121,7 +121,7 @@ export default function Agendamento() {
                             router.dismissAll();
                         }
 
-                        router.replace('/home');
+                        router.replace('/home/(index)'); // Volta para a home, onde o próximo agendamento será atualizado automaticamente
                     }
                 }]
             );
