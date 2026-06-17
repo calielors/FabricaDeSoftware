@@ -1,7 +1,9 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "../services/supabase";
 import * as Auth from "../utils/auth";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router"; // Importamos o useSegments para monitorar a rota
+import FundoAnimado from "../../src/assets/components/FundoAnimado"; // Ajuste o caminho para o seu componente
+import { useTheme } from "../../src/contexts/ThemeContext"; // Ajuste o caminho para o seu contexto de Tema
 
 type User = {
   id: string;
@@ -33,6 +35,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+  
+  const { theme } = useTheme(); 
+  // OuseSegments devolve um array com a rota atual (ex: ['auth', 'welcome'] ou ['auth', 'login'])
+  const segments = useSegments();
+  const estaNoFluxoAuth = segments[0] === "auth" || segments[0] === "recuperarSenha";
+  const escurecerESumirFundo = !estaNoFluxoAuth;
 
   useEffect(() => {
     async function init() {
@@ -108,9 +116,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ logged, loading, user, signIn, signOut }}
-    >
+    <AuthContext.Provider value={{ logged, loading, user, signIn, signOut }}>
+      
+      {/* O fundo agora fica injetado na raiz do provedor! 
+        Ele só renderiza se o usuário estiver nas telas de Auth e recuperarSenha.
+        Ele NUNCA vai reiniciar o estado da animação ao trocar entre essas telas. */}
+      {estaNoFluxoAuth && (
+        <FundoAnimado theme={theme} pararEFinalizar={escurecerESumirFundo} />
+      )}
       {children}
     </AuthContext.Provider>
   );

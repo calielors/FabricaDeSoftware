@@ -6,45 +6,12 @@ const { width, height } = Dimensions.get("window");
 export const Validar_Styles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.background,
+    backgroundColor: "transparent",
   },
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 15,
   },
-
-  /* GLOWS AMBIENTES EM PERFEITA SINTONIA */
-  glowPrimary: {
-    position: "absolute",
-    top: -height * 0.1,
-    right: -width * 0.2,
-    width: width * 0.85,
-    height: width * 0.85,
-    borderRadius: (width * 0.85) / 2,
-    backgroundColor: theme.primary,
-    opacity: theme.background === COLORS.branco ? 0.07 : 0.12,
-  },
-  glowSecondary: {
-    position: "absolute",
-    top: height * 0.25,
-    left: -width * 0.3,
-    width: width * 0.75,
-    height: width * 0.75,
-    borderRadius: (width * 0.75) / 2,
-    backgroundColor: theme.success,
-    opacity: theme.background === COLORS.branco ? 0.04 : 0.06,
-  },
-  glowAccent: {
-    position: "absolute",
-    bottom: -height * 0.15,
-    right: -width * 0.1,
-    width: width * 0.9,
-    height: width * 0.9,
-    borderRadius: (width * 0.9) / 2,
-    backgroundColor: theme.primary,
-    opacity: theme.background === COLORS.branco ? 0.05 : 0.09,
-  },
-
   // Barra Superior (Voltar)
   topBar: {
     marginTop: Platform.OS === 'ios' ? 10 : 20,

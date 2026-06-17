@@ -84,7 +84,7 @@ export default function Agendamento() {
 
     const handleAgendarConsulta = async () => {
         if (!user) return Alert.alert("Erro", "Faça login para continuar.");
-        if (!tipoProfissional) return Alert.alert("Erro", "Profissional não selecionado")
+        if (!tipoProfissional) return Alert.alert("Erro", "Profissional não selecionado");
         if (!unidadeSelecionada) return Alert.alert("Erro", "Unidade não carregada.");
         if (!day) return Alert.alert("Atenção", "Selecione uma data.");
         if (!selectedTime) return Alert.alert("Atenção", "Selecione um horário.");

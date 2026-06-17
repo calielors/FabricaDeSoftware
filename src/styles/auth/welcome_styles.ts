@@ -1,59 +1,22 @@
 import { StyleSheet, Dimensions } from "react-native";
-import { COLORS } from "../../assets/colors/colors";
 
 const { width, height } = Dimensions.get("window");
 
 export const Welcome_Styles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.background,
+    backgroundColor: "transparent", 
   },
 
   safeArea: {
     flex: 1,
     paddingHorizontal: 15,
-    justifyContent: "space-between", // Empurra o header para o topo e o wrapper de botões para a base
+    justifyContent: "space-between",
   },
 
-  /* COMPOSIÇÃO DE GLOWS AMBIENTES (BLUR BLOBS)
-     Calibrado: Nem apagado demais, nem escuro demais.
-  */
-  glowPrimary: {
-    position: "absolute",
-    top: -height * 0.1,
-    right: -width * 0.2,
-    width: width * 0.85,
-    height: width * 0.85,
-    borderRadius: (width * 0.85) / 2,
-    backgroundColor: theme.primary,
-    // Reduzido para 0.10: fica sutil, mas ainda visível no fundo branco
-    opacity: theme.background === COLORS.branco ? 0.12 : 0.08, 
-  },
-  glowSecondary: {
-    position: "absolute",
-    top: height * 0.25,
-    left: -width * 0.3,
-    width: width * 0.75,
-    height: width * 0.75,
-    borderRadius: (width * 0.75) / 2,
-    backgroundColor: theme.success,
-    // Reduzido para 0.08: o verde fica bem discreto e limpo
-    opacity: theme.background === COLORS.branco ? 0.09 : 0.05,
-  },
-  glowAccent: {
-    position: "absolute",
-    bottom: -height * 0.15,
-    right: -width * 0.1,
-    width: width * 0.9,
-    height: width * 0.9,
-    borderRadius: (width * 0.9) / 2,
-    backgroundColor: theme.primary,
-    // Reduzido para 0.09: traz leveza para a base da tela
-    opacity: theme.background === COLORS.branco ? 0.15 : 0.07,
-  },
   // Cabeçalho no Topo
   header_box: {
-    marginTop: height * 0.06, // Dá uma folga elegante do entalhe/barra de status
+    marginTop: height * 0.06,
     marginBottom: 20,
   },
 
@@ -66,16 +29,16 @@ export const Welcome_Styles = (theme: any) => StyleSheet.create({
   },
 
   sub_data: {
-    fontSize: 15,
+    fontSize: 18,
     color: theme.placeholder,
-    marginTop: 8,
+    marginTop: 10,
     fontWeight: "500",
   },
 
-  // Agrupador Inferior (Garante o posicionamento mais abaixo)
+  // Agrupador Inferior
   bottom_wrapper: {
     width: "100%",
-    marginBottom: height * 0.03, // Ajusta perfeitamente acima da navegação de gestos do sistema
+    marginBottom: height * 0.03,
   },
 
   opcoes_container: {
@@ -85,36 +48,38 @@ export const Welcome_Styles = (theme: any) => StyleSheet.create({
   // Botão "Já possui acesso"
   botao_principal: {
     width: "100%",
-    height: 54,
+    minHeight: 56,
     backgroundColor: theme.primary,
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 12,
     gap: 12,
   },
 
   botao_principal_texto: {
     color: "#FFFFFF",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
   },
 
   // Botões Secundários (Google / Gov)
   botao_secundario: {
     width: "100%",
-    height: 54,
+    minHeight: 56,
     backgroundColor: theme.card,
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 12,
     gap: 12,
   },
 
   botao_secundario_texto: {
     color: theme.text,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "bold",
   },
 
@@ -133,7 +98,7 @@ export const Welcome_Styles = (theme: any) => StyleSheet.create({
 
   dividerText: {
     color: theme.placeholder,
-    fontSize: 13,
+    fontSize: 14,
     paddingHorizontal: 12,
     fontWeight: "600",
   },
@@ -145,16 +110,17 @@ export const Welcome_Styles = (theme: any) => StyleSheet.create({
 
   botao_cadastro: {
     width: "100%",
-    height: 54,
+    minHeight: 56,
     backgroundColor: theme.card,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 12,
   },
 
   botao_cadastro_texto: {
     color: theme.text,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "bold",
   },
 });

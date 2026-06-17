@@ -13,17 +13,14 @@ export default function Welcome() {
 
   return (
     <View style={styles.container}>
-      {/* Sistema de Glows Ambientes Identidade do App */}
-      <View style={styles.glowPrimary} />
-      <View style={styles.glowSecondary} />
-      <View style={styles.glowAccent} />
+      {/* Sistema de Glows removido daqui! O SVG do AuthProvider já faz o papel de fundo */}
 
       <SafeAreaView style={styles.safeArea}>
         
         {/* Bloco Superior: Título */}
         <View style={styles.header_box}>
-          <Text style={styles.titulo}>Comece sua{"\n"}jornada</Text>
-          <Text style={styles.sub_data}>Escolha como deseja acessar a plataforma</Text>
+          <Text style={styles.titulo}>Cuide da{"\n"}sua saúde</Text>
+          <Text style={styles.sub_data}>Escolha uma opção abaixo para acessar seus serviços</Text>
         </View>
 
         {/* Bloco Inferior: Contêiner que agrupa os botões mais abaixo */}
@@ -56,7 +53,7 @@ export default function Welcome() {
             <TouchableOpacity
               style={styles.botao_secundario}
               activeOpacity={0.7}
-              onPress={() => alert("Integração com gov.br em desenvolvimento")}
+              onPress={() => router.push("/auth/login")}
             >
               <FontAwesome5 name="landmark" size={16} color={theme.primary} />
               <Text style={styles.botao_secundario_texto}>Entrar com o gov.br</Text>

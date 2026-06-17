@@ -43,11 +43,6 @@ export default function Validar() {
 
   return (
     <View style={styles.container}>
-      {/* Sistema de Glows Ambientes */}
-      <View style={styles.glowPrimary} />
-      <View style={styles.glowSecondary} />
-      <View style={styles.glowAccent} />
-
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}

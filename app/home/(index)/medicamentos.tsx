@@ -416,7 +416,7 @@ export default function Medicamentos() {
               onPress={aplicarFiltros}
               activeOpacity={0.8}
             >
-              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>Aplicar</Text>
+              <Text style={{ color: theme.text, fontWeight: '700', fontSize: 16 }}>Aplicar</Text>
             </TouchableOpacity>
           </View>
 

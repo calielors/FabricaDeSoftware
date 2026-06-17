@@ -73,8 +73,7 @@ export const GerenciadorDeProgresso = () => {
   );
 }
 
-const Top_Bar_Styles = (theme: any) =>
-  StyleSheet.create({
+const Top_Bar_Styles = (theme: any) => StyleSheet.create({
     sus_agendamento: {
       backgroundColor: theme.primary,
       width: "100%",

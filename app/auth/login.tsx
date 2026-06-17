@@ -43,13 +43,8 @@ export default function Login() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
-      {/* Sistema de Glows Ambientes Baseados nas suas Cores Reais */}
-      <View style={styles.glowPrimary} />
-      <View style={styles.glowSecondary} />
-      <View style={styles.glowAccent} />
-
-      <SafeAreaView style={styles.safeArea}>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         <KeyboardAvoidingView 
           behavior={Platform.OS === "ios" ? "padding" : "height"} 
           style={{ flex: 1 }}
@@ -73,7 +68,6 @@ export default function Login() {
             {/* Conteúdo Centralizado */}
             <View style={styles.centerContainer}>
               <View style={styles.header}>
-                {/* Atalho escondido: activeOpacity 1 faz com que o texto não pisque ao clicar */}
                 <TouchableOpacity activeOpacity={1} onPress={testeUser}>
                   <Text style={styles.title}>Bem-vindo{"\n"}de volta</Text>
                 </TouchableOpacity>
@@ -83,7 +77,7 @@ export default function Login() {
               <View style={styles.formContainer}>
                 <PaperInput
                   mode="outlined"
-                  label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
+                  label="CPF"
                   value={formatCPF(cpf)}
                   onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
                   placeholder="000.000.000-00"
@@ -92,12 +86,15 @@ export default function Login() {
                   activeOutlineColor={theme.success}
                   outlineColor={theme.placeholder + "40"}
                   style={styles.input}
-                  theme={{ roundness: 16 }}
+                  theme={{ 
+                    roundness: 16,
+                    colors: { onSurfaceVariant: theme.placeholder } 
+                  }}
                 />
 
                 <PaperInput
                   mode="outlined"
-                  label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
+                  label="Senha"
                   value={password}
                   onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
                   placeholder="Digite sua senha"
@@ -105,8 +102,11 @@ export default function Login() {
                   outlineColor={theme.placeholder + "40"}
                   style={styles.input}
                   textColor={theme.text}
-                  theme={{ roundness: 16 }}
                   secureTextEntry={!passwordVisible}
+                  theme={{ 
+                    roundness: 16,
+                    colors: { onSurfaceVariant: theme.placeholder } 
+                  }}
                   right={
                     <PaperInput.Icon
                       icon={passwordVisible ? "eye" : "eye-off"}
@@ -141,7 +141,6 @@ export default function Login() {
                 onPress={() => router.replace("/auth/cadastro")}
               >
                 <Text style={styles.footerText}>Ainda não tem uma conta? <Text style={styles.footerLink}>Cadastre-se</Text></Text>
-                
               </TouchableOpacity>
             </View>
 

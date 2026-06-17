@@ -66,13 +66,8 @@ export default function Cadastro() {
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: theme.background }}>
-            {/* Sistema de Glows Ambientes Baseados nas suas Cores Reais */}
-            <View style={styles.glowPrimary} />
-            <View style={styles.glowSecondary} />
-            <View style={styles.glowAccent} />
-
-            <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeArea} edges={['top']}>
                 <KeyboardAvoidingView 
                     behavior={Platform.OS === "ios" ? "padding" : "height"} 
                     style={{ flex: 1 }}
@@ -97,14 +92,14 @@ export default function Cadastro() {
                         <View style={styles.centerContainer}>
                             <View style={styles.header}>
                                 <Text style={styles.title}>Crie sua conta</Text>
-                                <Text style={styles.subtitle}>Preencha os dados abaixo</Text>
+                                <Text style={styles.subtitle}>Preencha os dados abaixo para começar</Text>
                             </View>
 
                             <View style={styles.formContainer}>
                                 {/* Usuário */}
                                 <PaperInput
                                     mode="outlined"
-                                    label={<Text style={{ color: theme.placeholder }}>Usuário</Text>}
+                                    label="Usuário"
                                     value={username}
                                     onChangeText={(text) => setUsername(text.replace(/\s/g, ""))}
                                     placeholder="Escolha um nome de usuário"
@@ -112,55 +107,68 @@ export default function Cadastro() {
                                     outlineColor={theme.placeholder + "40"}
                                     style={styles.inputs}
                                     textColor={theme.text}
-                                    theme={{ roundness: 16 }}
+                                    theme={{ 
+                                        roundness: 16,
+                                        colors: { onSurfaceVariant: theme.placeholder }
+                                    }}
                                 />
 
                                 {/* CPF */}
                                 <PaperInput
                                     mode="outlined"
-                                    label={<Text style={{ color: theme.placeholder }}>CPF</Text>}
+                                    label="CPF"
                                     value={formatCPF(cpf)}
                                     onChangeText={(text) => setCpf(text.replace(/\D/g, "").slice(0, 11))}
                                     placeholder="000.000.000-00"
                                     activeOutlineColor={theme.primary}
                                     outlineColor={theme.placeholder + "40"}
                                     style={styles.inputs}
-                                    theme={{ roundness: 16 }}
                                     textColor={theme.text}
                                     keyboardType="numeric"
+                                    theme={{ 
+                                        roundness: 16,
+                                        colors: { onSurfaceVariant: theme.placeholder }
+                                    }}
                                 />
 
                                 {/* Email */}
                                 <PaperInput
                                     mode="outlined"
-                                    label={<Text style={{ color: theme.placeholder }}>E-mail</Text>}
+                                    label="E-mail"
                                     value={email}
                                     onChangeText={(text) => setEmail(text.replace(/\s/g, "").toLowerCase())}
                                     placeholder="seu@email.com"
                                     activeOutlineColor={theme.primary}
                                     outlineColor={theme.placeholder + "40"}
                                     style={styles.inputs}
-                                    theme={{ roundness: 16 }}
                                     keyboardType="email-address"
                                     autoCapitalize="none"
                                     autoCorrect={false}
                                     textColor={theme.text}
+                                    theme={{ 
+                                        roundness: 16,
+                                        colors: { onSurfaceVariant: theme.placeholder }
+                                    }}
                                 />
 
                                 {/* Senha */}
                                 <PaperInput
                                     mode="outlined"
-                                    label={<Text style={{ color: theme.placeholder }}>Senha</Text>}
+                                    label="Senha"
                                     value={password}
                                     onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
                                     placeholder="Crie uma senha forte"
                                     activeOutlineColor={theme.primary}
                                     outlineColor={theme.placeholder + "40"}
                                     style={styles.inputs}
-                                    theme={{ roundness: 16 }}
                                     secureTextEntry={!passwordVisible}
                                     autoCapitalize="none"
                                     autoCorrect={false}
+                                    textColor={theme.text}
+                                    theme={{ 
+                                        roundness: 16,
+                                        colors: { onSurfaceVariant: theme.placeholder }
+                                    }}
                                     right={
                                         <PaperInput.Icon 
                                             icon={passwordVisible ? "eye" : "eye-off"} 
@@ -168,23 +176,26 @@ export default function Cadastro() {
                                             color={theme.placeholder}
                                         />
                                     }
-                                    textColor={theme.text}
                                 />
 
                                 {/* Confirmar senha */}
                                 <PaperInput
                                     mode="outlined"
-                                    label={<Text style={{ color: theme.placeholder }}>Confirmação da senha</Text>}
+                                    label="Confirmação da senha"
                                     value={confirmPassword}
                                     onChangeText={(text) => setConfirmPassword(text.replace(/\s/g, ""))}
                                     placeholder="Repita a senha criada"
                                     activeOutlineColor={theme.primary}
                                     outlineColor={theme.placeholder + "40"}
                                     style={styles.inputs}
-                                    theme={{ roundness: 16 }}
                                     secureTextEntry={!confirmPasswordVisible}
                                     autoCapitalize="none"
                                     autoCorrect={false}
+                                    textColor={theme.text}
+                                    theme={{ 
+                                        roundness: 16,
+                                        colors: { onSurfaceVariant: theme.placeholder }
+                                    }}
                                     right={
                                         <PaperInput.Icon 
                                             icon={confirmPasswordVisible ? "eye" : "eye-off"} 
@@ -192,7 +203,6 @@ export default function Cadastro() {
                                             color={theme.placeholder}
                                         />
                                     }
-                                    textColor={theme.text}
                                 />
 
                                 {/* Botão Principal integrado logo abaixo dos inputs */}

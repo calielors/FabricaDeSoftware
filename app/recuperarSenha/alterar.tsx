@@ -131,11 +131,6 @@ export default function Alterar() {
 
   return (
     <View style={styles.container}>
-      {/* Sistema de Glows Ambientes Identidade do App */}
-      <View style={styles.glowPrimary} />
-      <View style={styles.glowSecondary} />
-      <View style={styles.glowAccent} />
-
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
