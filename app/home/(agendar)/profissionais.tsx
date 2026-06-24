@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshContr
 import React from "react";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router, useLocalSearchParams } from "expo-router";
-import { buscarProfissionaisPorUnidade } from "../../../src/services/consultas";
+import { buscarProfissionaisPorUnidadeApi } from "../../../src/services/api";
 import { useQuery } from "@/src/services/useQuery";
 import { COLORS } from "@/src/assets/colors/colors";
 
@@ -14,12 +14,12 @@ export default function SelecionarTipo() {
     const unidadeObj = unidadeOriginal ? JSON.parse(unidadeOriginal) : null;
 
     const { data: profissionais, loading, refresh } = useQuery(
-        () => buscarProfissionaisPorUnidade(unidadeObj?.id),
+        () => buscarProfissionaisPorUnidadeApi(unidadeObj?.id),
         [unidadeObj?.id]
     );
     const especialidadesUnicas = profissionais 
-        ? profissionais.filter((prof, index, self) => 
-            index === self.findIndex((t) => t.especialidade === prof.especialidade)
+        ? (profissionais as any[]).filter((prof: any, index: number, self: any[]) => 
+            index === self.findIndex((t: any) => t.especialidade === prof.especialidade)
           )
         : [];
 

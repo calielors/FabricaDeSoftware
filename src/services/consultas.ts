@@ -1,3 +1,13 @@
+/**
+ * DEPRECATED: Este arquivo foi substituído por src/services/api.ts
+ * 
+ * Todas as funções foram migradas para usar Edge Functions (fetch HTTP) em vez de
+ * chamadas diretas ao Supabase. Este arquivo é mantido apenas para referência.
+ * 
+ * USE: src/services/api.ts ao invés deste arquivo
+ * 
+ */
+
 import { cacheManager } from './cache';
 import { supabase } from './supabase';
 //Timeout

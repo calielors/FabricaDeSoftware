@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Ani
 import React, { useState, useContext, useEffect } from "react";
 import { Agendar_Styles } from "../../../src/styles/home/agendar/agendar_styles";
 import { AuthContext } from "../../../src/contexts/AuthContext";
-import { criarConsulta, buscarPacientePorAuthId, combinarDataHora, buscarHorariosOcupados, UnidadeSaude } from "../../../src/services/consultas";
+import { combinarDataHoraApi, buscarHorariosOcupadosApi, criarConsultaApi, obterPacientePorAuthId, UnidadeSaude, buscarUnidadesComProfissionaisApi } from "../../../src/services/api";
 import {  useQuery } from "@/src/services/useQuery";
 import { cacheManager } from "@/src/services/cache";
 import { router, useLocalSearchParams } from "expo-router";
@@ -66,8 +66,8 @@ export default function Agendamento() {
     const { data: horariosDisponiveis, loading: loadingHorarios } = useQuery(async () => {
         if (!day || !unidadeSelecionada) return { data: [], error: null };
 
-        const ocupados = await buscarHorariosOcupados(day, unidadeSelecionada.id);
-        let disponiveis = todosHorarios.filter(h => !ocupados.includes(h));
+        const { data: ocupados } = await buscarHorariosOcupadosApi(day, unidadeSelecionada.id);
+        let disponiveis = todosHorarios.filter(h => !ocupados?.includes(h));
 
         // Filtro de horário retroativo (se for hoje)
         const now = new Date();
@@ -92,16 +92,16 @@ export default function Agendamento() {
         setLoading(true);
 
         try {
-            const { data: paciente } = await buscarPacientePorAuthId(user.id);
+            const { data: paciente } = await obterPacientePorAuthId(user.id);
             if (!paciente) {
                 Alert.alert("Erro", "Complete seu cadastro de paciente.");
                 setLoading(false); // Importante resetar loading
                 return;
             }
 
-            const dataHora = combinarDataHora(day, selectedTime);
+            const dataHora = combinarDataHoraApi(day, selectedTime);
 
-            const { error } = await criarConsulta({
+            const { error } = await criarConsultaApi({
                 paciente_id: paciente.id,
                 unidade_saude_id: unidadeSelecionada.id,
                 data_hora: dataHora,

@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Dimensions, ScrollView, Refresh
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput as PaperInput } from "react-native-paper";
 import { Medicamentos_Styles } from '../../../src/styles/home/servicos/medicamentos_styles';
-import { supabase } from '../../../src/services/supabase';
+import { buscarMedicamentosApi } from '../../../src/services/api';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
@@ -44,29 +44,22 @@ export default function Medicamentos() {
 
   const [results, setResults] = useState<Medicamento[]>([]);
 
-  // === BUSCA COM USEQUERY (CACHE + SUPABASE) ===
+  // === BUSCA COM USEQUERY (CACHE + API) ===
   const { data: fetchedData, loading, error, refresh } = useQuery<Medicamento[]>(async () => {
     try {
-      const { data: dbData, error: dbError } = await supabase
-        .from('disponibilidade')
-        .select(`
-            id_medicamento,
-            unidades_disponiveis,
-            medicamento (id, nome, dose_mg),
-            unidade_saude (id, nome)
-          `)
-        .order('id_medicamento');
+      const { data: medicamentosData, error: medicError } = await buscarMedicamentosApi();
 
-      if (dbError) return { data: [], error: 'Erro ao carregar medicamentos' };
+      if (medicError) return { data: [], error: 'Erro ao carregar medicamentos' };
 
-      if (dbData) {
-        const mappedData: Medicamento[] = dbData.map((item: any, index: number) => ({
+      if (medicamentosData) {
+        const medicamentosArray = (medicamentosData || []) as any[];
+        const mappedData: Medicamento[] = medicamentosArray.map((item: any, index: number) => ({
           id: `${item.id_medicamento}-${index}`,
-          name: item.medicamento.nome,
-          dose_mg: `${item.medicamento.dose_mg}mg`,
-          dose_num: `${item.medicamento.dose_mg}mg`,
+          name: item.medicamento?.nome || item.nome || 'Desconhecido',
+          dose_mg: `${item.medicamento?.dose_mg || item.dose_mg || 0}mg`,
+          dose_num: `${item.medicamento?.dose_mg || item.dose_mg || 0}mg`,
           quantidade: item.unidades_disponiveis,
-          hospital: item.unidade_saude?.nome || 'Desconhecido',
+          hospital: item.unidade_saude?.nome || item.hospital || 'Desconhecido',
         }));
         return { data: mappedData, error: null };
       }

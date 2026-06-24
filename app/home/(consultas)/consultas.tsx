@@ -4,12 +4,12 @@ import { Consultas_Styles } from '../../../src/styles/home/consultas_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from "react-native-modal";
 import { AuthContext } from '../../../src/contexts/AuthContext';
-import { buscarPacientePorAuthId, buscarConsultasPaciente, cancelarConsulta } from '../../../src/services/consultas';
+import { obterPacientePorAuthId, buscarConsultasPacienteApi, cancelarConsultaApi } from '../../../src/services/api';
 import { useTheme } from '../../../src/contexts/ThemeContext';
-import { useQuery } from '@/src/services/useQuery';
-import { formatData } from '@/src/utils/formatFunctions';
+import { useQuery } from '../../../src/services/useQuery';
+import { formatData } from '../../../src/utils/formatFunctions';
 import { useFocusEffect } from '@react-navigation/native';
-import { cacheManager } from '@/src/services/cache';
+import { cacheManager } from '../../../src/services/cache';
 
 type Consulta = {
     id: number;
@@ -35,19 +35,19 @@ export default function Consultas() {
         if (!user) return { data: [], error: 'Usuário não autenticado' };
 
         try {
-            const { data: paciente } = await buscarPacientePorAuthId(user.id);
+            const { data: paciente } = await obterPacientePorAuthId(user.id);
             if (!paciente) return { data: [], error: 'Dados de paciente não encontrados' };
 
-            const { data: consultas } = await buscarConsultasPaciente(paciente.id);
+            const { data: consultas } = await buscarConsultasPacienteApi(paciente.id);
             if (!consultas) return { data: [], error: null };
 
             const agora = new Date();
-            const filtradas = consultas
-                .filter(c => {
+            const filtradas = (consultas as any[])
+                .filter((c: any) => {
                     const dataConsulta = new Date(c.data_hora);
                     return dataConsulta >= agora && c.status !== 'cancelada';
                 })
-                .map(c => {
+                .map((c: any) => {
                     const [dataParte] = c.data_hora.split('T');
                     const dataHora = new Date(c.data_hora);
                     const hora = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -88,7 +88,13 @@ export default function Consultas() {
         if (!consultaSelecionada) return;
         setCancelando(true);
         try {
-            const { error } = await cancelarConsulta(consultaSelecionada.id);
+            const { data: paciente } = await obterPacientePorAuthId(user!.id);
+            if (!paciente) {
+                Alert.alert('Erro', 'Não foi possível identificar o paciente');
+                return;
+            }
+
+            const { error } = await cancelarConsultaApi(consultaSelecionada.id, paciente.id);
             if (error) {
                 Alert.alert('Erro', `Não foi possível cancelar a consulta. ${error.message || 'Tente novamente.'}`);
             } else {

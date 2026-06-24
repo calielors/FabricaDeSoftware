@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Historico_Styles} from '../../../src/styles/home/servicos/historico_styles';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AuthContext } from '../../../src/contexts/AuthContext';
-import { buscarPacientePorAuthId, buscarConsultasPaciente } from '../../../src/services/consultas';
+import { obterPacientePorAuthId, buscarConsultasPacienteApi } from '../../../src/services/api';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../../src/contexts/ThemeContext';
@@ -34,16 +34,17 @@ export default function Historico() {
         if (!user) return { data: [], error: 'Usuário não autenticado' };
 
         try {
-            const { data: paciente } = await buscarPacientePorAuthId(user.id);
+            const { data: paciente } = await obterPacientePorAuthId(user.id);
             if (!paciente) return { data: [], error: 'Paciente não encontrado' };
         
-            const { data: consultas } = await buscarConsultasPaciente(paciente.id);
+            const { data: consultas } = await buscarConsultasPacienteApi(paciente.id);
             if (!consultas) return { data: [], error: null };
 
             const agora = new Date();
-            const formatadas = consultas
-                .filter(c => new Date(c.data_hora) < agora || c.status === 'cancelada' || c.status === 'faltou')
-                .map(c => {
+            const consultasArray = ((consultas as any) || []) as any[];
+            const formatadas = consultasArray
+                .filter((c: any) => new Date(c.data_hora) < agora || c.status === 'cancelada' || c.status === 'faltou')
+                .map((c: any) => {
                     const [dataParte] = c.data_hora.split('T');
                     const hora = new Date(c.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                     return {
@@ -55,7 +56,7 @@ export default function Historico() {
                         status: c.status === 'cancelada' ? 'Cancelada' : (c.status === 'faltou' ? 'Faltou' : 'Realizada') as any,
                     };
                 })
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()) as any;
 
             return { data: formatadas, error: null };
         } catch (err: any) {

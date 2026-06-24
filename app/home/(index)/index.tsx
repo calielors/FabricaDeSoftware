@@ -7,7 +7,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter, useFocusEffect, useNavigation } from "expo-router";
 import { AuthContext } from "../../../src/contexts/AuthContext";
-import { buscarPacientePorAuthId, buscarConsultasPaciente } from "../../../src/services/consultas";
+import { obterPacientePorAuthId, buscarConsultasPacienteApi } from "../../../src/services/api";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { useQuery } from "../../../src/services/useQuery";
 import { TabActions } from "@react-navigation/native";
@@ -47,24 +47,24 @@ export default function Home() {
         }
 
         try {
-            const { data: paciente } = await buscarPacientePorAuthId(user.id);
+            const { data: paciente } = await obterPacientePorAuthId(user.id);
 
             if (!paciente) {
                 return { data: null, error: null };
             }
 
-            const { data: consultas } = await buscarConsultasPaciente(paciente.id);
+            const { data: consultas } = await buscarConsultasPacienteApi(paciente.id);
 
-            if (consultas && consultas.length > 0) {
+            if (consultas && (consultas as any[]).length > 0) {
                 const agora = new Date();
 
-                const proximaConsulta = consultas
-                    .filter((c) => {
+                const proximaConsulta = (consultas as any[])
+                    .filter((c: any) => {
                         const dataConsulta = new Date(c.data_hora);
                         return dataConsulta >= agora && c.status === "agendada";
                     })
                     .sort(
-                        (a, b) =>
+                        (a: any, b: any) =>
                             new Date(a.data_hora).getTime() -
                             new Date(b.data_hora).getTime()
                     )[0];

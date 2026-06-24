@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { supabase } from "../../../src/services/supabase";
+import { atualizarPaciente, obterPacientePorAuthId } from "../../../src/services/api";
+import { supabase } from "../../../src/services/supabase"; // Para getUser() - validação de sessão
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { COLORS } from "@/src/assets/colors/colors";
 import { KeyboardAvoidingView } from "react-native";
@@ -63,16 +64,13 @@ export default function Endereco() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("Usuário não autenticado");
 
-            const { data, error } = await supabase
-                .from('paciente')
-                .select('endereco')
-                .eq('email', user.email)
-                .single();
+            // Buscar dados do paciente por auth_user_id
+            const { data: pacienteData, error: pacienteError } = await obterPacientePorAuthId(user.id);
+            if (pacienteError || !pacienteData) throw pacienteError || new Error("Paciente não encontrado");
 
-            if (error) throw error;
-
-            setEnderecoCompleto(data.endereco || "");
-            parseEndereco(data.endereco);
+            const endereco = pacienteData.endereco || "";
+            setEnderecoCompleto(endereco);
+            parseEndereco(endereco);
         } catch (error: any) {
             Alert.alert("Erro", error.message || "Não foi possível carregar os dados");
         } finally {
@@ -86,13 +84,13 @@ export default function Endereco() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("Usuário não autenticado");
 
+            // Buscar dados do paciente por auth_user_id
+            const { data: pacienteData, error: pacienteError } = await obterPacientePorAuthId(user.id);
+            if (pacienteError || !pacienteData) throw pacienteError || new Error("Paciente não encontrado");
+
             const enderecoAtualizado = buildEndereco(editData);
 
-            const { error } = await supabase
-                .from('paciente')
-                .update({ endereco: enderecoAtualizado })
-                .eq('email', user.email);
-
+            const { error } = await atualizarPaciente(pacienteData.id, { endereco: enderecoAtualizado });
             if (error) throw error;
 
             setEnderecoCompleto(enderecoAtualizado);

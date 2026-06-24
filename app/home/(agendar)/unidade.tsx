@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import React from "react";
-import { buscarUnidadesSaude, UnidadeSaude } from "../../../src/services/consultas";
+import { buscarUnidadesComProfissionaisApi, UnidadeSaude } from "../../../src/services/api";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { router } from "expo-router";
 import { useQuery } from "@/src/services/useQuery";
@@ -8,7 +8,7 @@ import { COLORS } from "@/src/assets/colors/colors";
 
 export default function SelecionarUnidade() {
   const { theme } = useTheme();
-  const { data: unidades, loading, refresh } = useQuery<UnidadeSaude[]>(buscarUnidadesSaude);
+  const { data: unidades, loading, refresh } = useQuery<UnidadeSaude[]>(buscarUnidadesComProfissionaisApi);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>

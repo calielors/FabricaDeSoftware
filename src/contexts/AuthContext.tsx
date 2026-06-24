@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "../services/supabase";
 import * as Auth from "../utils/auth";
+import { invalidarCacheApi } from "../services/api";
 import { useRouter, useSegments } from "expo-router"; // Importamos o useSegments para monitorar a rota
 import FundoAnimado from "../../src/assets/components/FundoAnimado"; // Ajuste o caminho para o seu componente
 import { useTheme } from "../../src/contexts/ThemeContext"; // Ajuste o caminho para o seu contexto de Tema
@@ -110,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signOut() {
     await Auth.clearSession();
+    invalidarCacheApi(); // Limpa cache ao fazer logout
     setLogged(false);
     setUser(null);
     router.replace("/auth/welcome");

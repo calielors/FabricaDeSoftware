@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, KeyboardAvoidingView } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { supabase } from "../../../src/services/supabase";
+import { atualizarPaciente, obterPacientePorAuthId } from "../../../src/services/api";
 import { formatCPF, formatData, formatDateToISO, formatTelefone} from "../../../src/utils/formatFunctions";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 import { Dados_Styles } from "../../../src/styles/home/perfil/dados_styles";
+import { supabase } from "../../../src/services/supabase"; // Para getUser() - validação de sessão
 
 export default function DadosPessoais() {
     const { theme } = useTheme();
@@ -46,22 +47,30 @@ export default function DadosPessoais() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("Usuário não autenticado");
 
-            const { data, error } = await supabase
-                .from('paciente')
-                .select('*')
-                .eq('email', user.email)
-                .single();
+            // Buscar dados do paciente por auth_user_id
+            const { data: pacienteData, error: pacienteError } = await obterPacientePorAuthId(user.id);
+            if (pacienteError || !pacienteData) throw pacienteError || new Error("Paciente não encontrado");
 
-            if (error) throw error;
+            // Mapear dados do paciente para o formato esperado
+            const userData = {
+                nome: pacienteData.nome || "",
+                nome_social: pacienteData.nome_social || "",
+                data_nascimento: pacienteData.data_nascimento || "",
+                cpf: pacienteData.cpf || "",
+                genero: pacienteData.genero || "",
+                telefone: pacienteData.telefone || "",
+                cartao_sus: pacienteData.cartao_sus || "",
+                email: pacienteData.email || ""
+            };
 
-            setUserData(data);
+            setUserData(userData);
             setEditData({
-                nome: data.nome || "",
-                nome_social: data.nome_social || "",
-                data_nascimento: formatData(data.data_nascimento) || "",
-                genero: data.genero || "",
-                telefone: data.telefone || "",
-                cartao_sus: data.cartao_sus || ""
+                nome: userData.nome,
+                nome_social: userData.nome_social,
+                data_nascimento: formatData(userData.data_nascimento) || "",
+                genero: userData.genero,
+                telefone: userData.telefone,
+                cartao_sus: userData.cartao_sus
             });
         } catch (error: any) {
             Alert.alert("Erro", error.message || "Não foi possível carregar os dados");
@@ -78,17 +87,21 @@ export default function DadosPessoais() {
 
         setSaving(true);
         try {
-            const { error } = await supabase
-                .from('paciente')
-                .update({
-                    nome: editData.nome.trim(),
-                    nome_social: editData.nome_social.trim(),
-                    data_nascimento: formatDateToISO(editData.data_nascimento.trim()),
-                    genero: editData.genero.trim(),
-                    telefone: editData.telefone.trim(),
-                    cartao_sus: editData.cartao_sus.trim()
-                })
-                .eq('email', userData.email);
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("Usuário não autenticado");
+
+            // Buscar dados do paciente por auth_user_id
+            const { data: pacienteData, error: pacienteError } = await obterPacientePorAuthId(user.id);
+            if (pacienteError || !pacienteData) throw pacienteError || new Error("Paciente não encontrado");
+
+            const { error } = await atualizarPaciente(pacienteData.id, {
+                nome: editData.nome.trim(),
+                nome_social: editData.nome_social.trim(),
+                data_nascimento: formatDateToISO(editData.data_nascimento.trim()),
+                genero: editData.genero.trim(),
+                telefone: editData.telefone.trim(),
+                cartao_sus: editData.cartao_sus.trim()
+            });
 
             if (error) throw error;
 
