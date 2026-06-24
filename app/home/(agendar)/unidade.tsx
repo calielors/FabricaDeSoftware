@@ -8,7 +8,11 @@ import { COLORS } from "@/src/assets/colors/colors";
 
 export default function SelecionarUnidade() {
   const { theme } = useTheme();
-  const { data: unidades, loading, refresh } = useQuery<UnidadeSaude[]>(buscarUnidadesComProfissionaisApi);
+  const { data: unidades, loading, refresh } = useQuery<UnidadeSaude[]>(
+    () => buscarUnidadesComProfissionaisApi() as any,
+    [],
+    'unidades-com-profissionais'
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, Sc
 import { Validacao_Styles } from "../../src/styles/auth/validacao_styles";
 import { TextInput as PaperInput } from "react-native-paper";
 import { CadastroContext } from "../../src/contexts/CadastroContext";
-import { supabase } from "../../src/services/supabase";
+import { registrarPaciente } from "../../src/services/api";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { Feather } from "@expo/vector-icons";
@@ -36,11 +36,14 @@ export default function Validacao() {
     if (codigo !== "123456") return showError("O código informado está incorreto. Use 123456 para teste.");
 
     try {
-      const { data, error } = await supabase.functions.invoke("register-paciente", {
-        body: { nome: username, cpf, email, senha: password },
+      const { data, error } = await registrarPaciente({
+        nome: username,
+        cpf,
+        email,
+        senha: password,
       });
 
-      if (error || data?.error) return showError(error?.message || data?.error || "Falha ao registrar usuário.");
+      if (error) return showError(error.message || "Falha ao registrar usuário.");
 
       Alert.alert("Sucesso", "Conta criada com sucesso!", [
         {

@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "../services/supabase";
 import * as Auth from "../utils/auth";
-import { invalidarCacheApi } from "../services/api";
+import { invalidarCacheApi, loginPacienteApi } from "../services/api";
 import { useRouter, useSegments } from "expo-router"; // Importamos o useSegments para monitorar a rota
 import FundoAnimado from "../../src/assets/components/FundoAnimado"; // Ajuste o caminho para o seu componente
 import { useTheme } from "../../src/contexts/ThemeContext"; // Ajuste o caminho para o seu contexto de Tema
@@ -65,7 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
         }
       } catch (err) {
-        console.error("[Auth] Session restore failed:", err);
         setLogged(false);
         setUser(null);
       } finally {
@@ -78,13 +77,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(cpf: string, password: string) {
     try {
-      const { data, error } = await supabase.functions.invoke(
-        "login-paciente",
-        { body: { cpf, password } }
-      );
+      const { data, error } = await loginPacienteApi(cpf, password);
 
-      if (error) throw new Error("Erro ao conectar-se ao servidor.");
-      if (data?.error) throw new Error(data.error);
+      if (error) throw new Error(error.message || "Erro ao conectar-se ao servidor.");
+      if (!data) throw new Error("Nenhuma resposta do servidor.");
 
       const { session, user } = data;
 
@@ -102,7 +98,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setLogged(true);
     } catch (err: any) {
-      console.log("[Auth] signIn error:", err);
       setLogged(false);
       setUser(null);
       throw new Error(err?.message || "Não foi possível realizar o login.");

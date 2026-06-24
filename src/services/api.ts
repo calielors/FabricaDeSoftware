@@ -69,8 +69,10 @@ async function callEdgeFunction<T>(
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
+    const url = `${SUPABASE_URL}/functions/v1/${functionName}`;
+
     const response = await fetch(
-      `${SUPABASE_URL}/functions/v1/${functionName}`,
+      url,
       {
         method: 'POST',
         headers: {
@@ -86,6 +88,7 @@ async function callEdgeFunction<T>(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      console.error(`[callEdgeFunction] ${functionName} falhou:`, response.status, errorData?.error);
       return {
         data: null,
         error: {
@@ -103,6 +106,7 @@ async function callEdgeFunction<T>(
 
     return { data: result.data as T, error: null };
   } catch (error: any) {
+    console.error(`[callEdgeFunction] Exceção em ${functionName}:`, error.message);
     if (error.name === 'AbortError') {
       return {
         data: null,
@@ -136,12 +140,121 @@ export async function obterPacientePorAuthId(authUserId: string): Promise<ApiRes
   );
 }
 
-export async function criarPaciente(dadosPaciente: any): Promise<ApiResponse<Paciente>> {
-  return callEdgeFunction<Paciente>(
-    'gerenciar-pacientes',
-    { acao: 'criar', dados: dadosPaciente },
-    15000
-  );
+/**
+ * Registra um novo paciente (cria auth + paciente)
+ * Chama a Edge Function 'register-paciente'
+ */
+export async function registrarPaciente(dados: {
+  nome: string;
+  cpf: string;
+  email: string;
+  senha: string;
+}): Promise<ApiResponse<any>> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    const response = await fetch(
+      `${SUPABASE_URL}/functions/v1/register-paciente`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dados),
+        signal: controller.signal,
+      }
+    );
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        data: null,
+        error: {
+          message: errorData.error || 'Erro ao registrar paciente',
+          status: response.status,
+        },
+      };
+    }
+
+    const result = await response.json();
+    
+    if (result.error) {
+      return { data: null, error: { message: result.error } };
+    }
+
+    return { data: result.user || result, error: null };
+  } catch (error: any) {
+    console.error('[registrarPaciente] Erro:', error.message);
+    
+    if (error.name === 'AbortError') {
+      return {
+        data: null,
+        error: { message: 'Tempo limite de conexão excedido. Verifique sua internet' },
+      };
+    }
+    return {
+      data: null,
+      error: { message: error.message || 'Erro de conexão' },
+    };
+  }
+}
+
+/**
+ * Realiza login de um paciente existente
+ * Chama a Edge Function 'login-paciente'
+ */
+export async function loginPacienteApi(cpf: string, password: string): Promise<ApiResponse<any>> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    const response = await fetch(
+      `${SUPABASE_URL}/functions/v1/login-paciente`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cpf, password }),
+        signal: controller.signal,
+      }
+    );
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        data: null,
+        error: {
+          message: errorData.error || 'Erro ao fazer login',
+          status: response.status,
+        },
+      };
+    }
+
+    const result = await response.json();
+    
+    if (result.error) {
+      return { data: null, error: { message: result.error } };
+    }
+
+    return { data: result, error: null };
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      return {
+        data: null,
+        error: { message: 'Tempo limite de conexão excedido. Verifique sua internet' },
+      };
+    }
+    return {
+      data: null,
+      error: { message: error.message || 'Erro de conexão' },
+    };
+  }
 }
 
 export async function atualizarPaciente(idPaciente: number, dadosPaciente: any): Promise<ApiResponse<Paciente>> {
@@ -184,7 +297,7 @@ export async function criarConsultaApi(consulta: {
   cacheManager.delete(`consultas_paciente_${consulta.paciente_id}`);
   
   return callEdgeFunction(
-    'gerenciar-pacientes',
+    'gerenciar-consultas',
     { acao: 'criar-consulta', dados: consulta },
     15000
   );
@@ -202,7 +315,7 @@ export async function buscarConsultasPacienteApi(pacienteId: number) {
   }
 
   const result = await callEdgeFunction(
-    'gerenciar-pacientes',
+    'gerenciar-consultas',
     { acao: 'listar-consultas', id_paciente: pacienteId },
     15000
   );
@@ -222,7 +335,7 @@ export async function cancelarConsultaApi(consultaId: number, pacienteId: number
   cacheManager.delete(`consultas_paciente_${pacienteId}`);
   
   return callEdgeFunction(
-    'gerenciar-pacientes',
+    'gerenciar-consultas',
     { acao: 'cancelar-consulta', id_consulta: consultaId },
     10000
   );
@@ -243,7 +356,7 @@ export async function buscarHorariosOcupadosApi(
   }
 
   const result = await callEdgeFunction<string[]>(
-    'gerenciar-pacientes',
+    'gerenciar-consultas',
     {
       acao: 'buscar-horarios-ocupados',
       data,
@@ -275,7 +388,7 @@ export async function buscarUnidadesSaudeApi() {
   }
 
   const result = await callEdgeFunction(
-    'gerenciar-pacientes',
+    'gerenciar-referencias',
     { acao: 'listar-unidades' },
     10000
   );
@@ -296,38 +409,24 @@ export async function buscarUnidadesComProfissionaisApi() {
   const cacheData = cacheManager.get(cacheKey);
   
   if (cacheData) {
+    console.log('[API] Unidades retornadas do cache:', cacheData);
     return { data: cacheData, error: null };
   }
 
-  try {
-    // Busca todas as unidades
-    const { data: unidades, error: unidadesError } = await buscarUnidadesSaudeApi();
-    if (unidadesError || !unidades) {
-      return { data: null, error: unidadesError || new Error('Nenhuma unidade encontrada') };
-    }
+  console.log('[API] Chamando gerenciar-referencias com acao: buscar-unidades-com-profissionais');
+  const result = await callEdgeFunction(
+    'gerenciar-referencias',
+    { acao: 'buscar-unidades-com-profissionais' },
+    10000
+  );
 
-    // Verifica quais unidades têm profissionais em paralelo
-    const unidadesArray = (unidades as any) || [];
-    const verificacoes = await Promise.all(
-      ((unidadesArray as unknown) as UnidadeSaude[]).map(async (unidade: UnidadeSaude) => {
-        const { data: profissionais } = await buscarProfissionaisPorUnidadeApi(unidade.id);
-        const profArray = ((profissionais as any) || []) as any[];
-        return { unidade, temProfissionais: profArray.length > 0 };
-      })
-    );
+  console.log('[API] Resultado gerenciar-referencias:', result);
 
-    // Filtra apenas unidades com profissionais
-    const unidadesComProfissionais = ((verificacoes as any) || [])
-      .filter((v: any) => v.temProfissionais)
-      .map((v: any) => v.unidade);
-
-    // Cache do resultado filtrado
-    cacheManager.set(cacheKey, unidadesComProfissionais, undefined);
-
-    return { data: unidadesComProfissionais, error: null };
-  } catch (error: any) {
-    return { data: null, error: error };
+  if (result.data) {
+    cacheManager.set(cacheKey, result.data, undefined);
   }
+
+  return result;
 }
 
 /**
@@ -342,7 +441,7 @@ export async function buscarProfissionaisPorUnidadeApi(unidadeId: number) {
   }
 
   const result = await callEdgeFunction(
-    'gerenciar-pacientes',
+    'gerenciar-referencias',
     { acao: 'listar-profissionais', unidade_saude_id: unidadeId },
     10000
   );
@@ -367,7 +466,7 @@ export async function buscarMedicamentosApi() {
   }
 
   const result = await callEdgeFunction(
-    'gerenciar-pacientes',
+    'gerenciar-referencias',
     { acao: 'listar-medicamentos' },
     10000
   );
