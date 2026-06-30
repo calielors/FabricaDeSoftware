@@ -42,3 +42,4 @@ src/config/env.ts
 # generated native folders
 /ios
 /android
+.env

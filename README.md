@@ -29,6 +29,8 @@ Protótipos Mobile: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMy
 [Defina a variável de ambiente](https://supertutoriais.com.br/pc/como-criar-variaveis-personalizadas-windows-10/) 'ANDROID_HOME' e reinicie o PC. Normalmente ela se encontra em 'C:\Users\user\AppData\Local\Android\Sdk' ou em um local similar.<br>
 Clone o repositório na branch 'main'<br>
 Abra a pasta raíz com o Visual Studio Code<br>
+Faça uma cópia do arquivo .env-example. Renomeie a cópia para .env<br>
+Preencha o .env com os dados do Supabase.<br>
 Abra o terminal e confirme que ele está na rota terminando em '\FabricaDeSoftware'<br>
 Garanta que o emulador consegue abrir com sucesso<br>
 Execute o comando 'npm install'<br>

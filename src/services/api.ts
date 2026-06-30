@@ -1,10 +1,15 @@
-import { supabase, SUPABASE_URL } from './supabase';
+import { supabase } from './supabase';
+import Constants from "expo-constants";
 import { cacheManager } from './cache';
 
 /**
  * Camada de API centralizada para chamadas via Edge Functions
  * Substitui chamadas diretas ao Supabase por fetch HTTP
  */
+
+
+const SUPABASE_URL =
+  Constants.expoConfig?.extra?.supabaseUrl as string;
 
 // ===========================
 // TIPOS
@@ -65,7 +70,7 @@ async function callEdgeFunction<T>(
 ): Promise<ApiResponse<T>> {
   try {
     const token = await getAccessToken();
-    
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -99,7 +104,7 @@ async function callEdgeFunction<T>(
     }
 
     const result = await response.json();
-    
+
     if (result.error) {
       return { data: null, error: { message: result.error } };
     }
@@ -180,7 +185,7 @@ export async function registrarPaciente(dados: {
     }
 
     const result = await response.json();
-    
+
     if (result.error) {
       return { data: null, error: { message: result.error } };
     }
@@ -188,7 +193,7 @@ export async function registrarPaciente(dados: {
     return { data: result.user || result, error: null };
   } catch (error: any) {
     console.error('[registrarPaciente] Erro:', error.message);
-    
+
     if (error.name === 'AbortError') {
       return {
         data: null,
@@ -237,7 +242,7 @@ export async function loginPacienteApi(cpf: string, password: string): Promise<A
     }
 
     const result = await response.json();
-    
+
     if (result.error) {
       return { data: null, error: { message: result.error } };
     }
@@ -260,7 +265,7 @@ export async function loginPacienteApi(cpf: string, password: string): Promise<A
 export async function atualizarPaciente(idPaciente: number, dadosPaciente: any): Promise<ApiResponse<Paciente>> {
   // Limpa cache ao atualizar
   cacheManager.delete('paciente_' + idPaciente);
-  
+
   return callEdgeFunction<Paciente>(
     'gerenciar-pacientes',
     { acao: 'atualizar', id_paciente: idPaciente, dados: dadosPaciente },
@@ -270,7 +275,7 @@ export async function atualizarPaciente(idPaciente: number, dadosPaciente: any):
 
 export async function deletarPaciente(idPaciente: number): Promise<ApiResponse<any>> {
   cacheManager.delete('paciente_' + idPaciente);
-  
+
   return callEdgeFunction<any>(
     'gerenciar-pacientes',
     { acao: 'deletar', id_paciente: idPaciente },
@@ -295,7 +300,7 @@ export async function criarConsultaApi(consulta: {
 }) {
   // Limpa cache de consultas do paciente
   cacheManager.delete(`consultas_paciente_${consulta.paciente_id}`);
-  
+
   return callEdgeFunction(
     'gerenciar-consultas',
     { acao: 'criar-consulta', dados: consulta },
@@ -309,7 +314,7 @@ export async function criarConsultaApi(consulta: {
 export async function buscarConsultasPacienteApi(pacienteId: number) {
   const cacheKey = `consultas_paciente_${pacienteId}`;
   const cacheData = cacheManager.get(cacheKey);
-  
+
   if (cacheData) {
     return { data: cacheData, error: null };
   }
@@ -333,7 +338,7 @@ export async function buscarConsultasPacienteApi(pacienteId: number) {
 export async function cancelarConsultaApi(consultaId: number, pacienteId: number) {
   // Limpa cache de consultas
   cacheManager.delete(`consultas_paciente_${pacienteId}`);
-  
+
   return callEdgeFunction(
     'gerenciar-consultas',
     { acao: 'cancelar-consulta', id_consulta: consultaId },
@@ -350,7 +355,7 @@ export async function buscarHorariosOcupadosApi(
 ): Promise<ApiResponse<string[]>> {
   const cacheKey = `horarios_${data}_${unidadeId || 'sem-unidade'}`;
   const cacheData = cacheManager.get<string[]>(cacheKey);
-  
+
   if (cacheData) {
     return { data: cacheData, error: null };
   }
@@ -382,7 +387,7 @@ export async function buscarHorariosOcupadosApi(
 export async function buscarUnidadesSaudeApi() {
   const cacheKey = 'unidades_saude_com_profissionais';
   const cacheData = cacheManager.get(cacheKey);
-  
+
   if (cacheData) {
     return { data: cacheData, error: null };
   }
@@ -407,7 +412,7 @@ export async function buscarUnidadesSaudeApi() {
 export async function buscarUnidadesComProfissionaisApi() {
   const cacheKey = 'unidades_saude_com_profissionais_filtrado';
   const cacheData = cacheManager.get(cacheKey);
-  
+
   if (cacheData) {
     console.log('[API] Unidades retornadas do cache:', cacheData);
     return { data: cacheData, error: null };
@@ -435,7 +440,7 @@ export async function buscarUnidadesComProfissionaisApi() {
 export async function buscarProfissionaisPorUnidadeApi(unidadeId: number) {
   const cacheKey = `profissionais_unidade_${unidadeId}`;
   const cacheData = cacheManager.get(cacheKey);
-  
+
   if (cacheData) {
     return { data: cacheData, error: null };
   }
@@ -460,7 +465,7 @@ export async function buscarProfissionaisPorUnidadeApi(unidadeId: number) {
 export async function buscarMedicamentosApi() {
   const cacheKey = 'medicamentos_disponiveis';
   const cacheData = cacheManager.get(cacheKey);
-  
+
   if (cacheData) {
     return { data: cacheData, error: null };
   }
