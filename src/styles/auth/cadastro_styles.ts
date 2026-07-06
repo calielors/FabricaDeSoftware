@@ -20,10 +20,21 @@ export const CadastroStyles = (theme: any) => StyleSheet.create({
     topBar: {
         marginTop: Platform.OS === 'ios' ? 10 : 20,
         flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
     },
+
     backButton: {
         padding: 4,
         marginLeft: -8,
+    },
+    
+    switchWrapper: {
+        width: 44,
+        height: 44,
+        justifyContent: "center",
+        alignItems: "center",
     },
 
     // Container Centralizador

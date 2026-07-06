@@ -5,6 +5,7 @@ import { FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useRouter } from "expo-router";
+import ThemeSwitch from "../../src/assets/components/ThemeSwitch";
 
 export default function Welcome() {
   const { theme } = useTheme();
@@ -17,6 +18,10 @@ export default function Welcome() {
 
       <SafeAreaView style={styles.safeArea}>
         
+        <View style={styles.switch_container}>
+          <ThemeSwitch />
+        </View>
+
         {/* Bloco Superior: Título */}
         <View style={styles.header_box}>
           <Text style={styles.titulo}>Cuide da{"\n"}sua saúde</Text>

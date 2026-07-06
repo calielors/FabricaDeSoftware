@@ -5,7 +5,17 @@ const { width, height } = Dimensions.get("window");
 export const Welcome_Styles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "transparent", 
+    backgroundColor: "transparent",
+  },
+  switch_container: {
+    position: "absolute",
+    top: 66,
+    right: 28,
+    width: 44,
+    height: 44,
+    zIndex: 1000,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   safeArea: {

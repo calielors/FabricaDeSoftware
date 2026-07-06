@@ -4,7 +4,7 @@ export default {
     slug: "app-agendasus",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/images/icon.png",
+    icon: "./assets/images/Logo.png",
     scheme: "agendasus",
     userInterfaceStyle: "automatic",
 
@@ -21,7 +21,7 @@ export default {
 
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/images/adaptive-icon.png",
+        foregroundImage: "./assets/images/Logo.png",
         backgroundColor: "#ffffff",
       },
       predictiveBackGestureEnabled: false,

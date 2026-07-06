@@ -8,6 +8,7 @@ import { formatCPF, cleanCpf } from "../../src/utils/formatFunctions";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useRouter } from "expo-router";
+import ThemeSwitch from "@/src/assets/components/ThemeSwitch";
 
 export default function Login() {
   const { theme } = useTheme();
@@ -32,7 +33,7 @@ export default function Login() {
     }
 
     const cleanCpfValue = cleanCpf(cpf);
-    if (!cleanCpfValue) return;  
+    if (!cleanCpfValue) return;
 
     try {
       await signIn(cleanCpfValue, password);
@@ -45,24 +46,27 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === "ios" ? "padding" : "height"} 
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
         >
-          <ScrollView 
+          <ScrollView
             contentContainerStyle={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
             {/* Barra Superior */}
             <View style={styles.topBar}>
-              <TouchableOpacity 
-                activeOpacity={0.7} 
+              <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() => router.back()}
                 style={styles.backButton}
               >
                 <Feather name="chevron-left" size={28} color={theme.text} />
               </TouchableOpacity>
+              <View style={styles.switchWrapper}>
+                <ThemeSwitch />
+              </View>
             </View>
 
             {/* Conteúdo Centralizado */}
@@ -86,9 +90,9 @@ export default function Login() {
                   activeOutlineColor={theme.success}
                   outlineColor={theme.placeholder + "40"}
                   style={styles.input}
-                  theme={{ 
+                  theme={{
                     roundness: 16,
-                    colors: { onSurfaceVariant: theme.placeholder } 
+                    colors: { onSurfaceVariant: theme.placeholder }
                   }}
                 />
 
@@ -103,9 +107,9 @@ export default function Login() {
                   style={styles.input}
                   textColor={theme.text}
                   secureTextEntry={!passwordVisible}
-                  theme={{ 
+                  theme={{
                     roundness: 16,
-                    colors: { onSurfaceVariant: theme.placeholder } 
+                    colors: { onSurfaceVariant: theme.placeholder }
                   }}
                   right={
                     <PaperInput.Icon

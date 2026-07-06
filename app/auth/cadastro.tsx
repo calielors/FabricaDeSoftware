@@ -8,6 +8,7 @@ import { CadastroContext } from "../../src/contexts/CadastroContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../src/contexts/ThemeContext";
+import ThemeSwitch from "@/src/assets/components/ThemeSwitch";
 
 export default function Cadastro() {
     const { theme } = useTheme();
@@ -86,6 +87,9 @@ export default function Cadastro() {
                             >
                                 <Feather name="chevron-left" size={28} color={theme.text} />
                             </TouchableOpacity>
+                            <View style={styles.switchWrapper}>
+                                <ThemeSwitch />
+                            </View>
                         </View>
 
                         {/* 2. Bloco Central: Cabeçalho + Todos os Inputs */}

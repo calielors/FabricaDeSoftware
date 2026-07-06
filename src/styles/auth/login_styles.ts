@@ -7,10 +7,12 @@ export const Login_Styles = (theme: any) => StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+  
   container: {
     flex: 1,
     backgroundColor: "transparent",
   },
+
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 28,
@@ -20,12 +22,21 @@ export const Login_Styles = (theme: any) => StyleSheet.create({
   topBar: {
     marginTop: Platform.OS === 'ios' ? 10 : 20,
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
   },
+  
   backButton: {
     padding: 4,
     marginLeft: -8,
   },
-
+  switchWrapper: {
+    width: 44,
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   // Conteúdo Centralizado
   centerContainer: {
     flex: 1,

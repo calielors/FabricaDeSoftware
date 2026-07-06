@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions, View, Animated, Easing } from 'react-native';
 import LottieView from 'lottie-react-native';
 import lottieOriginalData from '../../../assets/background/cleaned_lottie.json';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("screen");
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 
 const TOTAL_FRAMES = 1000;
