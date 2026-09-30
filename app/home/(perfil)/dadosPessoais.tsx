@@ -3,9 +3,9 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityInd
 import { useRouter } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { supabase } from "../../../src/services/supabase";
-import { COLORS } from "../../../src/assets/colors/colors";
-import { Top_Bar } from "../../../src/components/top_bar";
-import { formatCPF } from "../../../src/components/format_cpf";
+import { COLORS } from "../../../src/theme/colors";
+import { Top_Bar } from "../../../src/components/topBar";
+import { formatCPF } from "../../../src/utils/formatarCpf";
 import { useTheme } from "../../../src/contexts/ThemeContext";
 
 export default function DadosPessoais() {

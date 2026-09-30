@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
-import { COLORS } from '../assets/colors/colors';
+import { useTheme } from '../contexts/ThemeContext';
 
-export const Consultas_Styles = (theme: any) => StyleSheet.create({
+
+export const Historico_Styles = (theme: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.background,
@@ -35,20 +36,9 @@ export const Consultas_Styles = (theme: any) => StyleSheet.create({
         color: theme.text,
         fontWeight: 'bold',
     },
-    empty: {
-        textAlign: 'center',
-        color: theme.placeholder,
-        marginTop: 20,
-    },
-    error: {
-        color: 'red',
-        textAlign: 'center',
-    },
     statusContainer: {
         marginTop: 8,
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        width: '100%',
+        width: '20%'
     },
     emptyText: {
         textAlign: 'center',
@@ -59,11 +49,5 @@ export const Consultas_Styles = (theme: any) => StyleSheet.create({
     statusText: {
         fontSize: 14,
         fontWeight: '600',
-    },
-    cancelarButton: {
-        backgroundColor: theme.danger,
-        paddingVertical: 4,
-        paddingHorizontal: 15,
-        borderRadius: 6,
     },
 });

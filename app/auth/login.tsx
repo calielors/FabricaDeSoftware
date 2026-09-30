@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Login_Styles } from "../../src/styles/login_styles";
+import { Login_Styles } from "../../src/styles/loginStyles";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import { Top_Bar } from "../../src/components/top_bar";
+import { Top_Bar } from "../../src/components/topBar";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { TextInput as PaperInput } from "react-native-paper";
-import { formatCPF } from "../../src/components/format_cpf";
+import { formatCPF } from "../../src/utils/formatarCpf";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useRouter } from "expo-router";
@@ -126,6 +126,13 @@ export default function Login() {
             <Text style={styles.links}>
               Primeiro acesso? Cadastre-se aqui
             </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push("/portal/login")}
+          >
+            <Text style={styles.links}>Sou servidor da unidade</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView >
