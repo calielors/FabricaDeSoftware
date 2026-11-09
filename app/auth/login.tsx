@@ -1,14 +1,15 @@
 import React, { useState, useContext } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Login_Styles } from "../../src/styles/login_styles";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Login_Styles } from "../../src/styles/loginStyles";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import { Top_Bar } from "../../src/components/top_bar";
+import { Top_Bar } from "../../src/components/topBar";
 import { AuthContext } from "../../src/contexts/AuthContext";
 import { TextInput as PaperInput } from "react-native-paper";
-import { formatCPF } from "../../src/components/format_cpf";
+import { formatCPF } from "../../src/utils/formatarCpf";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../src/contexts/ThemeContext";
 import { useRouter } from "expo-router";
+import { alertar } from "../../src/utils/alerta";
 
 export default function Login() {
   const { theme } = useTheme();
@@ -22,13 +23,13 @@ export default function Login() {
 
   async function handleLogin() {
     if (!cpf || !password) {
-      Alert.alert("Atenção", "Preencha CPF e senha!");
+      alertar("Atenção", "Preencha CPF e senha!");
       return;
     }
 
     const cleanCpf = cpf.replace(/\D/g, "");
     if (cleanCpf.length !== 11) {
-      Alert.alert("Atenção", "CPF inválido! Deve conter 11 dígitos.");
+      alertar("Atenção", "CPF inválido! Deve conter 11 dígitos.");
       return;
     }
 
@@ -36,13 +37,30 @@ export default function Login() {
       await signIn(cleanCpf, password);
       router.replace("/home");
     } catch (error: any) {
-      Alert.alert("Erro ao entrar", error.message || "CPF ou senha incorretos.");
+      const mensagem = error?.message || error?.error || "";
+
+      // Intercepta e exibe a mensagem adequada para conta não confirmada
+      if (
+        mensagem.toLowerCase().includes("email not confirmed") ||
+        mensagem.toLowerCase().includes("não confirmado") ||
+        mensagem.toLowerCase().includes("não verificado") ||
+        mensagem.toLowerCase().includes("pending_verification")
+      ) {
+        alertar(
+          "E-mail pendente",
+          "Sua conta foi criada, mas o e-mail ainda não foi verificado. Acesse sua caixa de entrada/Mailpit e clique no link de ativação."
+        );
+      } else {
+        alertar("Erro ao entrar", mensagem || "CPF ou senha incorretos.");
+      }
     }
   }
+
   async function testeUser() {
     setCpf("12345678900");
     setPassword("ABC123!@#ab");
   }
+
   return (
     <View style={{ flex: 1 }}>
 
@@ -126,6 +144,13 @@ export default function Login() {
             <Text style={styles.links}>
               Primeiro acesso? Cadastre-se aqui
             </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push("/portal/login")}
+          >
+            <Text style={styles.links}>Sou servidor da unidade</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView >

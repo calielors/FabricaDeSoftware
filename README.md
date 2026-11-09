@@ -24,6 +24,21 @@ Protótipos Mobile: [(Acesso no Figma)](https://www.figma.com/design/0THctJLxAMy
 -Extensão "Expo Tools" para VSCode<br>
 -Expo Orbit<br>
 
+# Backend (Supabase local)
+O banco, a autenticação e as Edge Functions ficam na pasta `supabase/` e rodam localmente via Docker.<br>
+**Pré-requisito:** Docker Desktop aberto.<br>
+Execute o comando 'npm install'<br>
+Execute o comando 'npm run db:start'. Na primeira vez ele baixa as imagens Docker (alguns GB) e cria o banco com dados de exemplo<br>
+Copie o arquivo '.env.example' para '.env.local' e preencha 'EXPO_PUBLIC_SUPABASE_ANON_KEY' com o 'ANON_KEY' exibido por 'npm run db:status'<br>
+No emulador Android, use 'EXPO_PUBLIC_SUPABASE_URL=http://10.0.2.2:54321'; no celular físico, use o IP do seu PC na rede<br>
+
+**Usuário de teste** (já verificado): CPF `123.456.789-00`, senha `ABC123!@#ab`. O botão "Entrar com o gov.br" da tela de login preenche esses dados.<br>
+**E-mails** (recuperação de senha) não saem para a internet: abra http://127.0.0.1:54324 para vê-los. Na nuvem eles saem por SMTP externo: veja [docs/envio-de-email.md](docs/envio-de-email.md)<br>
+**Recriar o banco do zero** (aplica `supabase/migrations` e `supabase/seed.sql` de novo): 'npm run db:reset'<br>
+**Portal da unidade** (servidores das UBS): http://localhost:8081/portal. Contas de teste e perfis em [docs/portal-da-unidade.md](docs/portal-da-unidade.md) (ex.: `recepcao.dv@agendasus.dev` / `Servidor@123`)<br>
+**Testar o banco** (políticas de acesso, fuso horário e portal): 'npm run db:test'. Veja [docs/politicas-de-acesso.md](docs/politicas-de-acesso.md) e [docs/data-e-hora.md](docs/data-e-hora.md)<br>
+**Desligar:** 'npm run db:stop'<br>
+
 # Realizando a build do projeto localmente e rodando (android/web)
 **Realize a build pelo menos uma vez, e sempre realize quando alterar bibliotecas** <br>
 [Defina a variável de ambiente](https://supertutoriais.com.br/pc/como-criar-variaveis-personalizadas-windows-10/) 'ANDROID_HOME' e reinicie o PC. Normalmente ela se encontra em 'C:\Users\user\AppData\Local\Android\Sdk' ou em um local similar.<br>
@@ -44,4 +59,15 @@ Aperte 'a' para abrir no emulador android ou 'w' par abrir na web<br>
 
 # Rodando uma build específica (android/web)
 Acesse o a build específica (pelo dashboard do expo.dev ou por um link)<br>
-Clique em "Open with Orbit" ou "Abrir com Orbit"<br>
+Clique em "Open with Orbit" ou "Abrir com Orbit"<br>.
+# Docker (versão web)
+
+Compila a versão web e serve com nginx na porta `8080`. A URL e a chave anon do Supabase entram no bundle no build:
+
+```bash
+export EXPO_PUBLIC_SUPABASE_URL=https://szbcloiswybqiwyyejdj.supabase.co
+export EXPO_PUBLIC_SUPABASE_ANON_KEY=<chave anon do projeto>
+docker compose up --build -d
+```
+
+Acesse `http://localhost:8080` (outra porta: `APP_PORT=8081 docker compose up --build -d`).

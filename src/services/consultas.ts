@@ -1,5 +1,8 @@
 import { supabase } from './supabase';
-//Timeout
+import { FUSO_PADRAO, noFuso, paraIsoComFuso } from '../utils/fusoHorario';
+
+export const ERRO_HORARIO_INDISPONIVEL = 'HORARIO_INDISPONIVEL';
+
 const timeout = async <T>(promise: PromiseLike<T>, controller: AbortController, ms: number = 30000): Promise<T> => {
     const timeoutId = setTimeout(() => controller.abort(), ms);
 
@@ -16,31 +19,45 @@ const timeout = async <T>(promise: PromiseLike<T>, controller: AbortController, 
     }
 };
 
-// Executa qualquer query
 async function executarQuery<T>(
-    query: any, 
+    query: any,
     ms: number = 15000,
     mensagemErroPadrao: string = 'Erro ao processar requisição'
 ): Promise<{ data: T | null; error: any }> {
     const controller = new AbortController();
+
     try {
         const response = await timeout(
             query.abortSignal(controller.signal),
             controller,
             ms
-        )as {data: T | null; error: any};
+        ) as { data: T | null; error: any };
 
         if (response.error) {
             return { data: null, error: { message: mensagemErroPadrao, details: response.error } };
         }
-        
+
         return { data: response.data as T, error: null };
     } catch (err: any) {
         return { data: null, error: { message: err.message || mensagemErroPadrao } };
     }
 }
 
-// Tipos
+function ehConflitoDeHorario(error: any): boolean {
+    const detalhe = error?.details || error;
+    const texto = [
+        error?.message,
+        detalhe?.message,
+        detalhe?.details,
+        detalhe?.hint,
+    ].filter(Boolean).join(' ');
+
+    return detalhe?.code === '23505'
+        || texto.includes('consulta_profissional_horario_unico_idx')
+        || texto.includes('consulta_sem_profissional_horario_unico_idx')
+        || texto.includes('consulta_horario_unico_idx');
+}
+
 export type Paciente = {
     id: number;
     nome: string;
@@ -61,9 +78,10 @@ export type Consulta = {
     profissional_id?: number;
     unidade_saude_id?: number;
     status?: string;
+    /** Instante com fuso (timestamptz). Exibir com noFuso(data_hora, fusoDaConsulta(c)). */
     data_hora: string;
     especialidade?: string;
-    unidade_saude?: string | { id: number; nome: string; endereco?: string };
+    unidade_saude?: string | { id: number; nome: string; endereco?: string; fuso_horario?: string };
 };
 
 export type UnidadeSaude = {
@@ -71,11 +89,26 @@ export type UnidadeSaude = {
     nome: string;
     endereco?: string;
     telefone?: string;
+    /** Fuso IANA da unidade, ex.: "America/Sao_Paulo". */
+    fuso_horario?: string;
 };
 
-/**
- * Busca o paciente associado ao usuário autenticado
- */
+export type Profissional = {
+    id: number;
+    nome: string;
+    cpf?: string;
+    registro_conselho?: string;
+    especialidade?: string;
+    unidade_saude_id?: number;
+    unidade_id?: number;
+};
+
+/** Fuso em que o horário de uma consulta deve ser exibido: o da unidade. */
+export function fusoDaConsulta(consulta: Pick<Consulta, 'unidade_saude'>): string {
+    const unidade = consulta.unidade_saude;
+    return (typeof unidade === 'object' && unidade?.fuso_horario) || FUSO_PADRAO;
+}
+
 export async function buscarPacientePorAuthId(authUserId: string) {
     const query = supabase
         .from('paciente')
@@ -84,18 +117,14 @@ export async function buscarPacientePorAuthId(authUserId: string) {
         .maybeSingle();
 
     const resultado = await executarQuery<Paciente>(query, 10000, 'Nenhum paciente vinculado a este usuário.');
-    
-    // Verificação extra para o maybeSingle (se data for null mas não houver erro de rede)
+
     if (!resultado.error && !resultado.data) {
         return { data: null, error: { message: 'Por favor, complete seu cadastro.', code: 'PACIENTE_NAO_ENCONTRADO' } };
     }
-    
+
     return resultado;
 }
 
-/**
- * Busca todas as unidades de saúde cadastradas
- */
 export async function buscarUnidadesSaude() {
     const query = supabase
         .from('unidade_saude')
@@ -105,9 +134,16 @@ export async function buscarUnidadesSaude() {
     return executarQuery<UnidadeSaude[]>(query, 10000, 'Erro ao carregar a lista de unidades');
 }
 
-/**
- * Cria um novo agendamento de consulta no banco de dados
- */
+export async function buscarProfissionaisPorUnidade(unidadeId: number) {
+    const query = supabase
+        .from('profissional')
+        .select('*')
+        .eq('unidade_saude_id', unidadeId)
+        .order('nome', { ascending: true });
+
+    return executarQuery<Profissional[]>(query, 10000, 'Erro ao carregar a lista de profissionais');
+}
+
 export async function criarConsulta(consulta: Omit<Consulta, 'id'>) {
     const query = supabase
         .from('consulta')
@@ -122,24 +158,32 @@ export async function criarConsulta(consulta: Omit<Consulta, 'id'>) {
         .select()
         .single();
 
-    return executarQuery<Consulta>(query, 15000, 'Não foi possível salvar seu agendamento. Verifique sua conexão.');
+    const resultado = await executarQuery<Consulta>(query, 15000, 'Não foi possível salvar seu agendamento. Verifique sua conexão.');
+
+    if (resultado.error && ehConflitoDeHorario(resultado.error)) {
+        return {
+            data: null,
+            error: {
+                code: ERRO_HORARIO_INDISPONIVEL,
+                message: 'Horario indisponivel. Escolha outro horario disponivel.',
+                details: resultado.error.details || resultado.error,
+            },
+        };
+    }
+
+    return resultado;
 }
-/**
- * Busca todas as consultas de um paciente com dados da unidade de saúde
- */
+
 export async function buscarConsultasPaciente(pacienteId: number) {
     const query = supabase
         .from('consulta')
-        .select('*, unidade_saude:unidade_saude_id (id, nome, endereco)')
+        .select('*, unidade_saude:unidade_saude_id (id, nome, endereco, fuso_horario)')
         .eq('paciente_id', pacienteId)
         .order('data_hora', { ascending: true });
 
     return executarQuery<Consulta[]>(query, 15000, 'Não foi possível carregar seu histórico de consultas');
 }
 
-/**
- * Cancela uma consulta existente
- */
 export async function cancelarConsulta(consultaId: number) {
     const query = supabase
         .from('consulta')
@@ -151,42 +195,65 @@ export async function cancelarConsulta(consultaId: number) {
     return executarQuery<Consulta>(query, 10000, 'Falha ao tentar cancelar a consulta');
 }
 
-/**
- * Busca horários ocupados para uma data e unidade específicas
- */
-export async function buscarHorariosOcupados(data: string, unidadeId?: number): Promise<string[]> {
-    const inicioDia = `${data}T00:00:00`;
-    const fimDia = `${data}T23:59:59`;
+export async function buscarHorariosDisponiveis(
+    data?: string,
+    unidadeId?: number | null,
+    profissionalId?: number | null
+) {
+    if (!data) {
+        return { data: null, error: { message: 'Parametro obrigatorio: data.' } };
+    }
 
-    const query = supabase
-        .from('consulta')
-        .select('data_hora')
-        .gte('data_hora', inicioDia)
-        .lte('data_hora', fimDia)
-        .neq('status', 'cancelada')
-        .eq('unidade_saude_id', unidadeId || 0);
+    if (!unidadeId) {
+        return { data: null, error: { message: 'Parametro obrigatorio: unidade.' } };
+    }
 
-    // Usamos a mestra para garantir o timeout de 10s
-    const resultado = await executarQuery<any[]>(query, 10000, 'Erro ao buscar horários.');
+    if (!profissionalId) {
+        return { data: null, error: { message: 'Parametro obrigatorio: profissional.' } };
+    }
 
-    // Se der erro ou não vier nada, retorna lista vazia
+    const query = supabase.rpc('buscar_disponibilidade_agenda', {
+        p_unidade_id: unidadeId,
+        p_profissional_id: profissionalId,
+        p_data: data,
+    });
+
+    const resultado = await executarQuery<Array<string | { horario: string }>>(
+        query,
+        10000,
+        'Erro ao carregar horários disponíveis'
+    );
+
+    if (resultado.error) {
+        return { data: null, error: resultado.error };
+    }
+
+    const horarios = (resultado.data || [])
+        .map((item) => typeof item === 'string' ? item : item.horario)
+        .filter((horario): horario is string => Boolean(horario));
+
+    return { data: horarios, error: null };
+}
+
+export async function buscarHorariosOcupados(data: string, unidadeId?: number, fuso: string = FUSO_PADRAO): Promise<string[]> {
+    if (!unidadeId) {
+        throw new Error('Parametro obrigatorio: unidade.');
+    }
+
+    const query = supabase.rpc('horarios_ocupados', {
+        p_data: data,
+        p_unidade_id: unidadeId,
+    });
+
+    const resultado = await executarQuery<string[]>(query, 10000, 'Erro ao buscar horários.');
+
     if (resultado.error || !resultado.data) {
         return [];
     }
 
-    // Transforma o formato do banco (ISO) para apenas o horário (HH:mm)
-    return resultado.data.map(c => {
-        const dataHora = new Date(c.data_hora);
-        return dataHora.toLocaleTimeString('pt-BR', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
-    });
+    return resultado.data.map(dataHoraIso => noFuso(dataHoraIso, fuso).hora);
 }
 
-/**
- * Função auxiliar para combinar data e horário em formato ISO
- */
-export function combinarDataHora(data: string, horario: string): string {
-    return `${data}T${horario}:00`;
+export function combinarDataHora(data: string, horario: string, fuso: string = FUSO_PADRAO): string {
+    return paraIsoComFuso(data, horario, fuso);
 }
