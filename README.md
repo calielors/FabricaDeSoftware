@@ -32,7 +32,7 @@ O banco, a autenticação e as Edge Functions ficam na pasta `supabase/` e rodam
 Execute o comando 'npm install'<br>
 Execute o comando 'npm run db:start'. Na primeira vez ele baixa as imagens Docker (alguns GB) e cria o banco com dados de exemplo<br>
 Copie o arquivo '.env.example' para '.env.local' e preencha 'EXPO_PUBLIC_SUPABASE_ANON_KEY' com o 'ANON_KEY' exibido por 'npm run db:status'<br>
-No emulador Android, use 'EXPO_PUBLIC_SUPABASE_URL=http://10.0.2.2:54321'; no celular físico, use o IP do seu PC na rede<br>.
+No emulador Android, use 'EXPO_PUBLIC_SUPABASE_URL=http://10.0.2.2:54321'; no celular físico, use o IP do seu PC na rede<br>
 
 **Usuário de teste** (já verificado): CPF `123.456.789-00`, senha `ABC123!@#ab`. O botão "Entrar com o gov.br" da tela de login preenche esses dados.<br>
 **E-mails** (recuperação de senha) não saem para a internet: abra http://127.0.0.1:54324 para vê-los. Na nuvem eles saem por SMTP externo: veja [docs/envio-de-email.md](docs/envio-de-email.md)<br>
